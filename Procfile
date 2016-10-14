@@ -1,1 +1,1 @@
-web: python manage.py runserver
+web: python cmput404project/manage.py runserver
