@@ -1,1 +1,1 @@
-web: python cmput404project/manage.py runserver
+web: gunicorn cmput404project.wsgi 

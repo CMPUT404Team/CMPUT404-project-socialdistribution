@@ -25,7 +25,7 @@ SECRET_KEY = 'fhi=2hwn4^m=ad0xzj9577$w*01&j97xh(ibxcb7zo9ng9&=*o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['winter-resonance.herokuapp.com']
 
 
 # Application definition
