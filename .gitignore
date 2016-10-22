@@ -91,3 +91,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# sqlite
+*.sqlite3
+
+# temp files
+*~
