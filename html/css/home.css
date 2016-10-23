@@ -1,0 +1,11 @@
+
+
+.tiled-photo{
+  width: 10%;
+  height: 10%;
+}
+
+.first-position {
+  right:0%;
+  position: absolute;
+}
