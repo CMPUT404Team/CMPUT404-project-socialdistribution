@@ -24,3 +24,7 @@ Contributors:
     Olexiy Berjanskii
     Erin Torbiak
     Abram Hindle
+
+Sources
+=========================
+Author: jfriend00 Link: http://stackoverflow.com/questions/12287856/insert-image-object-into-html
