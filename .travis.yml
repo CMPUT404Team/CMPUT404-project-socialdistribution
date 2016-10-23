@@ -6,4 +6,6 @@ python:
 install: "pip install -r cmput404project/requirements.txt"
 
 # command to run tests
-script: python cmput404project/manage.py test
+script: 
+        - cd cmput404project
+        - python manage.py test
