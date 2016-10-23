@@ -9,6 +9,7 @@
 .tiled-photo{
   height: 16.66%;
   width: 16.66%;
+  filter: blur(10px);
 }
 
 .first-position {
