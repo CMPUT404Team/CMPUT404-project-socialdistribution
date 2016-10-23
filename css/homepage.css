@@ -1,0 +1,15 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.transparent{
+	background:rgba(64,64,64,0.8);
+	padding: 2em;
+}
+
+.main-header{
+	color: #E8E8E8;
+}
+
+.right-align{
+	
+}
