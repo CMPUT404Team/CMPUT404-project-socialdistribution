@@ -94,3 +94,12 @@ ENV/
 
 #temp files
 *.py~
+
+# sqlite
+*.sqlite3
+
+# temp files
+*~
+
+# vim
+*.py.swp
