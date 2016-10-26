@@ -7,8 +7,16 @@
   </head>
     <body>
       <div>
-        <div id="background" class="row-1">
+        <div id="background" class="tiled-background">
           <script src="js/loadBackground.js"></script>
+        </div>
+        <div class="login-dialog">
+          <h1 class="login-dialog">Doggo</h1>
+          <form class="login-dialog" action="/login/" method="post">
+            <label for="username"> Username: </label>
+            <input id="username" type="text" name="username" value="{{current_name}}">
+            <input type="submit" value="Login">
+          </form>
         </div>
       </div>
     </body>

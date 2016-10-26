@@ -1,4 +1,4 @@
-.row-1{
+.tiled-background{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -9,17 +9,21 @@
 .tiled-photo{
   height: 16.66%;
   width: 16.66%;
-  filter: blur(10px);
+  filter: blur(8px);
 }
 
-.first-position {
-
+h1.login-dialog{
+  color: white;
+  order: 1;
 }
 
-.second-position {
-
+form.login-dialog{
+  order: 2;
 }
 
-.third-position {
-
+.login-dialog {
+  background-color:rgba(0, 0, 0, 0.5);
+  top: 50%;
+  display: flex;
+  position: absolute;
 }
