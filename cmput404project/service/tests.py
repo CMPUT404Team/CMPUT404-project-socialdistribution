@@ -87,8 +87,8 @@ class PostViewSetTests(APITestCase):
 
     def create_update_post(self, post_id):
         #PUT http://service/posts/postid to update/create post
-        return self.client.put('/posts/'+str(post_id)+'/')
+        return self.client.put('/posts/'+str(post_id)+'/', {"postid":post_id}, format='json')
 
     def create_post(self, post_id):
         #a POST should insert the post http://service/posts/postid
-        return self.client.post('/posts/'+str(post_id)+'/')
+        return self.client.post('/posts/'+str(post_id)+'/'{"postid":post_id}, format='json')
