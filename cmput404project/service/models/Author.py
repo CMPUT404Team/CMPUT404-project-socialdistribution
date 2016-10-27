@@ -1,22 +1,21 @@
 from django.db import models
+from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 import uuid
 
 @python_2_unicode_compatible
-class Author(models.Model):
-    iden=uuid.uuid4()
-    username=models.CharField(max_length=200)
-    email=models.CharField(max_length=200)
-    __password=models.CharField(max_length=200)
-    image="path"
-    posts=[]
-    friends=[]
-    followers=[]
-    following=[]
-    host=""
+class Author(models.Model):   
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    iden = models.UUIDField()
+    #image="path"
+    #posts=[]
+    #friends=[]
+    #host=""
     
+
     def __str__(self):
-        return self.username
+        return self.username 
+    '''
     def getEmail(self):
         return self.email
     def changePassword(self,newPassword):
@@ -38,7 +37,7 @@ class Author(models.Model):
         else:
             following.append(Auth)
             Auth.followers.append(self)
-    
+
     def deleteFriend(self,Auth):
         friends.remove(Auth)
         followers.append(Auth)
@@ -47,6 +46,5 @@ class Author(models.Model):
 
     def getProfilePic():
         #get pic passed from sign-up
-
-    def getFeed():
-        
+        pass
+    '''
