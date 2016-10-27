@@ -83,4 +83,12 @@ class PostViewSetTests(APITestCase):
 
     def get_posts_by_page_and_size(self, page_number, size):
         # GET http://service/author/posts?page=4&size=50
-        return self.client.get('/author/posts?page='+str(page_number)+'/&size='+str(size)+'/')
+        return self.client.get('/author/posts?page='+str(page_number)+'&size='+str(size)+'/')
+
+    def create_update_post(self, post_id):
+        #PUT http://service/posts/postid to update/create post
+        return self.client.put('/posts/'+str(post_id)+'/')
+
+    def create_post(self, post_id):
+        #a POST should insert the post http://service/posts/postid
+        return self.client.post('/posts/'+str(post_id)+'/')
