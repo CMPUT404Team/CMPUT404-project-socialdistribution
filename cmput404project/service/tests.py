@@ -25,7 +25,7 @@ class UserViewSetTests(APITestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_create_valid_user(self):
-	    response = self.create_user('testUser')
+        response = self.create_user('testUser')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(User.objects.filter(username='testUser')), 1)
 
