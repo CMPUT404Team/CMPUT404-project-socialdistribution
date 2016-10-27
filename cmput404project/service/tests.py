@@ -56,5 +56,31 @@ class PostViewSetTests(APITestCase):
         self.client.force_authenticate(user=superuser)
 
     def set_up_author(self):
-        author = Author.objects.create_author('Username', 'email@abc.ca', 'p@ssw0rd')
+        #base this off of how Author model is created
+        author = Author.objects.create_author('Username')
         self.client.force_authenticate(user=author)
+
+    #Defining our GET endpoints that we need to test
+    def get_posts_by_current_user(self):
+        #http://service/author/posts (posts that are visible to the currently authenticated user)
+        return self.client.get('/author/posts/')
+
+    def get_public_posts(self):
+        # http://service/posts (all posts marked as public on the server)
+        return self.client.get('/posts/')
+
+    def get_posts_by_author_id(self, author_id):
+        # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
+        return self.client.get('/author/'+str(author_id)+'/')
+
+    def get_single_post_by_id(self, post_id):
+        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
+        return self.client.get('/posts/'+str(post_id)+'/')
+
+    def get_posts_by_page(self, page_number):
+        # GET http://service/author/posts?page=4
+        return self.client.get('/author/posts?page='+str(page_number)+'/')
+
+    def get_posts_by_page_and_size(self, page_number, size):
+        # GET http://service/author/posts?page=4&size=50
+        return self.client.get('/author/posts?page='+str(page_number)+'/&size='+str(size)+'/')
