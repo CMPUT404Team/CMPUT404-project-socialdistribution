@@ -65,30 +65,105 @@ class PostViewSetTests(APITestCase):
         #http://service/author/posts (posts that are visible to the currently authenticated user)
         return self.client.get('/author/posts/')
 
+    def test_get_posts_by_current_author(self):
+        #TODO: Retrives all the posts made by the currently logged in author
+
+    def test_get_posts_by_current_admin(self):
+        #TODO: Retrieves all the posts made by the currently logged in admin
+
     def get_public_posts(self):
         # http://service/posts (all posts marked as public on the server)
         return self.client.get('/posts/')
+
+    def test_get_public_posts(self):
+        #TODO: Retrieve all public posts on the server
 
     def get_posts_by_author_id(self, author_id):
         # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
         return self.client.get('/author/'+str(author_id)+'/')
 
+    def test_get_posts_by_author_id(self):
+        #TODO: returns all the posts made by an author with a specific ID
+
+    def test_get_posts_with_invalid_author_id(self):
+        #TODO: test getting posts with an invalid author id, or author ID that doesn't exist
+
     def get_single_post_by_id(self, post_id):
         # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
         return self.client.get('/posts/'+str(post_id)+'/')
+
+    def test_get_post_by_id(self):
+        #TODO: Retrieves the post by its unique ID
+
+    def test_get_posts_with_invalid_post_id(self):
+        #TODO: tests behaviour for when you get posts with incorrectly
+        #      formatted ID, or ID that doesn't exist
 
     def get_posts_by_page(self, page_number):
         # GET http://service/author/posts?page=4
         return self.client.get('/author/posts?page='+str(page_number)+'/')
 
+    def test_get_posts_by_page(self):
+        #TODO: Returns all of posts on a specific page
+
+    def test_get_full_page_of_posts(self):
+        #TODO: test retrieving a full page of posts
+
+    def test_get_partial_page_of_posts(self):
+        #TODO: test retrieving a partial page of posts
+
+    def test_page_does_not_exist(self):
+        #TODO: Tests what is returned if requested page of posts does not exist
+
+    def test_page_has_no_posts(self):
+        #TODO: Tests getting page 1, when the user has made no posts
+        #pretty sure this is redundant to above
+
     def get_posts_by_page_and_size(self, page_number, size):
         # GET http://service/author/posts?page=4&size=50
         return self.client.get('/author/posts?page='+str(page_number)+'&size='+str(size)+'/')
+
+    def test_get_posts_by_page_and_size(self):
+        #TODO: retrieve a page of posts with specific size of page
+
+    def test_get_posts_by_page_and_exceeded_size(self):
+        #TODO: retrieve a page where there are more posts than the specified size
+
+    def test_get_posts_by_page_and_partial_size(self):
+        #TODO: retrive a page where the size is smaller than the one specified
 
     def create_update_post(self, post_id):
         #PUT http://service/posts/postid to update/create post
         return self.client.put('/posts/'+str(post_id)+'/', {"postid":post_id}, format='json')
 
+    def test_create_post_with_put(self):
+        #TODO: Create a post using a put method
+
+    def test_update_post(self):
+        #TODO: Update an existing post
+
+    def test_update_nonexistent_post(self):
+        #TODO: try to update a post that hasn't been created
+
+    def test_create_invalid_post(self):
+        #TODO: create a post that has an invalid post_id
+        # maybe unessecary?
+
+    def test_create_existing_post(self):
+        #TODO: create a post that already exists with a put
+
     def create_post(self, post_id):
         #a POST should insert the post http://service/posts/postid
         return self.client.post('/posts/'+str(post_id)+'/'{"postid":post_id}, format='json')
+
+    def test_create_post_with_post(self):
+        #TODO: Create a post using a post method
+
+    def test_update_post_with_post(self):
+        #TODO: Update an existing post
+
+    def test_insert_into_existing(self):
+        #TODO: try to post into an existing post
+
+    def test_insert_invalid_post(self):
+        #TODO: insert an invalidly formatted post
