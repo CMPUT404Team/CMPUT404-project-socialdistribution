@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient, force_authenticate
 from django.urls import reverse
 from rest_framework import status
-from service.models import Author
 
 from .views import UserViewSet
 
