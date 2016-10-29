@@ -176,11 +176,16 @@ class PostViewSetTests(APITestCase):
 
     def test_create_post_with_post(self):
         #TODO: Create a post using a post method
-        pass
+        post_id = 111
+        response = self.create_post(111)
+        self.assertEqual(response.status_code, 201)
 
     def test_update_post_with_post(self):
         #TODO: Update an existing post
-        pass
+        post_id = 111
+        self.create_post(111)
+        response = self.create_post(111)
+        self.assertEqual(response.status_code, 200)
 
     def test_insert_into_existing(self):
         #TODO: try to post into an existing post
