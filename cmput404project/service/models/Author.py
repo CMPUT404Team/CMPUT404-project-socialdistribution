@@ -3,19 +3,12 @@ from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 import uuid
 
-@python_2_unicode_compatible
 class Author(models.Model):   
     iden = models.UUIDField()
-    host = models.CharField(default='')
-    image = models.CharField(default='')
-    posts=[]
-    friends=[]
-    
-    def getRandomImageUrl(self):
-        return ''
-
-    def __str__(self):
-        return None 
+    #image="path"
+    #posts=[]
+    #friends=[]
+    #host=""
     '''
     def getEmail(self):
         return self.email
