@@ -8,7 +8,7 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email', 'groups', 'iden')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    iden = serializers.UUIDField(source='author.iden')
+    iden = serializers.UUIDField(source='author.iden', read_only=True)
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'groups','iden')
