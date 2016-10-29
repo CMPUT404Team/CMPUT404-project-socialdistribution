@@ -7,14 +7,16 @@ import uuid
 class Author(models.Model):   
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     iden = models.UUIDField()
-    #image="path"
-    #posts=[]
-    #friends=[]
-    #host=""
+    host = models.CharField(default='')
+    image = models.CharField(default='')
+    posts=[]
+    friends=[]
     
+    def getRandomImageUrl(self):
+        return ''
 
     def __str__(self):
-        return self.username 
+        return self.user.username 
     '''
     def getEmail(self):
         return self.email
