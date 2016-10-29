@@ -5,7 +5,6 @@ import uuid
 
 @python_2_unicode_compatible
 class Author(models.Model):   
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
     iden = models.UUIDField()
     host = models.CharField(default='')
     image = models.CharField(default='')
@@ -16,7 +15,7 @@ class Author(models.Model):
         return ''
 
     def __str__(self):
-        return self.user.username 
+        return None 
     '''
     def getEmail(self):
         return self.email
