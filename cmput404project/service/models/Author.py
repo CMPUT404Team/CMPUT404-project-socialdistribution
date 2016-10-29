@@ -3,7 +3,6 @@ from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 import uuid
 
-@python_2_unicode_compatible
 class Author(models.Model):   
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     iden = models.UUIDField()
@@ -11,10 +10,7 @@ class Author(models.Model):
     #posts=[]
     #friends=[]
     #host=""
-    
 
-    def __str__(self):
-        return self.username 
     '''
     def getEmail(self):
         return self.email
