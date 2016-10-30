@@ -5,7 +5,7 @@ from service.models import Author
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Author
-        fields = ('url', 'username', 'email', 'groups', 'iden')
+        fields = ('url', 'username', 'email', 'groups')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     iden = serializers.UUIDField(source='author.iden', read_only=True)

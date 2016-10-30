@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from models.Author import Author
 from .views import UserViewSet
+import json
 
 class UserViewSetTests(APITestCase):
     def setUp(self):
@@ -45,3 +46,10 @@ class UserViewSetTests(APITestCase):
     
     def create_user(self, username):
         return self.client.post('/users/', {"username":username}, format='json')
+
+    def test_get_Author(self):
+        author = Author(host='local', displayName='testMonkey')
+        author.save()
+        response = self.client.get('/author/'+str(author.id)+'/') 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.dumps(author), response.content)
