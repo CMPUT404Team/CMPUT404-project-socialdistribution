@@ -145,50 +145,66 @@ class PostViewSetTests(APITestCase):
         #TODO: retrive a page where the size is smaller than the one specified
         pass
 
-    def create_update_post(self, post_id):
+    def create_update_post(self, post_id, put_body):
         #PUT http://service/posts/postid to update/create post
-        return self.client.put('/posts/'+str(post_id)+'/', {"postid":post_id}, format='json')
+        return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
 
     def test_create_post_with_put(self):
-        #TODO: Create a post using a put method
-        pass
+        # Create a post using a put method
+        post_id = 111
+        put_body = {"postid":post_id, "title":"Sample Title"}
+        response = self.create_update_post(post_id, put_body)
+        self.assertEqual(response.status_code, 200)
 
     def test_update_post(self):
-        #TODO: Update an existing post
-        pass
+        # Update an existing post
+        post_id = 111
+        post_body = {"postid":post_id, "title":"Sample Title"}
+        response = self.create_post(post_body)
+        put_body = {"title":"Updated Title"}
+        response = self.create_update_post(post_id, put_body)
+        self.assertEqual(response.status_code, 200)
 
     def test_update_nonexistent_post(self):
-        #TODO: try to update a post that hasn't been created
-        pass
+        # Try to update a post that hasn't been created
+        # Maybe it should have the same result as test_create_post_with_put?
+        post_id = 54321
+        put_body = {"title":"Sample Title"}
+        response = self.create_update_post(post_id, put_body)
+        self.assertEqual(response.status_code, 404)
 
     def test_create_invalid_post(self):
-        #TODO: create a post that has an invalid post_id
-        # maybe unessecary?
-        pass
+        post_id = "not-a-number"
+        put_body = {"title":"Sample Title"}
+        response = self.create_update_post(post_id, put_body)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_existing_post(self):
         #TODO: create a post that already exists with a put
+        # Seems like it is the same as test_update_post
         pass
 
-    def create_post(self, post_id):
+    def create_post(self, post_body):
         #a POST should insert the post http://service/posts/postid
-        return self.client.post('/posts/'+str(post_id)+'/',{"postid":post_id}, format='json')
+        return self.client.post('/posts/', post_body, format='json')
 
     def test_create_post_with_post(self):
-        #TODO: Create a post using a post method
-        post_id = 111
-        response = self.create_post(111)
-        self.assertEqual(response.status_code, 201)
+        # Create a post using a post method
+        request_body = {"postid":111}
+        response = self.create_post(request_body)
+        self.assertEqual(response.status_code, 200)
 
     def test_update_post_with_post(self):
-        #TODO: Update an existing post
-        post_id = 111
-        self.create_post(111)
-        response = self.create_post(111)
+        # Update an existing post
+        request_body = {"postid":111, "title":"Sample Title"}
+        response = self.create_post(request_body)
+        request_body = {"title":"Updated Title"}
+        response = self.create_post(request_body)
         self.assertEqual(response.status_code, 200)
 
     def test_insert_into_existing(self):
-        #TODO: try to post into an existing post
+        # Try to post into an existing post
+        # What is the difference from test_update_post_with_post?
         pass
 
     def test_insert_invalid_post(self):
