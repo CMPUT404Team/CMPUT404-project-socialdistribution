@@ -4,41 +4,6 @@ from django.utils.encoding import python_2_unicode_compatible
 import uuid
 
 class Author(models.Model):   
-    iden = models.UUIDField()
-    #image="path"
-    #posts=[]
-    #friends=[]
-    #host=""
-    '''
-    def getEmail(self):
-        return self.email
-    def changePassword(self,newPassword):
-        __password=newPassword;
-    def getFriends(self):
-        return self.friends;
-    def getFollowing(self):
-        return self.following;
-    def getPosts(self):
-        return self.posts;
-    def friendRequest(self, Auth):
-        if Auth.iden in followers:
-            #switch Auth to friends
-            followers.remove(Auth)
-            friends.append(Auth)
-            #removing self from following
-            Auth.getFollowing().remove(self)
-            Auth.getFriends().append(self)
-        else:
-            following.append(Auth)
-            Auth.followers.append(self)
-
-    def deleteFriend(self,Auth):
-        friends.remove(Auth)
-        followers.append(Auth)
-        Auth.getFriends().remove(self)
-        Auth.getFollowing().append(self)
-
-    def getProfilePic():
-        #get pic passed from sign-up
-        pass
-    '''
+    unique_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    host = models.CharField(max_length=30)
+    displayName = models.CharField(max_length=30)  
