@@ -52,4 +52,4 @@ class UserViewSetTests(APITestCase):
         author.save()
         response = self.client.get('/author/'+str(author.id)+'/') 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.dumps(author), response.content)
+        self.assertIn(author.displayName, response.content)
