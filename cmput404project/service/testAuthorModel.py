@@ -5,16 +5,18 @@ from django.contrib.auth.models import User
 class AuthorModelTests(TestCase):
 
     def setUp(self):
-        self.author = Author(user=User(username='test'))
+        self.author = Author(host='localhost', displayName='test')
 
-    def test_Author_Creates_iden_field(self):
-        self.assertIsNotNone(self.author.iden)
+    def test_Author_Creates_Id(self):
+        self.assertIsNotNone(self.author.id)
     
-    def test_Author_Creates_Image_Url(self):
-        self.fail()
-
-    def test_Author_username(self):
-        self.assertEqual(str(self.author), 'test')
+    def test_Author_Username(self):
+        self.assertEqual(self.author.displayName, 'test')
 
     def test_Author_Host(self):
-        self.fail()
+        self.assertEqual('localhost',self.author.host)
+    
+    def test_Author_Friend(self):
+        friend = Author()
+        self.author.add_friend(friend)
+        self.assertEqual(friend, self.author.friends.first())
