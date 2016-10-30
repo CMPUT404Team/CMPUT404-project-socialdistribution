@@ -45,28 +45,3 @@ class UserViewSetTests(APITestCase):
 
     def create_user(self, username):
         return self.client.post('/users/', {"username":username}, format='json')
-
-
-class CommentTests(APITestCase):
-
-    def setUp(self):
-        #make author, post
-        author = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
-        post = (post)
-        self.client = APIClient()
-        #Authenticate as a super user so we can test everything
-        self.client.force_authenticate(user=superuser)
-
-    def test_get_comment(self):
-        response = self.get_user(1)
-        comment = Comment.create_comment("hello I am a comment", author)
-        self.assertEqual(response.status_code, 200)
-        response.render()
-        self.assertIn('JSON GOES HERE', response.content)
-
-    def test_post_comment(self):
-        response = self.get_user(1)
-        comment = Comment.create_comment("hello", author)
-        self.assertEqual(response.status_code, 200)
-        response.render()
-        self.assertIn('JSON GOES HERE', response.content)

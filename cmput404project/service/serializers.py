@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
+from service.models import Comment
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -10,3 +11,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ('url', 'name')
+
+class CommentSerializer():
+    class Meta:
+        model = Comment
+        fields = ('author','comment','pubDate','guid')
