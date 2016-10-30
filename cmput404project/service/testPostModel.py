@@ -1,16 +1,18 @@
 from django.test import TestCase
 from models.Post import Post
 from mock import MagicMock
+import markdown
 
 class PostModelTests(TestCase):
 
     def setUp(self):
         self.author = Mock()
         self.author.id = 1234
-        self.post = Post(self.author,title="A post title about a post about web dev",
+        self.post = Post(self.author,
+            title="A post title about a post about web dev",
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="This post discusses stuff -- brief",
-            contentType= "text/plain",
+            content_type= "text/plain",
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
         post.save()
@@ -65,6 +67,16 @@ class PostModelTests(TestCase):
         self.post.add_comment(comment)
         self.assertEqual(self.post.comments.length,1)
         self.assertEqual(self.post.comments.first(), comment)
+        self.post.comments.clear()
+
+    def test_Post_Add_Empty_Comment(self):
+        comment = Mock()
+        comment.comment = ""
+        comment.author = self.author
+        self.post.add_comment(comment)
+        self.assertEqual(self.post.comments.length,0)
+        self.assertNone(self.post.comments.first())
+        self.post.comments.clear()
 
     def test_Post_Next_Equal(self):
         post_next = "http://service/posts/" + self.post.id +"/comments"
@@ -73,5 +85,21 @@ class PostModelTests(TestCase):
     def test_Post_Number_Of_Comments_To_Display(self):
         self.assertIsNotNone(self.post.comment_size)
 
-    def test_Edit_Post(self):
-        pass
+    def test_Edit_Title_Description(self):
+        new_description = "my new description"
+        self.post.description = new_description
+        new_title = "oh hey, new title"
+        self.post.title = new_title
+        self.assertEqual(self.post.title, new_title)
+        self.assertEqual(self.post.description, new_description)
+
+    def test_Add_Image_To_Post(self):
+        image_link = "https://www.instagram.com/p/BMLWLAZhicf/?taken-by=sensible.heart"
+        self.post.add_photo(image_link)
+        self.assertTrue(self.post.attached_photo)
+
+    def test_Post_Markdown(self):
+        self.post.content_type = 'text/x-markdown'
+        md = markdown.markdown("my markdown text")
+        self.post.description = md
+        assertEqual(self.post.description, md)
