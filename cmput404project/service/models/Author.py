@@ -10,4 +10,5 @@ class Author(models.Model):
     friends = models.ManyToManyField("self", symmetrical=False)
 
     def add_friend(self, author):
+        self.save()
         self.friends.add(author)

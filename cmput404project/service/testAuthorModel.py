@@ -18,5 +18,6 @@ class AuthorModelTests(TestCase):
     
     def test_Author_Friend(self):
         friend = Author()
+        friend.save()
         self.author.add_friend(friend)
         self.assertEqual(friend, self.author.friends.first())
