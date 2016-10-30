@@ -6,6 +6,7 @@ class AuthorModelTests(TestCase):
 
     def setUp(self):
         self.author = Author(host='localhost', displayName='test')
+        self.author.save()
 
     def test_Author_Creates_Id(self):
         self.assertIsNotNone(self.author.id)
