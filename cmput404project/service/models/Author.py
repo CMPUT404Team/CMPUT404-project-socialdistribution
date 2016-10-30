@@ -9,7 +9,10 @@ class Author(models.Model):
     displayName = models.CharField(max_length=30) 
     # Specifying symmetrical to false allows an Author to be friends with
     # another author who is not friends with them.
-    friends = models.ManyToManyField("self", symmetrical=False)
+    friends = models.ManyToManyField("self", symmetrical=False, blank=True)
 
     def add_friend(self, author):
         self.friends.add(author)
+
+    def __str__(self):
+        return self.displayName
