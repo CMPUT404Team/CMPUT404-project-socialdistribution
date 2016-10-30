@@ -21,7 +21,8 @@ class Comment(models.Model):
     def create_comment(cls,comm, auth):
         createdComment = cls(comment = comm, author = auth)
         createdComment.guid = uuid.uuid4()
-        createdComment.pubDate = datetime.datetime()
+        createdComment.pubDate = datetime.now()
         return createdComment
+        
     def __str__(self):
         return self.comment

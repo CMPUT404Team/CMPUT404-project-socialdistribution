@@ -6,9 +6,11 @@ from rest_framework import status
 from .views import UserViewSet
 from mock import MagicMock, Mock
 from datetime import datetime
-from .models import Comment
+from models.Comment import Comment
+from django.test import TestCase
+import uuid
 
-class CommentUnitTest():
+class CommentUnitTest(TestCase):
 
     def published_recently(self, pubDate, now):
         if (now.day == pubDate.day):
@@ -18,16 +20,17 @@ class CommentUnitTest():
 
     def test_create_comment(self):
         author = Mock(id = 'de305d54-75b4-431b-adb2-eb6b9e546013', host = 'http://127.0.0.1:5454/', displayName = 'Greg')
-        pubDate = datetime.now()
+        #pubDate = datetime.now()
         comment = 'This is a comment'
-        guid = uuid4.uuid()
         comm = Comment().create_comment(comment, author)
-        assertEqual(comm.author, author, "Author not equal")
-        assertEqual(comm.comment, comment, "Comment not equal")
-        assertIsInstance(comm.pubDate, datetime, "Not a datetime object")
-        assertTrue(self.published_recently(comm.pubDate), "Date not recent enough")
-        assertIsInstance(comm.guid, uuid4, "Not a uuid object")
-        assertIsInstance(comm, Comment, "Not a comment object")
+        comm.guid = uuid.UUID('de305d54-75b4-431b-adb2-eb6b9e546023')
+        self.assertEqual(comm.author, author, "Author not equal")
+        self.assertEqual(comm.comment, comment, "Comment not equal")
+        self.assertEqual(comm.guid, uuid.UUID('de305d54-75b4-431b-adb2-eb6b9e546023'), "UUID not equal")
+        self.assertIsInstance(comm.pubDate, datetime, "Not a datetime object")
+        self.assertTrue(self.published_recently(comm.pubDate, datetime.now()), "Date not recent enough")
+        #self.assertIsInstance(comm.guid, uuid.uuid4(), "Not a uuid object")
+        self.assertIsInstance(comm, Comment, "Not a comment object")
 
 class CommentViewSetTests(APITestCase):
 
@@ -38,7 +41,7 @@ class CommentViewSetTests(APITestCase):
         self.client.force_authenticate(user=superuser)
         self.author = Mock(id = 'de305d54-75b4-431b-adb2-eb6b9e546013', host = 'http://127.0.0.1:5454/', displayName = 'Greg')
         self.post = Mock(id = 'de305d54-75b4-431b-adb2-eb6b9e546015')
-        self.comment = Comment().create_comment("Your pupper is wonderful", author)
+        self.comment = Comment().create_comment("Your pupper is wonderful", self.author)
         self.post.get_comments = MagicMock(return_value = ["Your pupper is wonderful"])
 
     def test_get_comment(self):
