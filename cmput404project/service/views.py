@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group
+<<<<<<< HEAD
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,6 +22,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+<<<<<<< HEAD
 class PostView(APIView):
 
     def get_object(self, uuid):
@@ -33,3 +35,10 @@ class PostView(APIView):
             post = self.get_object(uuid)
             serializer = PostSerializer(post)
             return Response(serializer.data)
+=======
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows posts to be viewed or edited.
+    """
+    queryset = Post.objects.all()
+>>>>>>> 68f34233a67bf3fdf5add8b245da7b5ce14ca218
