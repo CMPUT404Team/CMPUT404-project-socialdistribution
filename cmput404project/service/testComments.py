@@ -52,4 +52,8 @@ class CommentViewSetTests(APITestCase):
 
     def test_post_comment(self):
         #check post comment from post object
-        pass
+        comment="this is a comment"
+        self.post.addComment(comment)
+        #assume there is only one comment??
+        self.assertEqual(comment,self.post.get_comments())
+        
