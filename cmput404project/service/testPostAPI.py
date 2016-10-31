@@ -12,6 +12,7 @@ class PostViewSetTests(APITestCase):
 
     def set_up_author(self):
         #base this off of how Author model is created
+        self.author = Mock()
         self.client.force_authenticate(user=author)
 
     def get_posts_by_current_user(self):
@@ -20,7 +21,15 @@ class PostViewSetTests(APITestCase):
 
     def test_get_posts_by_current_author(self):
         #TODO: Retrives all the posts made by the currently logged in author
-        pass
+        set_up_author()
+        post_id = 86
+        put_body = {"postid":post_id, "title":"Sample Title"}
+        self.create_update_post(post_id, put_body)
+        response = get_posts_by_current_user()
+        self.assertEqual(response.status_code, 200)
+
+    def test_no_posts_by_current_author(self):
+        set_up_author()
 
     def test_get_posts_by_current_admin(self):
         #TODO: Retrieves all the posts made by the currently logged in admin
@@ -134,9 +143,28 @@ class PostViewSetTests(APITestCase):
         response = self.create_update_post(post_id, put_body)
         self.assertEqual(response.status_code, 400)
 
-    def test_create_existing_post(self):
-        #TODO: create a post that already exists with a put
-        # Seems like it is the same as test_update_post
+    def delete_post(self, post_id):
+        #A delete should delete posts with a specific ID
+        return self.client.delete('/posts/'+str(post_id)+'/')
+
+    def test_delete_post(self):
+        post_id = 86
+        put_body = {"title":"Sample Title"}
+        create_update_post(post_id, put_body)
+        response = delete_post(post_id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_nonexistent_post(self):
+        post_id = 86
+        response = delete_post(post_id)
+        self.assertEqual(response.status_code, 404)
+
+    def test_author_deletes_own_post(self):
+        #TODO: check permissions for an author deleting their own post
+        pass
+
+    def test_admin_deletes_post(self):
+        #TODO: an admin can delete any post, regardless if they authored it
         pass
 
     def create_post(self, post_body):

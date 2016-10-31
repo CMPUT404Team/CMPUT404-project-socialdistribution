@@ -45,14 +45,15 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.visibility, "PUBLIC")
 
     def test_Post_Change_Visibility(self):
-        self.post.visibility = "FOAF"
+        self.post.change_visibility("FOAF")
         self.assertEqual(self.post.visibility, "FOAF")
-        self.post.visibility = "FRIENDS"
+        self.post.change_visibility("FRIENDS")
         self.assertEqual(self.post.visibility, "FRIENDS")
-        self.post.visibility = "PRIVATE"
+        self.post..change_visibility("PRIVATE")
         self.assertEqual(self.post.visibility, "PRIVATE")
-        self.post.visibility = "SERVERONLY"
+        self.post.change_visibility("SERVERONLY")
         self.assertEqual(self.post.visibility, "SERVERONLY")
+        self.post.visibility = "PUBLIC"
 
     def test_Post_Has_Timestamp(self):
         self.assertIsNotNone(self.post.timestamp)
