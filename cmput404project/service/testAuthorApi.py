@@ -14,6 +14,8 @@ class UserViewSetTests(APITestCase):
         self.client = APIClient()
         #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
+	self.author = Author(host='local', displayName='testMonkey')
+	self.author.save()
 
     def test_get_valid_user(self):
         response = self.get_user(1)
@@ -48,10 +50,18 @@ class UserViewSetTests(APITestCase):
     def create_user(self, username):
         return self.client.post('/users/', {"username":username}, format='json')
     
-    @skip("Will implement soon")
     def test_get_Author(self):
-        author = Author(host='local', displayName='testMonkey')
-        author.save()
-        response = self.client.get('/author/'+str(author.id)+'/') 
+        response = self.client.get('/author/'+str(self.author.id)+'/') 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(author.displayName, response.content)
+        self.assertIn(self.author.displayName, response.content)
+
+    def test_get_friends(self):
+	friend = Author(host='testHost', displayName='testName')
+	friend.save()
+	self.author.add_friend(friend)
+	response = self.client.get('/author/'+str(self.author.id)+'/') 
+	json_friend = response.data.get('friends')[0]
+	self.assertIn('testHost',json_friend['host'])
+	self.assertIn('testName',json_friend['displayName'])
+
+	

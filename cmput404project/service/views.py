@@ -31,5 +31,5 @@ class AuthorDetailView(APIView):
 
 	def get(self, request, uuid):
         	author = self.get_object(uuid)
-        	serializer = AuthorSerializer(author)
+        	serializer = AuthorSerializer(author, context={'request':request})
         	return Response(serializer.data)

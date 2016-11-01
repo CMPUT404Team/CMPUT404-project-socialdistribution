@@ -1,12 +1,19 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from service.models import Author
+from models.Author import Author
+import uuid
+
+class FriendSerializer(serializers.Serializer):
+    displayName = serializers.CharField()
+    id = serializers.UUIDField()
+    host = serializers.CharField()	 
 
 class AuthorSerializer(serializers.Serializer):
-    class Meta:
-        model = Author
-        fields = ('username', 'email', 'groups')
-
+    displayName = serializers.CharField()
+    id = serializers.UUIDField()
+    host = serializers.CharField()
+    friends = FriendSerializer(required=False, many=True)
+      
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
