@@ -25,12 +25,12 @@ class PostsView(APIView):
     """
     Return a list of all posts or create a new post
     """
-    def get(self, request, format=None):
+    def get(self, request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -67,6 +67,11 @@ class PostView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, uuid):
+        post = self.get_object(uuid)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PostViewSet(viewsets.ModelViewSet):
     """
