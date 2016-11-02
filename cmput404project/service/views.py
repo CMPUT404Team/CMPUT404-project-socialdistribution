@@ -48,7 +48,7 @@ class FriendDetailView(APIView):
 	author1 = self.get_object(uuid1)
 	author2 = self.get_object(uuid2)
 	are_friends = author1.is_friend(author2)
-	return Response({'friends':are_friends})
+	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
 	
 class AuthorCreate(FormView):
     template_name = "author_form.html"
