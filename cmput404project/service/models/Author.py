@@ -12,15 +12,20 @@ class Author(models.Model):
     # Specifying symmetrical to false allows an Author to be friends with
     # another author who is not friends with them.
     friends = models.ManyToManyField("self", symmetrical=False, blank=True)
-    
+
     class Meta:
         ordering = ('id',)
-
-    def create_author(self, id, name):
-        author = Author(id, name)
         
     def add_friend(self, author):
         self.friends.add(author)
+
+    # Checks if one author is following another
+    def is_following(self, uuid):
+	return len(self.friends.filter(id=uuid))==1
+
+    # Checks to see if both authors are friends with each other
+    def is_friend(self,friend):
+	return self.is_following(friend.id) and friend.is_following(self.id)
 
     def __str__(self):
         return self.displayName

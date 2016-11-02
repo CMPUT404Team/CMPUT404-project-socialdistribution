@@ -31,5 +31,26 @@ class AuthorDetailView(APIView):
 
 	def get(self, request, uuid):
         	author = self.get_object(uuid)
-        	serializer = AuthorSerializer(author, context={'request':request})
+        	serializer = AuthorSerializer(author)
         	return Response(serializer.data)
+
+class FriendDetailView(APIView):
+	def get_object(self, uuid):
+		try:
+			return Author.objects.get(id=uuid)
+		except Author.DoesNotExist:
+			raise Http404
+	
+	def get(self, request, uuid1, uuid2):
+		author1 = self.get_object(uuid1)
+		author2 = self.get_object(uuid2)
+		are_friends = author1.is_friend(author2)
+		return Response({'friends':are_friends})
+	
+
+		
+
+
+
+
+
