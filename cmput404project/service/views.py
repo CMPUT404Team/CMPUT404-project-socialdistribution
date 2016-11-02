@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,22 +9,10 @@ from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-
 class AuthorDetailView(APIView):
+    '''
+    Used to get the profile information of an author.
+    '''
     def get_object(self, uuid):
         try:
             return Author.objects.get(id=uuid)
@@ -38,6 +25,10 @@ class AuthorDetailView(APIView):
         return Response(serializer.data)
 
 class FriendDetailView(APIView):
+    '''
+    Used to determine whether two users are friends with eachother. This 
+    means that each user will have the other user in their friends list.
+    '''
     def get_object(self, uuid):
 	try:
 	    return Author.objects.get(id=uuid)
