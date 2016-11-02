@@ -2,13 +2,12 @@ from django.test import TestCase
 from models.Post import Post
 from mock import MagicMock, Mock
 import markdown
+from Author import Author
 
 class PostModelTests(TestCase):
 
     def setUp(self):
-        self.author = Mock()
-        self.author.id = 1234
-        self.author.host = '127.0.0.1:8000'
+        self.author = Author(host='127.0.0.1:8000')
         self.post = Post.create(self.author,
             title="A post title about a post about web dev",
             origin="http://whereitcamefrom.com/post/zzzzz",

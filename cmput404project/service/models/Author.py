@@ -4,7 +4,7 @@ import uuid
 
 @python_2_unicode_compatible
 class Author(models.Model):
-    iden=uuid.uuid4()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username=models.CharField(max_length=200)
     email=models.CharField(max_length=200)
     password=models.CharField(max_length=200)
@@ -13,7 +13,7 @@ class Author(models.Model):
     friends=[]
     followers=[]
     following=[]
-    host=""
+    host=models.CharField(max_length=100, default='127.0.0.1:8000')
 
     def __str__(self):
         return self.username

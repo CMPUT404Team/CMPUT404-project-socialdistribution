@@ -5,13 +5,13 @@ from Author import Author
 
 @python_2_unicode_compatible
 class Post(models.Model):
-    VISIBILITY_OPTIONS = (('PUBLIC','PUBLIC'), ('PRIVATE','PRIVATE'),
-    ('FRIENDS','FRIENDS'), ('FOAF','FOAF'), ('SERVERONLY','SERVERONLY'))
+    VISIBILITY_OPTIONS = (('PU','PUBLIC'), ('PR','PRIVATE'),
+    ('FR','FRIENDS'), ('FO','FOAF'), ('SO','SERVERONLY'))
     CONTENT_TYPE = (('text/plain','text/plain'),('text/markdown','text/markdown'))
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     published = models.DateTimeField('date published')
-    visibility = models.CharField(max_length=1, choices=VISIBILITY_OPTIONS, default= 'PUBLIC')
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_OPTIONS, default= 'PUBLIC')
     title = models.CharField(max_length=75, blank=True)
     source = models.CharField(max_length=100, editable=False, blank=True)
     origin = models.CharField(max_length=100, editable=False, blank=True)
@@ -25,13 +25,13 @@ class Post(models.Model):
     def create(cls, author,title,origin,description,categories,visibility):
         post = cls(author=author, title=title, origin=origin, description=description, categories=categories,
         visibility=visibility)
-        origin = author.host
-        source = author.host
-        parse_description()
+        self.origin = author.host
+        self.source = author.host
+        self.parse_description()
         return post
 
     def __str__(self):
-        return title
+        return self.title
 
     def parse_description(self):
         if(markdown_description()):
