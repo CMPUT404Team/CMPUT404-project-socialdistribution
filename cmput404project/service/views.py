@@ -5,6 +5,9 @@ from rest_framework.response import Response
 from service.serializers import UserSerializer, GroupSerializer, PostSerializer
 from django.http import Http404
 from models.Post import Post
+from itertools import chain
+from django.core import serializers
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -23,10 +26,10 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PostsView(APIView):
     """
-    Return a list of all posts or create a new post
+    Return a list of all public posts or create a new post
     """
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.all()#.filter(visibility="PUBLIC")
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
@@ -54,15 +57,20 @@ class PostView(APIView):
 
     def post(self, request, uuid):
         post = self.get_object(uuid)
-        serializer = PostSerializer(post)
+        serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, uuid):
+    def put(self, request, uuid, format=None):
+        print request.data
+        print uuid
         post = self.get_object(uuid)
-        serializer = PostSerializer(post)
+        #serializer = PostSerializer(post)
+        #combined = list(chain(serializer.data, request.data))
+        #serializer = PostSerializer(data=serializers.serialize('json', combined))
+        serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
