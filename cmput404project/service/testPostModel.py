@@ -1,6 +1,6 @@
 from django.test import TestCase
 from models.Post import Post
-from mock import MagicMock
+from mock import MagicMock, Mock
 import markdown
 
 class PostModelTests(TestCase):
@@ -8,11 +8,11 @@ class PostModelTests(TestCase):
     def setUp(self):
         self.author = Mock()
         self.author.id = 1234
-        self.post = Post(self.author,
+        self.author.host = '127.0.0.1:8000'
+        self.post = Post.create(self.author,
             title="A post title about a post about web dev",
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="This post discusses stuff -- brief",
-            content_type= "text/plain",
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
         post.save()
@@ -45,13 +45,13 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.visibility, "PUBLIC")
 
     def test_Post_Change_Visibility(self):
-        self.post.change_visibility("FOAF")
+        self.post.visibility= "FOAF"
         self.assertEqual(self.post.visibility, "FOAF")
-        self.post.change_visibility("FRIENDS")
+        self.post.visibility = "FRIENDS"
         self.assertEqual(self.post.visibility, "FRIENDS")
-        self.post..change_visibility("PRIVATE")
+        self.post.visibility = "PRIVATE"
         self.assertEqual(self.post.visibility, "PRIVATE")
-        self.post.change_visibility("SERVERONLY")
+        self.post.visibility = "SERVERONLY"
         self.assertEqual(self.post.visibility, "SERVERONLY")
         self.post.visibility = "PUBLIC"
 
