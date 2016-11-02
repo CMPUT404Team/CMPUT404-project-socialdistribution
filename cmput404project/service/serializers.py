@@ -10,7 +10,7 @@ class FriendSerializer(serializers.Serializer):
 
 class AuthorSerializer(serializers.Serializer):
     displayName = serializers.CharField()
-    id = serializers.UUIDField()
+    id = serializers.UUIDField(read_only=True)
     host = serializers.CharField()
     friends = FriendSerializer(required=False, many=True)
       

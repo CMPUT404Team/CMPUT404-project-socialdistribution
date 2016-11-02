@@ -8,14 +8,11 @@ class Author(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     host = models.CharField(max_length=30)
     displayName = models.CharField(max_length=30)
-    
+    user = models.ForeignKey(User, null=True) 
     # Specifying symmetrical to false allows an Author to be friends with
     # another author who is not friends with them.
     friends = models.ManyToManyField("self", symmetrical=False, blank=True)
     
-    class Meta:
-        ordering = ('id',)
-
     def create_author(self, id, name):
         author = Author(id, name)
         
