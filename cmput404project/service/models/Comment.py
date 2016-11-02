@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 import uuid
 from datetime import datetime
+from Post import Post
+
 
 '''
 Assumptions based on requirements
@@ -12,10 +14,11 @@ Assumptions based on requirements
 '''
 #@python_2_unicode_compatible
 class Comment(models.Model):
-    author = models.CharField(max_length=200)
-    pubDate = models.DateTimeField(auto_now_add=True)
+    author = models.CharField(max_length=200, blank=True)
+    pubDate = models.DateTimeField(auto_now_add=True,null=True)
     comment= models.CharField(max_length=200)
     guid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     @classmethod
     def create_comment(cls,comm, auth):

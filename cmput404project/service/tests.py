@@ -24,13 +24,13 @@ class UserViewSetTests(APITestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_create_valid_user(self):
-	response = self.create_user('testUser')
+        response = self.create_user('testUser')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(User.objects.filter(username='testUser')), 1)
 
     def test_create_invalid_user(self):
-	response = self.create_user('I am an Invalid username')
-	self.assertEqual(response.status_code, 400)
+    	response = self.create_user('I am an Invalid username')
+    	self.assertEqual(response.status_code, 400)
 
     def test_create_existing_user(self):
         User.objects.create_user(username='ExistingUser')

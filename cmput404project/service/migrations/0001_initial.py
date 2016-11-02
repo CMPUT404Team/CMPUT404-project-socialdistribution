@@ -28,6 +28,15 @@ class Migration(migrations.Migration):
                 ('unique_id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('host', models.CharField(max_length=30)),
                 ('displayName', models.CharField(max_length=30)),
+                ],
+            ),
+        migrations.CreateModel(
+            name='Post',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('author', models.CharField(max_length=200)),
+                ('pub_date', models.DateTimeField(verbose_name=b'date published')),
+                ('status', models.CharField(max_length=150)),
             ],
         ),
     ]
