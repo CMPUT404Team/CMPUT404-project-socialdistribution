@@ -24,11 +24,8 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class CommentAPIView(APIView):
-    '''
-    def get_object(self):
-        return Comment.all()
-    '''
-    def get(self, request):
+
+    def get(self, request, id):
         comments = Comment.objects.all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
