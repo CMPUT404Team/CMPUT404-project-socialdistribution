@@ -2,8 +2,9 @@ from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from service.serializers import UserSerializer, GroupSerializer, CommentSerializer
 from models.Comment import Comment
+from service.serializers import UserSerializer, GroupSerializer, AuthorSerializer, CommentSerializer
+from models.Author import Author
 from django.http import Http404
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -21,6 +22,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+
 class CommentAPIView(APIView):
     '''
     def get_object(self):
@@ -30,3 +32,16 @@ class CommentAPIView(APIView):
         comments = Comment.objects.all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+
+class AuthorDetailView(APIView):
+
+	def get_object(self, uuid):
+        	try:
+            		return Author.objects.get(id=uuid)
+        	except Author.DoesNotExist:
+            		raise Http404
+
+	def get(self, request, uuid):
+        	author = self.get_object(uuid)
+        	serializer = AuthorSerializer(author)
+        	return Response(serializer.data)
