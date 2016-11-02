@@ -65,7 +65,7 @@ ROOT_URLCONF = 'cmput404project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['posts/templates/'],
+        'DIRS': ['posts/templates/', 'service/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

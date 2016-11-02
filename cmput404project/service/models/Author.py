@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
+from django.urls import reverse
 import uuid
 
 class Author(models.Model):   
@@ -12,12 +13,16 @@ class Author(models.Model):
     # Specifying symmetrical to false allows an Author to be friends with
     # another author who is not friends with them.
     friends = models.ManyToManyField("self", symmetrical=False, blank=True)
-    
-    def create_author(self, id, name):
-        author = Author(id, name)
-        
+   
+    @classmethod
+    def create(cls, user, displayName, host):
+        return cls(id=uuid.uuid4(), user=user, displayName=displayName)
+
     def add_friend(self, author):
         self.friends.add(author)
 
     def __str__(self):
         return self.displayName
+    
+    def get_absolute_url(self):
+        return reverse('author-detail', kwargs={'uuid': self.id})

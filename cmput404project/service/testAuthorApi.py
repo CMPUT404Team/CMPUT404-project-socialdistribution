@@ -14,7 +14,7 @@ class UserViewSetTests(APITestCase):
         self.client = APIClient()
         #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
-	self.author = Author(host='local', displayName='testMonkey')
+	self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
 	self.author.save()
 
     def test_get_valid_user(self):
