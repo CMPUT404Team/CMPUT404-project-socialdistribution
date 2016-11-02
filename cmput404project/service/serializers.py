@@ -29,9 +29,6 @@ class PostSerializer(serializers.ModelSerializer):
         return Post.Post.objects.create(**validated_data)
 
     def update(self, post, validated_data):
-        #post.id = validated_data.get('id', post.id)
-        print post
-        print validated_data
         post.author = validated_data.get('author', post.author)
         #post.content = validated_data.get('content', post.content)
         post.save()

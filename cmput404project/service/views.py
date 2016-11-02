@@ -57,19 +57,14 @@ class PostView(APIView):
 
     def post(self, request, uuid):
         post = self.get_object(uuid)
-        serializer = PostSerializer(data=request.data)
+        serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, uuid, format=None):
-        print request.data
-        print uuid
+    def put(self, request, uuid):
         post = self.get_object(uuid)
-        #serializer = PostSerializer(post)
-        #combined = list(chain(serializer.data, request.data))
-        #serializer = PostSerializer(data=serializers.serialize('json', combined))
         serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -80,6 +75,24 @@ class PostView(APIView):
         post = self.get_object(uuid)
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class VisiblePostsView(APIView):
+    """
+    Return a list of all posts available to the currently authenticated user
+    """
+    def get(self, request):
+        posts = Post.objects.all()#.filter(visibility="?")
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
+class AuthorPostsView(APIView):
+    """
+    Return a list of available posts created by specified user
+    """
+    def get(self, request):
+        posts = Post.objects.all()#.filter(author.id="?")
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
 
 class PostViewSet(viewsets.ModelViewSet):
     """
