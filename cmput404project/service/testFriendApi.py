@@ -5,7 +5,6 @@ from unittest import skip
 from django.urls import reverse
 from rest_framework import status
 from models.Author import Author
-from .views import UserViewSet
 import json
 
 class UserViewSetTests(APITestCase):
