@@ -28,7 +28,9 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class CommentAPIView(APIView):
-
+    """
+    API endpoint that allows the comments of a post to be viewed.
+    """
     def get(self, request, id):
         comments = Comment.objects.all()
         serializer = CommentSerializer(comments, many=True)

@@ -64,7 +64,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 class CommentSerializer(serializers.Serializer):
-    author = serializers.CharField(max_length=200)
+    author = AuthorSerializer(required=True)
     pubDate = serializers.DateTimeField()
     comment= serializers.CharField(max_length=200)
     guid = serializers.UUIDField()
