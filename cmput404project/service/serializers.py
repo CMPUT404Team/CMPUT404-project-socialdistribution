@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from service.models import Post, Author
 from django.db import models
-
+import uuid
 
 class PostSerializer(serializers.ModelSerializer):
     # for optional fields on post: var = CharField(allow_blank=True, required=False)
@@ -48,6 +48,17 @@ class PostSerializer(serializers.ModelSerializer):
         return post
 
 
+class FriendSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Author
+        fields = ('url', 'id', 'displayName', 'host')
+
+class AuthorSerializer(serializers.HyperlinkedModelSerializer):
+    friends = FriendSerializer(required=False, many=True)
+    class Meta:
+        model = Author
+        fields = ('url', 'id', 'displayName', 'host', 'friends')
+    
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
