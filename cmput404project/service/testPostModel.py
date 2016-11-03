@@ -2,7 +2,7 @@ from django.test import TestCase
 from models.Post import Post
 from mock import MagicMock, Mock
 import markdown
-from Author import Author
+from models.Author import Author
 
 class PostModelTests(TestCase):
 
@@ -14,7 +14,7 @@ class PostModelTests(TestCase):
             description="This post discusses stuff -- brief",
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
-        post.save()
+        self.post.save()
 
     def test_Post_Creates_Id(self):
         self.assertIsNotNone(self.post.id)
@@ -26,7 +26,7 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.description, "This post discusses stuff -- brief")
 
     def test_Post_Origin_Equal(self):
-        self.assertEqual(self.post.origin, "http://whereitcamefrom.com/post/zzzzz")
+        self.assertEqual(self.post.origin, '127.0.0.1:8000')
 
     def test_Post_Has_Source(self):
         self.assertIsNotNone(self.post.source)
