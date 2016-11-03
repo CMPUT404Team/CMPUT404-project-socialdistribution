@@ -29,7 +29,7 @@ class PostsView(APIView):
     Return a list of all public posts or create a new post
     """
     def get(self, request):
-        posts = Post.objects.all()#.filter(visibility="PUBLIC")
+        posts = Post.objects.all().filter(visibility="PUBLIC")
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
