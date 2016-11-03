@@ -43,7 +43,10 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',),
     'PAGE_SIZE': 10 
 }
 
@@ -62,7 +65,7 @@ ROOT_URLCONF = 'cmput404project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['posts/templates/'],
+        'DIRS': ['posts/templates/', 'service/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
