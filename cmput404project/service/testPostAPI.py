@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase, APIClient, force_authenticate
 from models.Post import Post
+from models.Author import Author
 # from mock import MagicMock
 from django.contrib.auth.models import User
 import uuid
@@ -22,9 +23,43 @@ class PostViewSetTests(APITestCase):
         return self.client.get('/author/posts/')
         #http://service/author/posts (posts that are visible to the currently authenticated user)
 
+    def get_public_posts(self):
+        # http://service/posts (all posts marked as public on the server)
+        return self.client.get('/posts/')
+
+    def get_posts_by_author_id(self, author_id):
+        # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
+        return self.client.get('/author/'+str(author_id)+'/')
+
+    def get_single_post_by_id(self, post_id):
+        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
+        return self.client.get('/posts/'+post_id+'/')
+
+    def get_posts_by_page(self, page_number):
+        # GET http://service/author/posts?page=4
+        return self.client.get('/author/posts?page='+str(page_number)+'/')
+
+    def get_posts_by_page_and_size(self, page_number, size):
+        # GET http://service/author/posts?page=4&size=50
+        return self.client.get('/author/posts?page='+str(page_number)+'&size='+str(size)+'/')
+
+    def create_post(self, post_body):
+        #a POST should insert the post http://service/posts/postid
+        return self.client.post('/posts/', post_body, format='json')
+
+    def delete_post(self, post_id):
+        #A delete should delete posts with a specific ID
+        return self.client.delete('/posts/'+str(post_id)+'/')
+
+    def create_update_post(self, post_id, put_body):
+        #PUT http://service/posts/postid to update/create post
+        return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
+
     def test_get_posts_by_current_author(self):
         post_id = uuid.uuid4()
-        put_body = {"postid":post_id, "title":"Sample Title"}
+        superuser = User.objects.create_superuser('superuser2', 'test@test2.com', 'test12342')
+        author = Author.create(host='local', displayName='test author', user=superuser)
+        put_body = {"postid":post_id, "author":author.id, "title":"Sample Title"}
         self.create_update_post(post_id, put_body)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
@@ -36,17 +71,9 @@ class PostViewSetTests(APITestCase):
         #TODO: Retrieves all the posts made by the currently logged in admin
         pass
 
-    def get_public_posts(self):
-        # http://service/posts (all posts marked as public on the server)
-        return self.client.get('/posts/')
-
     def test_get_public_posts(self):
         #TODO: Retrieve all public posts on the server
         pass
-
-    def get_posts_by_author_id(self, author_id):
-        # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
-        return self.client.get('/author/'+str(author_id)+'/')
 
     def test_get_posts_by_author_id(self):
         #TODO: returns all the posts made by an author with a specific ID
@@ -56,10 +83,6 @@ class PostViewSetTests(APITestCase):
         #TODO: test getting posts with an invalid author id, or author ID that doesn't exist
         pass
 
-    def get_single_post_by_id(self, post_id):
-        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
-        return self.client.get('/posts/'+post_id+'/')
-
     def test_get_post_by_id(self):
         #TODO: Retrieves the post by its unique ID
         pass
@@ -68,10 +91,6 @@ class PostViewSetTests(APITestCase):
         #TODO: tests behaviour for when you get posts with incorrectly
         #      formatted ID, or ID that doesn't exist
         pass
-
-    def get_posts_by_page(self, page_number):
-        # GET http://service/author/posts?page=4
-        return self.client.get('/author/posts?page='+str(page_number)+'/')
 
     def test_get_posts_by_page(self):
         #TODO: Returns all of posts on a specific page
@@ -94,10 +113,6 @@ class PostViewSetTests(APITestCase):
         #pretty sure this is redundant to above
         pass
 
-    def get_posts_by_page_and_size(self, page_number, size):
-        # GET http://service/author/posts?page=4&size=50
-        return self.client.get('/author/posts?page='+str(page_number)+'&size='+str(size)+'/')
-
     def test_get_posts_by_page_and_size(self):
         #TODO: retrieve a page of posts with specific size of page
         pass
@@ -109,10 +124,6 @@ class PostViewSetTests(APITestCase):
     def test_get_posts_by_page_and_partial_size(self):
         #TODO: retrive a page where the size is smaller than the one specified
         pass
-
-    def create_update_post(self, post_id, put_body):
-        #PUT http://service/posts/postid to update/create post
-        return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
 
     def test_create_post_with_put(self):
         # Create a post using a put method
@@ -144,10 +155,6 @@ class PostViewSetTests(APITestCase):
         response = self.create_update_post(post_id, put_body)
         self.assertEqual(response.status_code, 400)
 
-    def delete_post(self, post_id):
-        #A delete should delete posts with a specific ID
-        return self.client.delete('/posts/'+str(post_id)+'/')
-
     def test_delete_post(self):
         post_id = self.existing_post_id
         put_body = {"title":"Sample Title"}
@@ -167,10 +174,6 @@ class PostViewSetTests(APITestCase):
     def test_admin_deletes_post(self):
         #TODO: an admin can delete any post, regardless if they authored it
         pass
-
-    def create_post(self, post_body):
-        #a POST should insert the post http://service/posts/postid
-        return self.client.post('/posts/', post_body, format='json')
 
     def test_create_post_with_post(self):
         # Create a post using a post method
