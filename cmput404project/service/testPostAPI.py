@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase, APIClient, force_authenticate
 from models.Post import Post
-from mock import MagicMock
+# from mock import MagicMock
 from django.contrib.auth.models import User
 import uuid
 

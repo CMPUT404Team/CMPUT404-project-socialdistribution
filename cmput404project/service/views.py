@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from service.serializers import UserSerializer, GroupSerializer, PostSerializer
+from service.serializers import UserSerializer, GroupSerializer, PostSerializer, AuthorSerializer
 from django.http import Http404
 from models.Post import Post
 from models.Author import Author
