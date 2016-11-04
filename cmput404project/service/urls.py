@@ -7,7 +7,7 @@ urlpatterns = [
     url(r'^posts/(?P<uuid>[^/]+)/$', views.PostView.as_view(), name='post'),
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
     url(r'^author/(?P<uuid>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
-    url(r'^posts/(?P<id>[^/]+)/comments', views.CommentAPIView.as_view()),
+    url(r'^posts/(?P<pid>[^/]+)/comments', views.CommentAPIView.as_view()),
     url(r'^author/add/$', views.AuthorCreate.as_view(), name='author-add'),
 	url(r'^author/(?P<pk>[^/]+)/$', views.AuthorDetailView.as_view(), name='author-detail')
 ]

@@ -35,9 +35,15 @@ class CommentAPIView(APIView):
     """
     API endpoint that allows the comments of a post to be viewed.
     """
-    def get(self, request, id):
-        #Query by post -> comments, not
-        comments = Comment.objects.all()
+    def get_comments(self, postId):
+        try:
+            return Comment.objects.filter(post_id = postId)
+        except Comment.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pid):
+        comments = self.get_comments(pid)
+        print comments
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
 
