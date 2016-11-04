@@ -69,6 +69,4 @@ class UserViewSetTests(APITestCase):
 	response = self.client.get(self.detail_url)
 	json_friend = response.data.get('friends')[0]
 	self.assertIn('testHost',json_friend['host'])
-	self.assertIn('testName',json_friend['displayName'])
-
-	
+	self.assertIn('testName',json_friend['displayName'])	
