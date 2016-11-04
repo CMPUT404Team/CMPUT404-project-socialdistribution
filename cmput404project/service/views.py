@@ -1,7 +1,7 @@
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from service.serializers import UserSerializer, GroupSerializer, AuthorSerializer, FriendSerializer
+from service.serializers import *
 from models.Author import Author
 from django.http import Http404
 from django.forms import modelformset_factory
@@ -71,9 +71,20 @@ class FriendRequestView(APIView):
     '''
     Used to make a friend request. 
     '''
-    def post(self, response):
-        pass
-	
+    def get_object(self, uuid):
+        try:
+            return Author.objects.get(id=uuid)
+        except Author.DoesNotExist:
+            raise Http404
+
+    def post(self, request):
+        serializer = FriendRequestSerializer(request.data,data=request.data, context={'request':request})
+        if (serializer.is_valid(raise_exception=True)):
+            author = self.get_object(serializer.validated_data['author']['id'])
+            friend = self.get_object(serializer.validated_data['friend']['id'])
+            author.add_friend(friend)
+            return Response(status=204)
+
 class AuthorCreate(FormView):
     template_name = "author_form.html"
     form_class = AuthorForm
