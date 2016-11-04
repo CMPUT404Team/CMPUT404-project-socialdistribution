@@ -7,17 +7,16 @@ from django.utils.six import BytesIO
 from models.Comment import Comment
 from service.serializers import UserSerializer, GroupSerializer, AuthorSerializer, CommentSerializer, PostSerializer
 from models.Author import Author
+from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
-from django.http import Http404
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
 from django.core.exceptions import SuspiciousOperation
 import json
-
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -33,7 +32,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
 
 class CommentAPIView(APIView):
     """
@@ -167,3 +165,4 @@ class AuthorCreate(FormView):
         # It should return an HttpResponse.
         self.success_url = form.create_author(self.request.get_host())
         return super(AuthorCreate, self).form_valid(form)
+

@@ -2,7 +2,7 @@ from django.test import TestCase
 from models.Post import Post
 from mock import MagicMock, Mock
 import markdown
-from Author import Author
+from models.Author import Author
 
 class PostModelTests(TestCase):
 
@@ -14,7 +14,7 @@ class PostModelTests(TestCase):
             description="This post discusses stuff -- brief",
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
-        post.save()
+        self.post.save()
 
     def test_Post_Creates_Id(self):
         self.assertIsNotNone(self.post.id)
@@ -26,7 +26,7 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.description, "This post discusses stuff -- brief")
 
     def test_Post_Origin_Equal(self):
-        self.assertEqual(self.post.origin, "http://whereitcamefrom.com/post/zzzzz")
+        self.assertEqual(self.post.origin, '127.0.0.1:8000')
 
     def test_Post_Has_Source(self):
         self.assertIsNotNone(self.post.source)
@@ -54,36 +54,35 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.visibility, "SERVERONLY")
         self.post.visibility = "PUBLIC"
 
-    def test_Post_Has_Timestamp(self):
-        self.assertIsNotNone(self.post.timestamp)
+    def test_Post_Has_Published(self):
+        self.assertIsNotNone(self.post.published)
 
     def test_Post_Comment_Count(self):
-        self.assertEqual(self.post.comments.length, 0)
+        self.assertEqual(self.post.count, 0)
 
     def test_Post_Add_Comment(self):
-        comment = Mock()
-        comment.comment = "comment info"
-        comment.author = self.author
-        self.post.add_comment(comment)
-        self.assertEqual(self.post.comments.length,1)
+        self.post.comment_set.create(comment='comment info', author=self.author)
+        self.post.update_comment_count()
+        self.assertEqual(self.post.count,1)
         self.assertEqual(self.post.comments.first(), comment)
         self.post.comments.clear()
 
     def test_Post_Add_Empty_Comment(self):
-        comment = Mock()
-        comment.comment = ""
-        comment.author = self.author
-        self.post.add_comment(comment)
-        self.assertEqual(self.post.comments.length,0)
-        self.assertNone(self.post.comments.first())
-        self.post.comments.clear()
+        self.post.comment_set.create(comment='', author=self.author)
+        self.post.update_comment_count()
+        self.assertEqual(self.post.count,0)
+        try:
+            self.assertIsNone(self.post.comments[0])
+            self.post.comments.clear()
+        except IndexError:
+            pass
 
     def test_Post_Next_Equal(self):
-        post_next = "http://service/posts/" + self.post.id +"/comments"
+        post_next = "http://service/posts/" + str(self.post.id) +"/comments"
         self.assertEqual(self.post.next, post_next)
 
     def test_Post_Number_Of_Comments_To_Display(self):
-        self.assertIsNotNone(self.post.comment_size)
+        self.assertIsNotNone(self.post.size)
 
     def test_Edit_Title_Description(self):
         new_description = "my new description"
@@ -94,12 +93,17 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.description, new_description)
 
     def test_Add_Image_To_Post(self):
-        image_link = "https://www.instagram.com/p/BMLWLAZhicf/?taken-by=sensible.heart"
-        self.post.add_photo(image_link)
+        self.post2 = Post.create(self.author,
+            title="A post title about a post about web dev",
+            origin="http://whereitcamefrom.com/post/zzzzz",
+            description="https://www.instagram.com/p/BMLWLAZhicf/?taken-by=sensible.heart",
+            categories = ["web","tutorial"],
+            visibility = "PUBLIC")
+        self.post2.save()
         self.assertTrue(self.post.attached_photo)
 
     def test_Post_Markdown(self):
         self.post.content_type = 'text/x-markdown'
         md = markdown.markdown("my markdown text")
         self.post.description = md
-        assertEqual(self.post.description, md)
+        self.assertEqual(self.post.description, md)
