@@ -14,9 +14,6 @@ class Author(models.Model):
     # another author who is not friends with them.
     friends = models.ManyToManyField("self", symmetrical=False, blank=True)
 
-    class Meta:
-        ordering = ('id',)
-   
     @classmethod
     def create(cls, user, displayName, host):
         return cls(id=uuid.uuid4(), user=user, displayName=displayName)

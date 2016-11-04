@@ -65,6 +65,13 @@ class MutualFriendDetailView(APIView):
 	friends = author.get_friends()
         return Response({'query':'friends', 'friends':friends})
 
+class FriendRequestView(APIView):
+    '''
+    Used to make a friend request. 
+    '''
+    def post(self, response):
+        pass
+	
 class AuthorCreate(FormView):
     template_name = "author_form.html"
     form_class = AuthorForm
