@@ -3,6 +3,7 @@ from rest_framework import serializers
 from service.models import Comment, Author, Post
 from django.db import models
 from models.Author import Author
+from models.Comment import Comment
 import uuid
 
 class FriendSerializer(serializers.HyperlinkedModelSerializer):
@@ -77,7 +78,8 @@ class CommentSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         print (validated_data)
-        return Comment.objects.create(**validated_data)
+        #validated_data[]
+        return Comment.create_comment(**validated_data)
 
     def update(self, instance, validated_data):
         print "update"

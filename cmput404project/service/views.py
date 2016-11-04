@@ -53,19 +53,18 @@ class CommentAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request, pid):
-        req = request.body
+        #req = request.body
         try:
             #stream = BytesIO(req)
             #print stream
             #data = JSONParser().parse(req)
-            data = json.loads(req)
+            #data = json.loads(req)
             #print (data)
-            serializer = CommentSerializer(data=data)
-            serializer.is_valid()
+            serializer = CommentSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
             #print serializer.errors
             serializer.validated_data
-            #uncomment this out to call the serializer (which doesn't work right now)
-            #serializer.save()
         except SuspiciousOperation:
             raise HTTP_400_BAD_REQUEST
 
