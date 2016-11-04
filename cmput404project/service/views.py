@@ -1,7 +1,7 @@
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from service.serializers import UserSerializer, GroupSerializer, AuthorSerializer
+from service.serializers import UserSerializer, GroupSerializer, AuthorSerializer, FriendSerializer
 from models.Author import Author
 from django.http import Http404
 from django.forms import modelformset_factory
@@ -40,7 +40,36 @@ class FriendDetailView(APIView):
 	author2 = self.get_object(uuid2)
 	are_friends = author1.is_friend(author2)
 	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
+
+class MutualFriendDetailView(APIView):
+    '''
+    Used to list all the mutual friends between two authors. A post from an author
+    will occur, with all their friends, and the uuid in the url will give the link
+    of the friend to check it with.
+    '''
+    def post(self, request, uuid):
+        serializer = AuthorSerializer(data=request.data)
+	if serializer.is_valid():
+	    serializer.save()
+	    print "YAY" + str(serializer)
+    
+    def get_object(self, uuid):
+        try:
+            return Author.objects.get(id=uuid)
+        except Author.DoesNotExist:
+            raise Http404
+
+    def get(self, request, uuid):
+	friends = []
+        author = self.get_object(uuid)
+	serializer = FriendSerializer(author.friends, many=True, context={'request':request})
+	print serializer.data
+	for friend in serializer.data:
+	    friends.append(friend.get('id'))
+        # friends = serializer.data
+        return Response({'query':'friends', 'friends':friends})
 	
+
 class AuthorCreate(FormView):
     template_name = "author_form.html"
     form_class = AuthorForm
