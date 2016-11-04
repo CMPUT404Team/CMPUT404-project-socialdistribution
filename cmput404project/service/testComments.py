@@ -4,34 +4,37 @@ from rest_framework.test import APITestCase, APIClient, force_authenticate
 from django.urls import reverse
 from rest_framework import status
 from .views import UserViewSet
-from mock import MagicMock, Mock
+from mock import MagicMock, Mock, mock
 from datetime import datetime
 from models.Comment import Comment
 from django.test import TestCase
+from models.Author import Author
+from models.Post import Post
 import uuid
 
 class CommentUnitTest(TestCase):
 
     def published_recently(self, pubDate, now):
+        #checks if two dates are within the same day
         if (now.day == pubDate.day):
             return True
         else:
             return False
 
     def test_create_comment(self):
-        author = Mock(id = 'de305d54-75b4-431b-adb2-eb6b9e546013', host = 'http://127.0.0.1:5454/', displayName = 'Greg')
-        #pubDate = datetime.now()
-        comment = 'This is a comment'
-        comm = Comment().create_comment(comment, author)
-        comm.guid = uuid.UUID('de305d54-75b4-431b-adb2-eb6b9e546023')
+        # Tests the creation of a comment and that its values are set
+        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
+        author = Author.objects.create()
+        #author.create(superuser, 'coolname', '127.0.0.0.1')
+        pubDate = datetime.now()
+        post = Post()
+        comment = 'Nice doggo'
+        comm = Comment().create_comment(comment, author, post)
         self.assertEqual(comm.author, author, "Author not equal")
-        self.assertEqual(comm.comment, comment, "Comment not equal")
-        self.assertEqual(comm.guid, uuid.UUID('de305d54-75b4-431b-adb2-eb6b9e546023'), "UUID not equal")
-        #print type(comm.pubDate)
-        #print comm.pubDate
-        #self.assertIsInstance(comm.pubDate, datetime, "Not a datetime object")
-        #self.assertTrue(self.published_recently(comm.pubDate, datetime.now()), "Date not recent enough")
-        #self.assertIsInstance(comm.guid, uuid.uuid4(), "Not a uuid object")
+        self.assertEqual(comm.comment, 'Nice doggo', "Comment not equal")
+        self.assertIsInstance(comm.pubDate, datetime, "Not a datetime object")
+        self.assertTrue(self.published_recently(comm.pubDate, pubDate))
+        self.assertIsInstance(comm.guid, uuid.UUID, "Not a uuid object")
         self.assertIsInstance(comm, Comment, "Not a comment object")
 
 class CommentAPIViewTests(APITestCase):
@@ -41,19 +44,28 @@ class CommentAPIViewTests(APITestCase):
         self.client = APIClient()
         #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
-        self.author = Mock(id = 'de305d54-75b4-431b-adb2-eb6b9e546013', host = 'http://127.0.0.1:5454/', displayName = 'Greg')
-        self.post = Mock(id = 'de305d54-75b4-431b-adb2-eb6b9e546015')
-        self.comment = Comment().create_comment("Your pupper is wonderful", self.author)
-        self.post.get_comments = MagicMock(return_value = ["Your pupper is wonderful"])
+        self.author = Author()
+        self.author.create(superuser, 'coolname', '127.0.0.0.1')
+        self.post = Post()
+        self.post.create(self.author,
+            title="Top Ten best dogs",
+            origin="http://dogfanatic.com",
+            description="How do you pick just ten?!",
+            categories = ["list","dog"],
+            visibility = "PUBLIC")
+        self.comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
+        self.author.save()
+        self.post.save()
+        self.comment.save()
 
-    @skip("get comment test")
     def test_get_comment(self):
-        #call get comments from post object
+        #call the endpoint
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
-        mockGet = self.post.get_comments()
-        self.assertEqual(mockGet, "APIPOINT")
+        self.assertEqual(response.status_code, 200)
+        print (response.content)
+        self.assertIn(str(self.comment.guid), response.content)
 
-    @skip("post comment test")
     def test_post_comment(self):
         #check post comment from post object
         comment="this is a comment"

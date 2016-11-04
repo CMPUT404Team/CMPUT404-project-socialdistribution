@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets,status
+from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.utils.six import BytesIO
 from models.Comment import Comment
 from service.serializers import UserSerializer, GroupSerializer, AuthorSerializer, CommentSerializer, PostSerializer
 from models.Author import Author
@@ -13,6 +15,8 @@ from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
+from django.core.exceptions import SuspiciousOperation
+import json
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -35,6 +39,7 @@ class CommentAPIView(APIView):
     """
     API endpoint that allows the comments of a post to be viewed.
     """
+    #Do if check request time in one function??
     def get_comments(self, postId):
         try:
             return Comment.objects.filter(post_id = postId)
@@ -43,9 +48,28 @@ class CommentAPIView(APIView):
 
     def get(self, request, pid):
         comments = self.get_comments(pid)
-        print comments
+        #print comments
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
+
+    def post(self, request, pid):
+        req = request.body
+        try:
+            #stream = BytesIO(req)
+            #print stream
+            #data = JSONParser().parse(req)
+            data = json.loads(req)
+            #print (data)
+            serializer = CommentSerializer(data=data)
+            serializer.is_valid()
+            #print serializer.errors
+            serializer.validated_data
+            #uncomment this out to call the serializer (which doesn't work right now)
+            #serializer.save()
+        except SuspiciousOperation:
+            raise HTTP_400_BAD_REQUEST
+
+        return Response(serializer.validated_data)
 
 class AuthorDetailView(APIView):
     def get_object(self, uuid):
