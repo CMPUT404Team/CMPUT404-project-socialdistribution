@@ -48,10 +48,12 @@ class MutualFriendDetailView(APIView):
     of the friend to check it with.
     '''
     def post(self, request, uuid):
-        serializer = AuthorSerializer(data=request.data)
-	if serializer.is_valid():
-	    serializer.save()
-	    print "YAY" + str(serializer)
+        post = self.get_object(uuid)
+        serializer = AuthorSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get_object(self, uuid):
         try:
