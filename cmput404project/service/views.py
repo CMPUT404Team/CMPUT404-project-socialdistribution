@@ -62,13 +62,8 @@ class MutualFriendDetailView(APIView):
     def get(self, request, uuid):
 	friends = []
         author = self.get_object(uuid)
-	serializer = FriendSerializer(author.friends, many=True, context={'request':request})
-	print serializer.data
-	for friend in serializer.data:
-	    friends.append(friend.get('id'))
-        # friends = serializer.data
+	friends = author.get_friends()
         return Response({'query':'friends', 'friends':friends})
-	
 
 class AuthorCreate(FormView):
     template_name = "author_form.html"

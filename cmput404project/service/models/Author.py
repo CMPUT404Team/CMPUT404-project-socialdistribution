@@ -32,6 +32,13 @@ class Author(models.Model):
     def is_friend(self,friend):
 	return self.is_following(friend.id) and friend.is_following(self.id)
 
+    # Get all friends of an author
+    def get_friends(self):
+	friends_list = []
+	for friend in self.friends.all():
+	    friends_list.append(friend.id)
+	return friends_list
+
     def __str__(self):
         return self.displayName
     
