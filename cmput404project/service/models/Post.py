@@ -21,6 +21,10 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     categories = models.CharField(max_length=200, blank=True) #This would best be implemented by creating a categories model
     next = models.CharField(max_length=100, editable=False, blank=True)
+    comments = []
+    attached_photo = False
+    count = models.IntegerField(default=0)
+    size = models.IntegerField(default=50)
 
     @classmethod
     def create(cls, author,title,origin,description,categories,visibility):
@@ -29,7 +33,12 @@ class Post(models.Model):
         post.origin = author.host
         post.source = author.host
         post.parse_description()
+        post.comments = list(post.comment_set.all())
+        post.next = "http://service/posts/" + str(post.id) +"/comments"
         return post
+
+    def update_comment_count(self):
+        count = len(self.comments)
 
     def __str__(self):
         return self.title
@@ -49,9 +58,3 @@ class Post(models.Model):
 
     def posted_picture(self):
         return False
-
-    def delete_post(self):
-        author.getPosts().remove(self)
-
-    def add_comment(self,comment):
-        comments.append(com=Comment(comment))

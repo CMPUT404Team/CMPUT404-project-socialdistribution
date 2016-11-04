@@ -15,7 +15,7 @@ class PostSerializer(serializers.ModelSerializer):
             'origin',
             'description',
             'contentType',
-            'content',
+            'description',
             'author',
             'comments',
             'count',
@@ -58,7 +58,7 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Author
         fields = ('url', 'id', 'displayName', 'host', 'friends')
-    
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User

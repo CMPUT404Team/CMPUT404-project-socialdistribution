@@ -152,8 +152,11 @@ class PostViewSetTests(APITestCase):
     def test_create_invalid_post(self):
         post_id = "not-a-number"
         put_body = {"title":"Sample Title"}
-        response = self.create_update_post(post_id, put_body)
-        self.assertEqual(response.status_code, 400)
+        try:
+            response = self.create_update_post(post_id, put_body)
+            self.assertEqual(response.status_code, 400)
+        except ValueError:
+            pass
 
     def test_delete_post(self):
         post_id = self.existing_post_id
