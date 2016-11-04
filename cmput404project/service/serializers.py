@@ -30,9 +30,5 @@ class FriendListSerializer(serializers.Serializer):
 	
 class FriendRequestSerializer(serializers.Serializer):
     query = serializers.CharField(max_length=50)
-
-    def __init__(self, *args, **kwargs):
-        super(self.__class__,self).__init__(*args, **kwargs)
-        self.fields['author'] = FriendSerializer(required=False, context=self.context)
-        self.fields['friend'] = FriendSerializer(required=False, context=self.context)
-
+    author = FriendSerializer()
+    friend = FriendSerializer()
