@@ -15,6 +15,8 @@ class UserViewSetTests(APITestCase):
         self.client.force_authenticate(user=superuser)
 	self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
 	self.author.save()
+        self.detail_url = reverse('author-detail', kwargs={'pk': self.author.id})
+
     @skip("Old user stuff")
     def test_get_valid_user(self):
         response = self.get_user(1)
@@ -56,7 +58,7 @@ class UserViewSetTests(APITestCase):
         return self.client.post('/users/', {"username":username}, format='json')
     
     def test_get_Author(self):
-        response = self.client.get('/author/'+str(self.author.id)+'/') 
+        response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.author.displayName, response.content)
 
@@ -64,7 +66,7 @@ class UserViewSetTests(APITestCase):
 	friend = Author(host='testHost', displayName='testName')
 	friend.save()
 	self.author.add_friend(friend)
-	response = self.client.get('/author/'+str(self.author.id)+'/') 
+	response = self.client.get(self.detail_url)
 	json_friend = response.data.get('friends')[0]
 	self.assertIn('testHost',json_friend['host'])
 	self.assertIn('testName',json_friend['displayName'])
