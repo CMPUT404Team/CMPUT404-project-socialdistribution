@@ -41,6 +41,30 @@ class FriendDetailView(APIView):
 	are_friends = author1.is_friend(author2)
 	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
 
+class MutualFriendDetailView(APIView):
+    '''
+    Used to list all the mutual friends between two authors. A post from an author
+    will occur, with all their friends, and the uuid in the url will give the link
+    of the friend to check it with.
+    '''
+    def post(self, request, uuid):
+        serializer = AuthorSerializer(data=request.data)
+	if serializer.is_valid():
+	    serializer.save()
+	    print "YAY" + str(serializer)
+    
+    def get_object(self, uuid):
+        try:
+            return Author.objects.get(id=uuid)
+        except Author.DoesNotExist:
+            raise Http404
+
+    def get(self, request, uuid):
+	friends = []
+        author = self.get_object(uuid)
+	friends = author.get_friends()
+        return Response({'query':'friends', 'friends':friends})
+
 class FriendRequestView(APIView):
     '''
     Used to make a friend request. 

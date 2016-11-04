@@ -29,4 +29,12 @@ class UserViewSetTests(APITestCase):
     def test_check_invalid_friends(self):
 	# Test against invalid ID
 	self.assertFalse(self.friend1.is_following('0b141e54-c35a-4cc6-8864-bd584ec95a25'))
+
+    def test_get_friend_list(self):
+	# Test to get a list of author's friends
+	# Before friend added to author
+	self.assertEqual(len(self.friend1.get_friends()), 0)
+	self.friend1.add_friend(self.friend2)
+	# After friend is added to author
+	self.assertEqual(len(self.friend1.get_friends()), 1)
 	
