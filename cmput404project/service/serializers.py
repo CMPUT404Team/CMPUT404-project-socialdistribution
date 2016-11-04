@@ -2,16 +2,23 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from service.models import Comment, Author, Post
 from django.db import models
+from models.Author import Author
+import uuid
 
-class AuthorSerializer(serializers.Serializer):
+class FriendSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Author
-        fields = ('username', 'email', 'groups')
+        fields = ('url', 'id', 'displayName', 'host')
 
+class AuthorSerializer(serializers.HyperlinkedModelSerializer):
+    friends = FriendSerializer(required=False, many=True)
+    class Meta:
+        model = Author
+        fields = ('url', 'id', 'displayName', 'host', 'friends')
 
 class PostSerializer(serializers.ModelSerializer):
     # for optional fields on post: var = CharField(allow_blank=True, required=False)
-    author = models.ForeignKey(Author.Author)
+    #author = AuthorSerializer(context=this.context, required=True)
     class Meta:
         model = Post.Post
         fields = (
@@ -52,7 +59,6 @@ class PostSerializer(serializers.ModelSerializer):
         post.save()
         return post
 
-
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -64,7 +70,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 class CommentSerializer(serializers.Serializer):
-    author = AuthorSerializer(required=True)
+    author = AuthorSerializer()
     pubDate = serializers.DateTimeField()
     comment= serializers.CharField(max_length=200)
     guid = serializers.UUIDField()

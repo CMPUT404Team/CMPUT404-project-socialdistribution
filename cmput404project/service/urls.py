@@ -8,8 +8,8 @@ urlpatterns = [
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
     url(r'^author/(?P<uuid>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^posts/(?P<id>[^/]+)/comments', views.CommentAPIView.as_view()),
-    url(r'^author/(?P<uuid>[^/]+)/$', views.AuthorDetailView.as_view(), name='author')
+    url(r'^author/add/$', views.AuthorCreate.as_view(), name='author-add'),
+	url(r'^author/(?P<pk>[^/]+)/$', views.AuthorDetailView.as_view(), name='author-detail')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
-
