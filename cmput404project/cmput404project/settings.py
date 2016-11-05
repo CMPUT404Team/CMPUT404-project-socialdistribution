@@ -48,7 +48,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',),
-    'PAGE_SIZE': 10 
+    'PAGE_SIZE': 10
 }
 
 MIDDLEWARE = [
