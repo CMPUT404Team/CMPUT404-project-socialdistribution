@@ -4,7 +4,6 @@ from service.models import Comment, Author, Post
 from models.Author import Author
 from models.Post import Post
 from django.db import models
-from models.Author import Author
 from models.Comment import Comment
 import uuid
 
@@ -89,3 +88,16 @@ class CommentSerializer(serializers.Serializer):
 
 
         return instance
+
+class FriendListSerializer(serializers.Serializer):
+    query = serializers.CharField(max_length=50)
+    author = serializers.UUIDField()
+    authors = serializers.ListField(
+	    child = serializers.UUIDField()
+    )
+    
+class FriendRequestSerializer(serializers.Serializer):
+    query = serializers.CharField(max_length=50)
+    author = FriendSerializer()
+    friend = FriendSerializer()
+

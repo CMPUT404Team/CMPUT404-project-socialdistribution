@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^author/(?P<uuid>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^posts/(?P<pid>[^/]+)/comments', views.CommentAPIView.as_view()),
     url(r'^author/add/$', views.AuthorCreate.as_view(), name='author-add'),
+    url(r'^friendrequest/$', views.FriendRequestView.as_view(), name='friend-request'),
+	url(r'^friends/(?P<uuid>[^/]+)/', views.MutualFriendDetailView.as_view()),
+	url(r'^friends/(?P<uuid1>[^/]+)/(?P<uuid2>[^/]+)$', views.FriendDetailView.as_view()),
 	url(r'^author/(?P<pk>[^/]+)/$', views.AuthorDetailView.as_view(), name='author-detail')
 ]
 
