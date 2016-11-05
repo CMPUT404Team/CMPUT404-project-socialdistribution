@@ -46,19 +46,18 @@ class CommentAPIView(APIView):
 
     def get(self, request, pid):
         comments = self.get_comments(pid)
-        #print comments
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request, pid):
-        #req = request.body
         try:
-            #stream = BytesIO(req)
-            #print stream
-            #data = JSONParser().parse(req)
-            #data = json.loads(req)
-            #print (data)
-            serializer = CommentSerializer(data=request.data)
+            '''
+            pos=Post.objects.get(id=pid)
+            author=request_data['author']
+            comment=request_data['comment']
+            serializer2= PostSerializer()
+            '''
+            serializer = CommentSerializer(data=request.data,post=pos)
             if serializer.is_valid():
                 serializer.save()
             #print serializer.errors

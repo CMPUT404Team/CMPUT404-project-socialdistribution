@@ -76,10 +76,11 @@ class CommentSerializer(serializers.Serializer):
     comment= serializers.CharField(max_length=200)
     guid = serializers.UUIDField()
 
-    def create(self, validated_data):
+    def create(self, validated_data, post):
         print (validated_data)
-        #validated_data[]
-        return Comment.create_comment(**validated_data)
+        author=AuthorSerializer(data=validated_data["author"])
+        print(type(author))
+        return Comment.create_comment(validated_data['comment'],validated_data["author"])
 
     def update(self, instance, validated_data):
         print "update"
