@@ -4,16 +4,25 @@ from models.Author import Author
 # from mock import MagicMock
 from django.contrib.auth.models import User
 import uuid
+from django.core import serializers
+import json
 
 class PostViewSetTests(APITestCase):
     def setUp(self):
-        self.client = APIClient();
-        self.existing_post_id = uuid.uuid4()
-        #set_up_superuser()
-        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
+        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
+        self.client = APIClient()
+        #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
-
-
+        self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
+        self.author.save()
+        self.post = Post.create(self.author,
+            title="A post title about a post about web dev",
+            origin="http://whereitcamefrom.com/post/zzzzz",
+            description="This post discusses stuff -- brief",
+            categories = ["web","tutorial"],
+            visibility = "PUBLIC")
+        self.post.save()
+        
     #def set_up_author(self):
         #base this off of how Author model is created
     #    self.author = Mock()
@@ -31,10 +40,6 @@ class PostViewSetTests(APITestCase):
         # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
         return self.client.get('/author/'+str(author_id)+'/')
 
-    def get_single_post_by_id(self, post_id):
-        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
-        return self.client.get('/posts/'+post_id+'/')
-
     def get_posts_by_page(self, page_number):
         # GET http://service/author/posts?page=4
         return self.client.get('/author/posts?page='+str(page_number)+'/')
@@ -45,7 +50,7 @@ class PostViewSetTests(APITestCase):
 
     def create_post(self, post_body):
         #a POST should insert the post http://service/posts/postid
-        return self.client.post('/posts/', post_body, format='json')
+        return self.client.post('/posts/', data=post_body, format='json')
 
     def delete_post(self, post_id):
         #A delete should delete posts with a specific ID
@@ -56,11 +61,7 @@ class PostViewSetTests(APITestCase):
         return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
 
     def test_get_posts_by_current_author(self):
-        post_id = uuid.uuid4()
-        superuser = User.objects.create_superuser('superuser2', 'test@test2.com', 'test12342')
-        author = Author.create(host='local', displayName='test author', user=superuser)
-        put_body = {"postid":post_id, "author":author.id, "title":"Sample Title"}
-        self.create_update_post(post_id, put_body)
+        self.get_posts_by_author_id(self.author.id)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
 
@@ -83,9 +84,15 @@ class PostViewSetTests(APITestCase):
         #TODO: test getting posts with an invalid author id, or author ID that doesn't exist
         pass
 
+    def get_single_post_by_id(self, post_id):
+        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
+        return self.client.get('/posts/'+str(post_id)+'/')
+
     def test_get_post_by_id(self):
-        #TODO: Retrieves the post by its unique ID
-        pass
+        response = self.get_single_post_by_id(self.post.id)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(str(self.post.id), response.data['id'])
+        self.assertEqual(str(self.post.author.id), response.data['author']['id'])
 
     def test_get_posts_with_invalid_post_id(self):
         #TODO: tests behaviour for when you get posts with incorrectly
@@ -127,18 +134,16 @@ class PostViewSetTests(APITestCase):
 
     def test_create_post_with_put(self):
         # Create a post using a put method
-        post_id = self.existing_post_id
-        put_body = {"postid":self.existing_post_id, "title":"Sample Title"}
-        response = self.create_update_post(post_id, put_body)
+        post_body = self.get_post_data(self.post, self.author)
+        response = self.create_update_post(self.post.id, post_body)
         self.assertEqual(response.status_code, 200)
 
     def test_update_post(self):
         # Update an existing post
-        post_id = self.existing_post_id
-        post_body = {"postid":self.existing_post_id, "title":"Sample Title"}
+        post_body = {"id":str(self.post.id), "title":"Sample Title"}
         response = self.create_post(post_body)
         put_body = {"title":"Updated Title"}
-        response = self.create_update_post(post_id, put_body)
+        response = self.create_update_post(self.post.id, put_body)
         self.assertEqual(response.status_code, 200)
 
     def test_update_nonexistent_post(self):
@@ -159,11 +164,9 @@ class PostViewSetTests(APITestCase):
             pass
 
     def test_delete_post(self):
-        post_id = self.existing_post_id
-        put_body = {"title":"Sample Title"}
-        self.create_update_post(post_id, put_body)
+        post_id = self.post.id
         response = self.delete_post(post_id)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
     def test_delete_nonexistent_post(self):
         post_id = uuid.uuid4()
@@ -180,15 +183,14 @@ class PostViewSetTests(APITestCase):
 
     def test_create_post_with_post(self):
         # Create a post using a post method
-        request_body = {"postid":self.existing_post_id}
+        self.post.id = uuid.uuid4()
+        request_body = self.get_post_data(self.post, self.author) 
         response = self.create_post(request_body)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
     def test_update_post_with_post(self):
         # Update an existing post
-        request_body = {"postid":self.existing_post_id, "title":"Sample Title"}
-        response = self.create_post(request_body)
-        request_body = {"title":"Updated Title"}
+        request_body = self.get_post_data(self.post, self.author) 
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 200)
 
@@ -203,3 +205,25 @@ class PostViewSetTests(APITestCase):
     def test_insert_invalid_post(self):
         #TODO: insert an invalidly formatted post
         pass
+
+    def get_post_data(self, post, author):
+        return { 
+			"title": post.title,
+			"source": post.source,
+			"origin": post.origin,
+			"description": post.description,
+			"contentType": post.contentType,
+			"content": post.content,
+			"author":{
+				"id": str(author.id),
+				"host": author.host,
+				"displayName": author.displayName,
+			},
+			"categories": post.categories,
+			"count": str(post.count),
+			"size": str(post.size),
+			"next": post.next,
+			"published":str(post.published),
+			"id":str(post.id),
+			"visibility":post.visibility
+        }
