@@ -3,6 +3,7 @@ from models.Post import Post
 from mock import MagicMock, Mock
 import markdown
 from models.Author import Author
+from unittest import skip
 
 class PostModelTests(TestCase):
 
@@ -57,26 +58,6 @@ class PostModelTests(TestCase):
     def test_Post_Has_Published(self):
         self.assertIsNotNone(self.post.published)
 
-    def test_Post_Comment_Count(self):
-        self.assertEqual(self.post.count, 0)
-
-    def test_Post_Add_Comment(self):
-        self.post.comment_set.create(comment='comment info', author=self.author)
-        self.post.update_comment_count()
-        self.assertEqual(self.post.count,1)
-        self.assertEqual(self.post.comments.first(), comment)
-        self.post.comments.clear()
-
-    def test_Post_Add_Empty_Comment(self):
-        self.post.comment_set.create(comment='', author=self.author)
-        self.post.update_comment_count()
-        self.assertEqual(self.post.count,0)
-        try:
-            self.assertIsNone(self.post.comments[0])
-            self.post.comments.clear()
-        except IndexError:
-            pass
-
     def test_Post_Next_Equal(self):
         post_next = "http://service/posts/" + str(self.post.id) +"/comments"
         self.assertEqual(self.post.next, post_next)
@@ -92,6 +73,7 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.title, new_title)
         self.assertEqual(self.post.description, new_description)
 
+    @skip("Not implementing yet")
     def test_Add_Image_To_Post(self):
         self.post2 = Post.create(self.author,
             title="A post title about a post about web dev",

@@ -1,33 +1,35 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from service.models import Post, Author
+from models.Author import Author
+from models.Post import Post
 from django.db import models
 import uuid
 
+class FriendSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.UUIDField()
+    class Meta:
+        model = Author
+        fields = ('url', 'id', 'displayName', 'host')
+
+class AuthorSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.UUIDField()
+    friends = FriendSerializer(required=False, many=True)
+    class Meta:
+        model = Author
+        fields = ('url', 'id', 'displayName', 'host', 'friends')
+
 class PostSerializer(serializers.ModelSerializer):
     # for optional fields on post: var = CharField(allow_blank=True, required=False)
-    author = models.ForeignKey(Author.Author)
+    id = serializers.UUIDField()
+    author = FriendSerializer()
     class Meta:
-        model = Post.Post
-        fields = (
-            'title',
-            'source',
-            'origin',
-            'description',
-            'contentType',
-            'description',
-            'author',
-            'comments',
-            'count',
-            'size',
-            'next',
-            'published',
-            'id',
-            'visibility'
-        )
-        ordering = ['-published']
+        model = Post
+        fields = ('title', 'source', 'origin', 'content','contentType','description', 'author','count','size','next','published','id','visibility')
+
     def create(self, validated_data):
-        return Post.Post.objects.create(**validated_data)
+	author_id = validated_data.pop('author')['id']
+	author = Author.objects.get(id=author_id)
+        return Post.objects.create(author=author,**validated_data)
 
     def update(self, post, validated_data):
         post.title = validated_data.get('title', post.title)
@@ -47,17 +49,6 @@ class PostSerializer(serializers.ModelSerializer):
         post.save()
         return post
 
-
-class FriendSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Author
-        fields = ('url', 'id', 'displayName', 'host')
-
-class AuthorSerializer(serializers.HyperlinkedModelSerializer):
-    friends = FriendSerializer(required=False, many=True)
-    class Meta:
-        model = Author
-        fields = ('url', 'id', 'displayName', 'host', 'friends')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
