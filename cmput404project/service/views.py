@@ -131,7 +131,7 @@ class PostView(APIView):
         post = self.get_object(pk)
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
+    
 class VisiblePostsView(APIView):
     """
     Return a list of all posts available to the currently authenticated user
