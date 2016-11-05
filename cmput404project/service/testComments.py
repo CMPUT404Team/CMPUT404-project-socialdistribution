@@ -76,7 +76,7 @@ class CommentAPIViewTests(APITestCase):
         #check that they match
         self.assertEqual(response.status_code, 200)
         self.assertIn(str(self.comment.guid), response.content)
-    #@skip("no post yet")
+    @skip("not implemented")
     def test_post_comment(self):
         comment={
               "author": {
