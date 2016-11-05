@@ -4,16 +4,25 @@ from models.Author import Author
 # from mock import MagicMock
 from django.contrib.auth.models import User
 import uuid
+from django.core import serializers
+import json
 
 class PostViewSetTests(APITestCase):
     def setUp(self):
-        self.client = APIClient();
-        self.existing_post_id = uuid.uuid4()
-        #set_up_superuser()
-        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
+        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
+        self.client = APIClient()
+        #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
-
-
+        self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
+        self.author.save()
+        self.post = Post.create(self.author,
+            title="A post title about a post about web dev",
+            origin="http://whereitcamefrom.com/post/zzzzz",
+            description="This post discusses stuff -- brief",
+            categories = ["web","tutorial"],
+            visibility = "PUBLIC")
+        self.post.save()
+        
     #def set_up_author(self):
         #base this off of how Author model is created
     #    self.author = Mock()
@@ -53,14 +62,12 @@ class PostViewSetTests(APITestCase):
 
     def create_update_post(self, post_id, put_body):
         #PUT http://service/posts/postid to update/create post
+        print '\n'
         return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
 
     def test_get_posts_by_current_author(self):
-        post_id = uuid.uuid4()
-        superuser = User.objects.create_superuser('superuser2', 'test@test2.com', 'test12342')
-        author = Author.create(host='local', displayName='test author', user=superuser)
-        put_body = {"postid":post_id, "author":author.id, "title":"Sample Title"}
-        self.create_update_post(post_id, put_body)
+        put_body = {"id":str(self.post.id), "author":str(self.author.id), "title":"Sample Title"}
+        self.create_update_post(self.post.id, put_body)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
 
@@ -127,18 +134,18 @@ class PostViewSetTests(APITestCase):
 
     def test_create_post_with_put(self):
         # Create a post using a put method
-        post_id = self.existing_post_id
-        put_body = {"postid":self.existing_post_id, "title":"Sample Title"}
-        response = self.create_update_post(post_id, put_body)
+        post_body = self.get_post_data(self.post, self.author)
+        print json.dumps(post_body, sort_keys=True,indent=4, separators=(',', ': '))
+        response = self.create_update_post(self.post.id, post_body)
+        print str(response.status_code)
         self.assertEqual(response.status_code, 200)
 
     def test_update_post(self):
         # Update an existing post
-        post_id = self.existing_post_id
-        post_body = {"postid":self.existing_post_id, "title":"Sample Title"}
+        post_body = {"id":str(self.post.id), "title":"Sample Title"}
         response = self.create_post(post_body)
         put_body = {"title":"Updated Title"}
-        response = self.create_update_post(post_id, put_body)
+        response = self.create_update_post(self.post.id, put_body)
         self.assertEqual(response.status_code, 200)
 
     def test_update_nonexistent_post(self):
@@ -159,9 +166,7 @@ class PostViewSetTests(APITestCase):
             pass
 
     def test_delete_post(self):
-        post_id = self.existing_post_id
-        put_body = {"title":"Sample Title"}
-        self.create_update_post(post_id, put_body)
+        post_id = self.post.id
         response = self.delete_post(post_id)
         self.assertEqual(response.status_code, 200)
 
@@ -180,15 +185,13 @@ class PostViewSetTests(APITestCase):
 
     def test_create_post_with_post(self):
         # Create a post using a post method
-        request_body = {"postid":self.existing_post_id}
+        request_body = {"id":str(self.post.id)}
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 200)
 
     def test_update_post_with_post(self):
         # Update an existing post
-        request_body = {"postid":self.existing_post_id, "title":"Sample Title"}
-        response = self.create_post(request_body)
-        request_body = {"title":"Updated Title"}
+        request_body = {"id":str(self.post.id), "title":"Updated Title"}
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 200)
 
@@ -203,3 +206,69 @@ class PostViewSetTests(APITestCase):
     def test_insert_invalid_post(self):
         #TODO: insert an invalidly formatted post
         pass
+
+    def get_post_data(self, post, author):
+        return { 
+            # title of a post
+			"title": post.title,
+			# where did you get this post from?
+			"source": post.source,
+			# where is it actually from
+			"origin": post.origin,
+			# a brief description of the post
+			"description": post.description,
+			# The content type of the post
+			# assume either
+			# text/x-markdown
+			# text/plain
+			# for HTML you will want to strip tags before displaying
+			"contentType": post.contentType,
+			"content": post.content,
+			# the author has an ID where by authors can be disambiguated 
+			"author":{
+				# ID of the Author (UUID) http://en.wikipedia.org/wiki/Universally_unique_identifier
+				"id": str(author.id),
+				# the home host of the author
+				"host": author.host,
+				# the display name of the author
+				"displayName": author.displayName,
+			},
+			# categories this post fits into (a list of strings
+			"categories": post.categories,
+			# comments about the post
+			# return a maximum number of comments
+			# total number of comments for this post
+			"count": str(post.count),
+			# page size
+			"size": str(post.size),
+			# the first page of comments
+			"next": post.next,
+			# You should return ~ 5 comments per post.
+			# should be sorted newest(first) to oldest(last) 
+			"comments":[
+				{
+					"author":{
+					    # ID of the Author (UUID)
+						"id":"de305d54-75b4-431b-adb2-eb6b9e546013",
+						"host":"http://127.0.0.1:5454/",
+						"displayName":"Greg Johnson",
+						# url to the authors information
+						"url":"http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+						# HATEOS url for Github API
+						"github": "http://github.com/gjohnson"
+					},
+					"comment":"Sick Olde English",
+					"contentType":"text/x-markdown",
+					# ISO 8601 TIMESTAMP
+					"published":"2015-03-09T13:07:04+00:00",
+					# ID of the Comment (UUID)
+					"id":"de305d54-75b4-431b-adb2-eb6b9e546013"
+				}
+			],
+			# ISO 8601 TIMESTAMP
+			"published":str(post.published),
+			# ID of the Post (UUID)
+			"id":str(post.id),
+			# visibility ["PUBLIC","FOAF","FRIENDS","PRIVATE","SERVERONLY"]
+			"visibility":post.visibility
+        }
