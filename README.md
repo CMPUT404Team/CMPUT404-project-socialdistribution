@@ -15,7 +15,12 @@ Generally everything is LICENSE'D under the Apache 2 license by Abram Hindle.
 All text is licensed under the CC-BY-SA 4.0 http://creativecommons.org/licenses/by-sa/4.0/deed.en_US
 
 Contributors:
-
+    Wyatt Fleming
+    Alex Makepeace
+    Leah Olexson
+    Megan Sumner
+    Di Zhang
+    Oleksii Shevchenko
     Karim Baaba
     Ali Sajedi
     Kyle Richelhoff
