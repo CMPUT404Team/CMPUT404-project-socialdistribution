@@ -15,18 +15,12 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         model = Author
         fields = ('url', 'id', 'displayName', 'host', 'friends')
 
-class FriendIDSerializer(serializers.Serializer):
-    def __init__(self, *args, **kwargs):
-        super(self.__class__,self).__init__(*args, **kwargs)
-	self.fields['id'] = serializers.UUIDField()
-
 class FriendListSerializer(serializers.Serializer):
     query = serializers.CharField(max_length=50)
-    # authors = FriendIDSerializer()
-    def __init__(self, *args, **kwargs):
-        super(self.__class__,self).__init__(*args, **kwargs)
-        self.fields['author'] = serializers.UUIDField()
-	self.fields['authors'] = serializers.Serialize() 
+    author = serializers.UUIDField()
+    authors = serializers.ListField(
+	child = serializers.UUIDField()
+    )
 	
 class FriendRequestSerializer(serializers.Serializer):
     query = serializers.CharField(max_length=50)

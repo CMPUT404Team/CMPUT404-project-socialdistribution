@@ -49,13 +49,15 @@ class MutualFriendDetailView(APIView):
     '''
     def post(self, request, uuid):
         serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
-	print 'testtest'
+	mutual_friends = []
         if (serializer.is_valid(raise_exception=True)):
-	    print "test"
-            # author = self.get_object(serializer.validated_data['author']['id'])
-            # friend = self.get_object(serializer.validated_data['friend']['id'])
-            # author.add_friend(friend)
-            return Response(status=204)
+            author = self.get_object(serializer.validated_data['author'])
+	    author_all_friends = author.get_friends()
+	    friend_check = serializer.validated_data['authors']
+	    for friend in friend_check:
+		if friend in author_all_friends:
+		    mutual_friends.append(friend)
+            return Response({'query':'friends','author':author.id,'friends':mutual_friends})
     
     def get_object(self, uuid):
         try:
