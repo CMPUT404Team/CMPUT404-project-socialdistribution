@@ -1,11 +1,11 @@
 from rest_framework.test import APITestCase, APIClient, force_authenticate
 from models.Post import Post
 from models.Author import Author
-# from mock import MagicMock
 from django.contrib.auth.models import User
 import uuid
 from django.core import serializers
 import json
+from unittest import skip
 
 class PostViewSetTests(APITestCase):
     def setUp(self):
@@ -56,9 +56,12 @@ class PostViewSetTests(APITestCase):
         #A delete should delete posts with a specific ID
         return self.client.delete('/posts/'+str(post_id)+'/')
 
-    def create_update_post(self, post_id, put_body):
+    def create_update_post_with_put(self, post_id, put_body):
         #PUT http://service/posts/postid to update/create post
         return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
+
+    def create_update_post_with_post(self, post_id, post_body):
+        return self.client.post('/posts/'+str(post_id)+'/', post_body, format='json')
 
     def test_get_posts_by_current_author(self):
         self.get_posts_by_author_id(self.author.id)
@@ -132,18 +135,10 @@ class PostViewSetTests(APITestCase):
         #TODO: retrive a page where the size is smaller than the one specified
         pass
 
-    def test_create_post_with_put(self):
+    def test_update_post_with_put(self):
         # Create a post using a put method
-        post_body = self.get_post_data(self.post, self.author)
-        response = self.create_update_post(self.post.id, post_body)
-        self.assertEqual(response.status_code, 200)
-
-    def test_update_post(self):
-        # Update an existing post
-        post_body = {"id":str(self.post.id), "title":"Sample Title"}
-        response = self.create_post(post_body)
-        put_body = {"title":"Updated Title"}
-        response = self.create_update_post(self.post.id, put_body)
+        put_body = self.get_post_data(self.post, self.author)
+        response = self.create_update_post_with_put(self.post.id, put_body)
         self.assertEqual(response.status_code, 200)
 
     def test_update_nonexistent_post(self):
@@ -151,14 +146,14 @@ class PostViewSetTests(APITestCase):
         # Maybe it should have the same result as test_create_post_with_put?
         post_id = uuid.uuid4()
         put_body = {"title":"Sample Title"}
-        response = self.create_update_post(post_id, put_body)
+        response = self.create_update_post_with_post(post_id, put_body)
         self.assertEqual(response.status_code, 404)
 
     def test_create_invalid_post(self):
         post_id = "not-a-number"
         put_body = {"title":"Sample Title"}
         try:
-            response = self.create_update_post(post_id, put_body)
+            response = self.create_update_post_with_post(post_id, put_body)
             self.assertEqual(response.status_code, 400)
         except ValueError:
             pass
@@ -187,11 +182,11 @@ class PostViewSetTests(APITestCase):
         request_body = self.get_post_data(self.post, self.author) 
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 201)
-
+    @skip("Not yet implemented")
     def test_update_post_with_post(self):
         # Update an existing post
         request_body = self.get_post_data(self.post, self.author) 
-        response = self.create_post(request_body)
+        response = self.create_update_post_with_post(request_body, self.post.id)
         self.assertEqual(response.status_code, 200)
 
     def test_creating_public_post(self):

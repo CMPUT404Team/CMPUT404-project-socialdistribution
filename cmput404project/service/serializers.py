@@ -35,14 +35,14 @@ class PostSerializer(serializers.ModelSerializer):
         return Post.objects.create(author=author,**validated_data)
 
     def update(self, post, validated_data):
-        post.title = validated_data.get('title', post.title)
-        post.source = validated_data.get('source', post.source)
+        author_id = validated_data.pop('author')['id']
+        author = Author.objects.get(id=author_id)
+        post.title = validated_data.pop('title')
+        post.source = validated_data.pop('source', post.source)
         post.origin = validated_data.get('origin', post.origin)
         post.description = validated_data.get('description', post.description)
         post.contentType = validated_data.get('contentType', post.contentType)
         post.content = validated_data.get('content', post.content)
-        post.author = validated_data.get('author', post.author)
-        post.comments = validated_data.get('comments', post.comments)
         post.count = validated_data.get('count', post.count)
         post.size = validated_data.get('size', post.size)
         post.next = validated_data.get('next', post.next)
