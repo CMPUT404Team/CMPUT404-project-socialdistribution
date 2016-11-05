@@ -4,10 +4,9 @@ import uuid
 from Author import Author
 import datetime
 
-@python_2_unicode_compatible
 class Post(models.Model):
-    VISIBILITY_OPTIONS = (('PU','PUBLIC'), ('PR','PRIVATE'),
-    ('FR','FRIENDS'), ('FO','FOAF'), ('SO','SERVERONLY'))
+    VISIBILITY_OPTIONS = (('PUBLIC','PUBLIC'), ('PRIVATE','PRIVATE'),
+    ('FRIENDS','FRIENDS'), ('FOAF','FOAF'), ('SERVERONLY','SERVERONLY'))
     CONTENT_TYPE = (('text/plain','text/plain'),('text/markdown','text/markdown'))
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -22,8 +21,6 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     categories = models.CharField(max_length=200, blank=True) #This would best be implemented by creating a categories model
     next = models.CharField(max_length=100)
-    comments = []
-    attached_photo = False
     count = models.IntegerField(default=0)
     size = models.IntegerField(default=50)
 
@@ -34,12 +31,9 @@ class Post(models.Model):
         post.origin = author.host
         post.source = author.host
         post.parse_description()
-        post.comments = list(post.comment_set.all())
+        post.id = uuid.uuid4()
         post.next = "http://service/posts/" + str(post.id) +"/comments"
         return post
-
-    def update_comment_count(self):
-        count = len(self.comments)
 
     def __str__(self):
         return self.title
@@ -49,10 +43,6 @@ class Post(models.Model):
             content_type = 'text/markdown'
         else:
             content_type = 'text/plain'
-        if(self.posted_picture()):
-            attached_photo = True
-        else:
-            attached_photo = False
 
     def markdown_description(self):
         return False

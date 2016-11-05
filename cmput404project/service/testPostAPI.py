@@ -40,10 +40,6 @@ class PostViewSetTests(APITestCase):
         # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
         return self.client.get('/author/'+str(author_id)+'/')
 
-    def get_single_post_by_id(self, post_id):
-        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
-        return self.client.get('/posts/'+post_id+'/')
-
     def get_posts_by_page(self, page_number):
         # GET http://service/author/posts?page=4
         return self.client.get('/author/posts?page='+str(page_number)+'/')
@@ -54,7 +50,7 @@ class PostViewSetTests(APITestCase):
 
     def create_post(self, post_body):
         #a POST should insert the post http://service/posts/postid
-        return self.client.post('/posts/', post_body, format='json')
+        return self.client.post('/posts/', data=post_body, format='json')
 
     def delete_post(self, post_id):
         #A delete should delete posts with a specific ID
@@ -62,12 +58,10 @@ class PostViewSetTests(APITestCase):
 
     def create_update_post(self, post_id, put_body):
         #PUT http://service/posts/postid to update/create post
-        print '\n'
         return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
 
     def test_get_posts_by_current_author(self):
-        put_body = {"id":str(self.post.id), "author":str(self.author.id), "title":"Sample Title"}
-        self.create_update_post(self.post.id, put_body)
+        self.get_posts_by_author_id(self.author.id)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
 
@@ -90,9 +84,15 @@ class PostViewSetTests(APITestCase):
         #TODO: test getting posts with an invalid author id, or author ID that doesn't exist
         pass
 
+    def get_single_post_by_id(self, post_id):
+        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
+        return self.client.get('/posts/'+str(post_id)+'/')
+
     def test_get_post_by_id(self):
-        #TODO: Retrieves the post by its unique ID
-        pass
+        response = self.get_single_post_by_id(self.post.id)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(str(self.post.id), response.data['id'])
+        self.assertEqual(str(self.post.author.id), response.data['author']['id'])
 
     def test_get_posts_with_invalid_post_id(self):
         #TODO: tests behaviour for when you get posts with incorrectly
@@ -135,9 +135,7 @@ class PostViewSetTests(APITestCase):
     def test_create_post_with_put(self):
         # Create a post using a put method
         post_body = self.get_post_data(self.post, self.author)
-        print json.dumps(post_body, sort_keys=True,indent=4, separators=(',', ': '))
         response = self.create_update_post(self.post.id, post_body)
-        print str(response.status_code)
         self.assertEqual(response.status_code, 200)
 
     def test_update_post(self):
@@ -168,7 +166,7 @@ class PostViewSetTests(APITestCase):
     def test_delete_post(self):
         post_id = self.post.id
         response = self.delete_post(post_id)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
     def test_delete_nonexistent_post(self):
         post_id = uuid.uuid4()
@@ -185,13 +183,17 @@ class PostViewSetTests(APITestCase):
 
     def test_create_post_with_post(self):
         # Create a post using a post method
-        request_body = {"id":str(self.post.id)}
+        self.post.id = uuid.uuid4()
+        request_body = self.get_post_data(self.post, self.author) 
         response = self.create_post(request_body)
-        self.assertEqual(response.status_code, 200)
+        print
+        print "Response data",response.data
+        print
+        self.assertEqual(response.status_code, 201)
 
     def test_update_post_with_post(self):
         # Update an existing post
-        request_body = {"id":str(self.post.id), "title":"Updated Title"}
+        request_body = self.get_post_data(self.post, self.author) 
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 200)
 
@@ -209,66 +211,22 @@ class PostViewSetTests(APITestCase):
 
     def get_post_data(self, post, author):
         return { 
-            # title of a post
 			"title": post.title,
-			# where did you get this post from?
 			"source": post.source,
-			# where is it actually from
 			"origin": post.origin,
-			# a brief description of the post
 			"description": post.description,
-			# The content type of the post
-			# assume either
-			# text/x-markdown
-			# text/plain
-			# for HTML you will want to strip tags before displaying
 			"contentType": post.contentType,
 			"content": post.content,
-			# the author has an ID where by authors can be disambiguated 
 			"author":{
-				# ID of the Author (UUID) http://en.wikipedia.org/wiki/Universally_unique_identifier
 				"id": str(author.id),
-				# the home host of the author
 				"host": author.host,
-				# the display name of the author
 				"displayName": author.displayName,
 			},
-			# categories this post fits into (a list of strings
 			"categories": post.categories,
-			# comments about the post
-			# return a maximum number of comments
-			# total number of comments for this post
 			"count": str(post.count),
-			# page size
 			"size": str(post.size),
-			# the first page of comments
 			"next": post.next,
-			# You should return ~ 5 comments per post.
-			# should be sorted newest(first) to oldest(last) 
-			"comments":[
-				{
-					"author":{
-					    # ID of the Author (UUID)
-						"id":"de305d54-75b4-431b-adb2-eb6b9e546013",
-						"host":"http://127.0.0.1:5454/",
-						"displayName":"Greg Johnson",
-						# url to the authors information
-						"url":"http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-						# HATEOS url for Github API
-						"github": "http://github.com/gjohnson"
-					},
-					"comment":"Sick Olde English",
-					"contentType":"text/x-markdown",
-					# ISO 8601 TIMESTAMP
-					"published":"2015-03-09T13:07:04+00:00",
-					# ID of the Comment (UUID)
-					"id":"de305d54-75b4-431b-adb2-eb6b9e546013"
-				}
-			],
-			# ISO 8601 TIMESTAMP
 			"published":str(post.published),
-			# ID of the Post (UUID)
 			"id":str(post.id),
-			# visibility ["PUBLIC","FOAF","FRIENDS","PRIVATE","SERVERONLY"]
 			"visibility":post.visibility
         }
