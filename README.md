@@ -7,6 +7,11 @@ See project.org (plain-text/org-mode) for a description of the project.
 
 Make a distributed social network!
 
+Documentation
+=============
+To get the documentation, run the app by following the instructions in the readme inside of 
+cmput404project/ in this repo and hit the endpoint /docs. Ex) http://localhost:8000/docs
+
 Contributors / Licensing
 ========================
 
