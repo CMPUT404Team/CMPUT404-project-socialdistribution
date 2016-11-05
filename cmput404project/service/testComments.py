@@ -79,22 +79,18 @@ class CommentAPIViewTests(APITestCase):
     #@skip("no post yet")
     def test_post_comment(self):
         comment={
-          "query":"addComment",
-          "post:":"http://localhost:8000/I-Don't-Care",
-          "comments":{
-            "author": {
-                "url": "http://localhost:8000/author/14fdc531-4751-4e02-8cda-5fc5f4d221e1/",
-                "id": self.author.id,
+              "author": {
+                "url": "http://localhost:8000/author/9be030c0-ecb3-4d76-a4d9-5ad9184a0c9a/",
+                "id": str(self.author.id),
                 "displayName": "KJSHDAKJD",
                 "host": "AKJSBDA",
                 "friends": []
-            },
-            "pubDate": "2016-11-04T03:33:12.786827Z",
-            "comment": "Nice dog",
-            "guid": "84758741-e737-48e2-afde-c0f56546531c"
-          }
-        }
-        response=self.client.post('/posts/'+str(self.post.id)+'/comments')
+              },
+              "pubDate": "2016-11-04T03:33:12.786827Z",
+              "comment": "Nice dog",
+              "guid": "84758741-e737-48e2-afde-c0f56546531c"
+            }
+        response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
         self.assertEqual(response.status_code, 200)
         try:
             self.Comment.objects.filter(guid="84758741-e737-48e2-afde-c0f56546531c")

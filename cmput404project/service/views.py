@@ -51,13 +51,19 @@ class CommentAPIView(APIView):
 
     def post(self, request, pid):
         try:
-            '''
             pos=Post.objects.get(id=pid)
-            author=request_data['author']
-            comment=request_data['comment']
-            serializer2= PostSerializer()
-            '''
-            serializer = CommentSerializer(data=request.data,post=pos)
+            print(request.data )
+            print("type: ", type(request.data) )
+            comment_id = request.data['guid']
+            print('\n comment_id:'+ comment_id)
+            #comment = Comment.objects.get(guid=comment_id)
+            #author=request.data['author']
+            #comment=request.data['comment']
+            #serializer2= PostSerializer(pos,context={'request': request})
+            #print(serializer2.data)
+
+            serializer = CommentSerializer(data=request.data)
+            print("I AM THAT SECOND:", serializer.data)
             if serializer.is_valid():
                 serializer.save()
             #print serializer.errors

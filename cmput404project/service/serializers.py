@@ -68,11 +68,14 @@ class CommentSerializer(serializers.Serializer):
     comment= serializers.CharField(max_length=200)
     guid = serializers.UUIDField()
 
-    def create(self, validated_data, post):
-        print (validated_data)
-        author=AuthorSerializer(data=validated_data["author"])
-        print(type(author))
-        return Comment.create_comment(validated_data['comment'],validated_data["author"])
+    def create(self, validated_data):
+        comment = Comment.objects.create(**validated_data)
+        #author_id = post=validated_data['author']['id']
+        #author = Author.objects.get(id = author_id)
+        #comment.save(post=validated_data['post']['id'])
+        return comment
+        #author=AuthorSerializer(data=validated_data["author"])
+        #return Comment.create_comment(validated_data['comment'],validated_data["author"],post)
 
     def update(self, instance, validated_data):
         print "update"
@@ -83,4 +86,6 @@ class CommentSerializer(serializers.Serializer):
         #not sure about guid
         instance.guid = validated_data.get('guid', instance.guid)
         instance.save()
+
+
         return instance
