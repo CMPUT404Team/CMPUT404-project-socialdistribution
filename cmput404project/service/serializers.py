@@ -1,17 +1,21 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from service.models import Comment, Author, Post
+from models.Author import Author
+from models.Post import Post
 from django.db import models
 from models.Author import Author
 from models.Comment import Comment
 import uuid
 
 class FriendSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.UUIDField()
     class Meta:
         model = Author
         fields = ('url', 'id', 'displayName', 'host')
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.UUIDField()
     friends = FriendSerializer(required=False, many=True)
     class Meta:
         model = Author
@@ -19,28 +23,16 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     # for optional fields on post: var = CharField(allow_blank=True, required=False)
-    #author = AuthorSerializer(context=this.context, required=True)
+    id = serializers.UUIDField()
+    author = FriendSerializer()
     class Meta:
-        model = Post.Post
-        fields = (
-            'title',
-            'source',
-            'origin',
-            'description',
-            'contentType',
-            'description',
-            'author',
-            'comments',
-            'count',
-            'size',
-            'next',
-            'published',
-            'id',
-            'visibility'
-        )
-        ordering = ['-published']
+        model = Post
+        fields = ('title', 'source', 'origin', 'content','contentType','description', 'author','count','size','next','published','id','visibility')
+
     def create(self, validated_data):
-        return Post.Post.objects.create(**validated_data)
+	author_id = validated_data.pop('author')['id']
+	author = Author.objects.get(id=author_id)
+        return Post.objects.create(author=author,**validated_data)
 
     def update(self, post, validated_data):
         post.title = validated_data.get('title', post.title)

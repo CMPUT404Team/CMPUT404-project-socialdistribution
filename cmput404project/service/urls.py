@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
-    url(r'^posts/(?P<uuid>[^/]+)/$', views.PostView.as_view(), name='post'),
+    url(r'^posts/(?P<pk>[^/]+)/$', views.PostView.as_view(), name='post'),
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
     url(r'^author/(?P<uuid>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^posts/(?P<pid>[^/]+)/comments', views.CommentAPIView.as_view()),

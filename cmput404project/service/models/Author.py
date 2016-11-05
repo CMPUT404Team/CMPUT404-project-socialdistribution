@@ -15,7 +15,7 @@ class Author(models.Model):
 
     @classmethod
     def create(cls, user, displayName, host):
-        return cls(id=uuid.uuid4(), user=user, displayName=displayName)
+        return cls(id=uuid.uuid4(), user=user, displayName=displayName, host=host)
 
     def add_friend(self, author):
         self.friends.add(author)
