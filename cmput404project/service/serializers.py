@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-<<<<<<< HEAD
 from service.models import Comment, Author, Post
-=======
 from models.Author import Author
 from models.Post import Post
 from django.db import models
