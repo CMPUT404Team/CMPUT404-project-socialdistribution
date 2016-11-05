@@ -48,10 +48,16 @@ class MutualFriendDetailView(APIView):
     of the friend to check it with.
     '''
     def post(self, request, uuid):
-        serializer = AuthorSerializer(data=request.data)
-	if serializer.is_valid():
-	    serializer.save()
-	    print "YAY" + str(serializer)
+        serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
+	mutual_friends = []
+        if (serializer.is_valid(raise_exception=True)):
+            author = self.get_object(serializer.validated_data['author'])
+	    author_all_friends = author.get_friends()
+	    friend_check = serializer.validated_data['authors']
+	    for friend in friend_check:
+		if friend in author_all_friends:
+		    mutual_friends.append(friend)
+            return Response({'query':'friends','author':author.id,'friends':mutual_friends})
     
     def get_object(self, uuid):
         try:
@@ -60,7 +66,6 @@ class MutualFriendDetailView(APIView):
             raise Http404
 
     def get(self, request, uuid):
-	friends = []
         author = self.get_object(uuid)
 	friends = author.get_friends()
         return Response({'query':'friends', 'friends':friends})
