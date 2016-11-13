@@ -134,9 +134,11 @@ class PostAPITests(APITestCase):
 
     def test_update_post_with_put(self):
         # Create a post using a put method
+        self.post.title = "The new title"
         put_body = self.get_post_data(self.post, self.author)
         response = self.create_update_post_with_put(self.post.id, put_body)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['title'], "The new title")
 
     def test_update_nonexistent_post(self):
         # Try to update a post that hasn't been created
