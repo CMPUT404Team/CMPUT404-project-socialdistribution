@@ -48,7 +48,7 @@ class CommentUnitTest(TestCase):
         try:
             comm = Comment().create_comment(comment, "abc", post)
         except ValueError:
-            print(ValueError)
+            self.fail("Value error occured")
 
 class CommentAPIViewTests(APITestCase):
 

@@ -3,6 +3,7 @@ from rest_framework import generics, viewsets,status
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from django.utils.six import BytesIO
 from models.Comment import Comment
 from service.serializers import *
@@ -69,7 +70,7 @@ class CommentAPIView(APIView):
             #print serializer.errors
             serializer.validated_data
         except SuspiciousOperation:
-            raise HTTP_400_BAD_REQUEST
+            raise status.HTTP_400_BAD_REQUEST
 
         return Response(serializer.validated_data)
 
@@ -113,6 +114,8 @@ class PostView(APIView):
             return Post.objects.get(id=uuid)
         except Post.DoesNotExist:
             raise Http404
+        except ValueError:
+            raise ParseError("Malformed UUID")
 
     def get(self, request, pk):
         post = self.get_object(pk)

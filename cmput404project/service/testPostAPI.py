@@ -7,7 +7,7 @@ from django.core import serializers
 import json
 from unittest import skip
 
-class PostViewSetTests(APITestCase):
+class PostAPITests(APITestCase):
     def setUp(self):
         superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
         self.client = APIClient()
@@ -23,11 +23,6 @@ class PostViewSetTests(APITestCase):
             visibility = "PUBLIC")
         self.post.save()
         
-    #def set_up_author(self):
-        #base this off of how Author model is created
-    #    self.author = Mock()
-    #    self.client.force_authenticate(user=author)
-
     def get_posts_by_current_user(self):
         return self.client.get('/author/posts/')
         #http://service/author/posts (posts that are visible to the currently authenticated user)
@@ -67,6 +62,8 @@ class PostViewSetTests(APITestCase):
         self.get_posts_by_author_id(self.author.id)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(str(self.post.id), response.data[0]['id'])
+        self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
 
     def test_no_posts_by_current_author(self):
         pass
@@ -152,11 +149,8 @@ class PostViewSetTests(APITestCase):
     def test_create_invalid_post(self):
         post_id = "not-a-number"
         put_body = {"title":"Sample Title"}
-        try:
-            response = self.create_update_post_with_post(post_id, put_body)
-            self.assertEqual(response.status_code, 400)
-        except ValueError:
-            pass
+        response = self.create_update_post_with_post(post_id, put_body)
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_post(self):
         post_id = self.post.id
@@ -182,11 +176,11 @@ class PostViewSetTests(APITestCase):
         request_body = self.get_post_data(self.post, self.author) 
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 201)
-    @skip("Not yet implemented")
+
     def test_update_post_with_post(self):
         # Update an existing post
         request_body = self.get_post_data(self.post, self.author) 
-        response = self.create_update_post_with_post(request_body, self.post.id)
+        response = self.create_update_post_with_post(self.post.id, request_body)
         self.assertEqual(response.status_code, 200)
 
     def test_creating_public_post(self):
