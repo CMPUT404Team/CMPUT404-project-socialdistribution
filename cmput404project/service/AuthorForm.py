@@ -8,6 +8,7 @@ class AuthorForm(forms.Form):
     password = forms.CharField(widget=PasswordInput)
     
     def create_author(self, host):
+        #TODO Need to check if user already exists.
         user = User.objects.create_user(username=self.cleaned_data['displayName'], password=self.cleaned_data['password'])
         user.save()
         author = Author.create(user, self.cleaned_data['displayName'], host)
