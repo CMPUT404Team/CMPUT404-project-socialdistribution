@@ -8,3 +8,7 @@ Documentation
 =============
 To get the documentation, run the app by following the instructions above
 and hit the endpoint /docs. Ex) http://localhost:8000/docs
+
+References
+==========
+Author: Victor Silva Source: http://stackoverflow.com/a/20012419
