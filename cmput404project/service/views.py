@@ -52,22 +52,20 @@ class CommentAPIView(APIView):
     def post(self, request, pid):
         try:
             pos=Post.objects.get(id=pid)
-            print(request.data )
-            print("type: ", type(request.data) )
-            #ERROR ACCESSING guid here
-            comment_id = request.data["guid"]
-            print('\n comment_id:'+ comment_id)
-            #comment = Comment.objects.get(guid=comment_id)
-            #author=request.data['author']
-            #comment=request.data['comment']
-            #serializer2= PostSerializer(pos,context={'request': request})
-            #print(serializer2.data)
+            auth=Author.objects.get(id=request.data['comments']['author']['id'])
 
-            serializer = CommentSerializer(data=request.data)
-            print("I AM THAT SECOND:", serializer.data)
+            serializer2= PostSerializer(pos, context={'request': request})
+            serializer3= AuthorSerializer(auth, context={'request':request})
+            #print(serializer2.data)
+           # a={"author":{serializer3.data},"comment":request.data['comments']['comment'],"post":serializer2.data}
+            
+            serializer = CommentSerializerPost(data=request.data['comments']['comment'])
+            print(request.data['comments'])
+            #serializer = CommentSerializerPost(data=request.data)
+            print "lalalalala"
             if serializer.is_valid():
-                serializer.save()
-            #print serializer.errors
+                serializer.save(author=auth,post=pos)
+            print serializer.errors
             serializer.validated_data
         except SuspiciousOperation:
             raise HTTP_400_BAD_REQUEST
