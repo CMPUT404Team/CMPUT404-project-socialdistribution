@@ -134,9 +134,8 @@ class FriendListSerializer(serializers.Serializer):
     authors = serializers.ListField(
 	    child = serializers.UUIDField()
     )
-    
+
 class FriendRequestSerializer(serializers.Serializer):
     query = serializers.CharField(max_length=50)
     author = FriendSerializer()
     friend = FriendSerializer()
-

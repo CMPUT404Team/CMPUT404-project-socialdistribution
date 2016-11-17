@@ -50,27 +50,18 @@ class CommentAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request, pid):
-        try:
-            pos=Post.objects.get(id=pid)
-            auth=Author.objects.get(id=request.data['comments']['author']['id'])
+        pos=Post.objects.get(id=pid)
+        auth=Author.objects.get(id=request.data['comments']['author']['id'])
+        comment = request.data['comments']['comment']
 
-            serializer2= PostSerializer(pos, context={'request': request})
-            serializer3= AuthorSerializer(auth, context={'request':request})
-            #print(serializer2.data)
-           # a={"author":{serializer3.data},"comment":request.data['comments']['comment'],"post":serializer2.data}
-            
-            serializer = CommentSerializerPost(data=request.data['comments']['comment'])
-            print(request.data['comments'])
-            #serializer = CommentSerializerPost(data=request.data)
-            print "lalalalala"
-            if serializer.is_valid():
-                serializer.save(author=auth,post=pos)
-            print serializer.errors
-            serializer.validated_data
-        except SuspiciousOperation:
-            raise HTTP_400_BAD_REQUEST
+        serializerPost= PostSerializer(pos, context={'request': request})
+        serializerAuthor= AuthorSerializer(auth, context={'request':request})
+        serializer = CommentSerializerPost(data={'author':serializerAuthor.data,'post':serializerPost.data,'comment':comment})
 
-        return Response(serializer.validated_data)
+        if serializer.is_valid():
+            serializer.save(author=auth,post=pos)
+            return Response(serializer.validated_data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AuthorDetailView(APIView):
     '''
