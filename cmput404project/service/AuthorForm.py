@@ -9,11 +9,11 @@ class AuthorForm(forms.Form):
     
     def create_author(self, host):
 
-        user = User.objects.create_user(username=self.cleaned_data['displayName'], password=self.cleaned_data['password'])
+        user = User.objects.create_user(username=self.cleaned_data['displayName'], 
+                password=self.cleaned_data['password'], is_active=False)
         user.save()
-        author = Author.create(None, self.cleaned_data['displayName'], host)
+        author = Author.create(user, self.cleaned_data['displayName'], host)
         author.save()
-        return author.get_absolute_url()
     
     #Author: Victor Silva Source: http://stackoverflow.com/a/20012419
     def clean_displayName(self):

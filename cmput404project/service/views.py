@@ -12,6 +12,7 @@ from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
+from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
@@ -238,5 +239,6 @@ class AuthorCreate(FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        self.success_url = form.create_author(self.request.get_host())
+        form.create_author(self.request.get_host())
+        self.success_url = reverse('awaiting-approval') 
         return super(AuthorCreate, self).form_valid(form)
