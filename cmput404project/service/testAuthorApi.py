@@ -44,13 +44,20 @@ class AddAuthorApiTests(APITestCase):
             response = self.client.post(self.add_url, form.cleaned_data)
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response.url, reverse('awaiting-approval'))
+	    self.assertTrue(Author.objects.filter(displayName='Yolo Swag').exists())
+	    self.assertTrue(User.objects.filter(username='Yolo Swag').exists())
+            self.assertFalse(User.objects.get(username='Yolo Swag').is_active)
         else:
             self.fail("You passed invalid data to the form")
 
     def test_add_new_author_with_existing_username(self):
-        self.fail()
-    def test_new_author_is_not_active(self):
-        self.fail()
-
-    def get_valid_author_form_data(self):
-        self.fail()
+        form = AuthorForm({'displayName':'Yolo Swag', 'password':'4ForLife'})
+        if (form.is_valid()):
+	    user = User.objects.create(username='Yolo Swag')
+	    user.save()
+            response = self.client.post(self.add_url, form.cleaned_data)
+            self.assertEqual(response.status_code, 200)
+	    response.render()
+            self.assertIn('is already in use.', response.content)
+        else:
+            self.fail("You passed invalid data to the form")
