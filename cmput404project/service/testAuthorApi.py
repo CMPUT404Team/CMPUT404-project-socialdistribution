@@ -30,3 +30,12 @@ class AuthorAPITests(APITestCase):
 	json_friend = response.data.get('friends')[0]
 	self.assertIn('testHost',json_friend['host'])
 	self.assertIn('testName',json_friend['displayName'])	
+        
+    def test_add_new_author(self):
+        self.fail()
+
+    def test_add_new_author_with_existing_username(self):
+        self.fail()
+
+    def test_new_author_is_not_active(self):
+        self.fail()
