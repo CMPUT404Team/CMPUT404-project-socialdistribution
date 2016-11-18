@@ -107,6 +107,11 @@ class PostAPITests(APITestCase):
         self.assertEqual(str(self.post.id), response.data['id'])
         self.assertEqual(str(self.post.author.id), response.data['author']['id'])
 
+    def test_get_nonexistent_post_by_id(self):
+        self.post.id = uuid.uuid4()
+        response = self.get_single_post_by_id(self.post.id)
+        self.assertEqual(404, response.status_code)
+
     def test_get_posts_with_invalid_post_id(self):
         #TODO: tests behaviour for when you get posts with incorrectly
         #formatted ID, or ID that doesn't exist
