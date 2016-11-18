@@ -171,8 +171,12 @@ class AuthorPostsView(APIView):
     """
     Return a list of available posts created by specified user
     """
-    def get(self, request):
-        posts = Post.objects.all()#.filter(author.id="?")
+    def get(self, request, uuid):
+        try:
+            Author.objects.get(id=uuid)
+        except Author.DoesNotExist:
+            raise Http404
+        posts = Post.objects.all().filter(author__id=uuid)
         serializer = PostSerializer(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
