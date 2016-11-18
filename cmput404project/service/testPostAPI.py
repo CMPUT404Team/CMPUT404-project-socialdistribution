@@ -33,7 +33,7 @@ class PostAPITests(APITestCase):
 
     def get_posts_by_author_id(self, author_id):
         # http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
-        return self.client.get('/author/'+str(author_id)+'/')
+        return self.client.get('/author/'+str(author_id)+'/posts/')
 
     def get_posts_by_page(self, page_number):
         # GET http://service/author/posts?page=4
@@ -42,6 +42,10 @@ class PostAPITests(APITestCase):
     def get_posts_by_page_and_size(self, page_number, size):
         # GET http://service/author/posts?page=4&size=50
         return self.client.get('/author/posts?page='+str(page_number)+'&size='+str(size)+'/')
+
+    def get_single_post_by_id(self, post_id):
+        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
+        return self.client.get('/posts/'+str(post_id)+'/')
 
     def create_post(self, post_body):
         #a POST should insert the post http://service/posts/postid
@@ -54,35 +58,44 @@ class PostAPITests(APITestCase):
     def create_update_post_with_post(self, post_id, post_body):
         return self.client.post('/posts/'+str(post_id)+'/', post_body, format='json')
 
+
     def test_get_posts_by_current_author(self):
-        self.get_posts_by_author_id(self.author.id)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(str(self.post.id), response.data[0]['id'])
         self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
 
     def test_no_posts_by_current_author(self):
-        pass
+        post_id = self.post.id
+        # create posts when needed instead
+        #self.delete_post(post_id)
+        response = self.get_posts_by_current_user()
+        self.assertEqual(response.status_code, 200)
+        #self.assertEqual(len(response.data), 0)
 
     def test_get_posts_by_current_admin(self):
         #TODO: Retrieves all the posts made by the currently logged in admin
+        #how is it different from test_get_posts_by_current_author?
         pass
 
     def test_get_public_posts(self):
-        #TODO: Retrieve all public posts on the server
-        pass
+        # Retrieve all public posts on the server
+        response = self.get_public_posts()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['visibility'], "PUBLIC")
 
     def test_get_posts_by_author_id(self):
-        #TODO: returns all the posts made by an author with a specific ID
-        pass
+        # Return all the posts made by an author with a specific ID
+        response = self.get_posts_by_author_id(self.author.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(str(self.post.id), response.data[0]['id'])
+        self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
 
     def test_get_posts_with_invalid_author_id(self):
-        #TODO: test getting posts with an invalid author id, or author ID that doesn't exist
-        pass
-
-    def get_single_post_by_id(self, post_id):
-        # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
-        return self.client.get('/posts/'+str(post_id)+'/')
+        # Get posts with an invalid author id, or author ID that doesn't exist
+        not_author = uuid.uuid4()
+        response = self.get_posts_by_author_id(not_author)
+        self.assertEqual(response.status_code, 404)
 
     def test_get_post_by_id(self):
         response = self.get_single_post_by_id(self.post.id)
@@ -92,7 +105,7 @@ class PostAPITests(APITestCase):
 
     def test_get_posts_with_invalid_post_id(self):
         #TODO: tests behaviour for when you get posts with incorrectly
-        #      formatted ID, or ID that doesn't exist
+        #formatted ID, or ID that doesn't exist
         pass
 
     def test_get_posts_by_page(self):
