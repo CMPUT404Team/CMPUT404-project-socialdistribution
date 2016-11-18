@@ -132,8 +132,11 @@ class PostView(APIView):
         return Response(serializer.data)
 
     def post(self, request, pk):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data, context={'request':request})
+        try:
+            post = self.get_object(pk)
+            serializer = PostSerializer(post, data=request.data, context={'request':request})
+        except Http404:
+            serializer = PostSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
