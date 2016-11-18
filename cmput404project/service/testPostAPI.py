@@ -59,30 +59,40 @@ class PostAPITests(APITestCase):
         return self.client.post('/posts/'+str(post_id)+'/', post_body, format='json')
 
     def test_get_posts_by_current_author(self):
-        self.get_posts_by_author_id(self.author.id)
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(str(self.post.id), response.data[0]['id'])
         self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
 
     def test_no_posts_by_current_author(self):
-        pass
+        post_id = self.post.id
+        self.delete_post(post_id)
+        response = self.get_posts_by_current_user()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
 
     def test_get_posts_by_current_admin(self):
         #TODO: Retrieves all the posts made by the currently logged in admin
+        #how is it different from test_get_posts_by_current_author?
         pass
 
     def test_get_public_posts(self):
         #TODO: Retrieve all public posts on the server
-        pass
+        response = self.get_public_posts()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['visibility'], "PUBLIC")
 
     def test_get_posts_by_author_id(self):
         #TODO: returns all the posts made by an author with a specific ID
-        pass
+        response = self.get_posts_by_author_id(self.author.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(str(self.post.id), response.data[0]['id'])
+        self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
 
     def test_get_posts_with_invalid_author_id(self):
         #TODO: test getting posts with an invalid author id, or author ID that doesn't exist
-        pass
+        response = self.get_posts_by_author_id("invalid-user-id")
+        self.assertEqual(response.status_code, 404)
 
     def get_single_post_by_id(self, post_id):
         # http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
