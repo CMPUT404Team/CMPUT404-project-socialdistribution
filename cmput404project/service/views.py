@@ -131,8 +131,11 @@ class PostView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data, context={'request':request})
+        try:
+            post = self.get_object(pk)
+            serializer = PostSerializer(post, data=request.data, context={'request':request})
+        except Http404:
+            serializer = PostSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -142,7 +145,7 @@ class PostView(APIView):
         post = self.get_object(pk)
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class VisiblePostsView(APIView):
     """
     Return a list of all posts available to the currently authenticated user
@@ -169,7 +172,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class FriendDetailView(APIView):
     '''
-    Used to determine whether two users are friends with eachother. This 
+    Used to determine whether two users are friends with eachother. This
     means that each user will have the other user in their friends list.
     '''
     def get_object(self, uuid):
@@ -177,7 +180,7 @@ class FriendDetailView(APIView):
 	    return Author.objects.get(id=uuid)
 	except Author.DoesNotExist:
 	    raise Http404
-	
+
     def get(self, request, uuid1, uuid2):
 	author1 = self.get_object(uuid1)
 	author2 = self.get_object(uuid2)
@@ -201,7 +204,7 @@ class MutualFriendDetailView(APIView):
 		if friend in author_all_friends:
 		    mutual_friends.append(friend)
             return Response({'query':'friends','author':author.id,'friends':mutual_friends})
-    
+
     def get_object(self, uuid):
         try:
             return Author.objects.get(id=uuid)
@@ -215,7 +218,7 @@ class MutualFriendDetailView(APIView):
 
 class FriendRequestView(APIView):
     '''
-    Used to make a friend request. 
+    Used to make a friend request.
     '''
     def get_object(self, uuid):
         try:

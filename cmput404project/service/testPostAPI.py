@@ -9,7 +9,7 @@ from unittest import skip
 
 class PostAPITests(APITestCase):
     def setUp(self):
-        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
+        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
         self.client = APIClient()
         #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
@@ -22,7 +22,7 @@ class PostAPITests(APITestCase):
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
         self.post.save()
-        
+
     def get_posts_by_current_user(self):
         return self.client.get('/author/posts/')
         #http://service/author/posts (posts that are visible to the currently authenticated user)
@@ -50,10 +50,6 @@ class PostAPITests(APITestCase):
     def delete_post(self, post_id):
         #A delete should delete posts with a specific ID
         return self.client.delete('/posts/'+str(post_id)+'/')
-
-    def create_update_post_with_put(self, post_id, put_body):
-        #PUT http://service/posts/postid to update/create post
-        return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
 
     def create_update_post_with_post(self, post_id, post_body):
         return self.client.post('/posts/'+str(post_id)+'/', post_body, format='json')
@@ -132,6 +128,16 @@ class PostAPITests(APITestCase):
         #TODO: retrive a page where the size is smaller than the one specified
         pass
 
+    def create_update_post_with_put(self, post_id, put_body):
+        #PUT http://service/posts/postid to update/create post
+        return self.client.put('/posts/'+str(post_id)+'/', put_body, format='json')
+
+    def test_create_post_with_put(self):
+        self.post.id = uuid.uuid4()
+        request_body = self.get_post_data(self.post, self.author)
+        response = self.create_update_post_with_put(self.post.id, request_body)
+        self.assertEqual(response.status_code, 200)
+
     def test_update_post_with_put(self):
         # Create a post using a put method
         self.post.title = "The new title"
@@ -175,13 +181,21 @@ class PostAPITests(APITestCase):
     def test_create_post_with_post(self):
         # Create a post using a post method
         self.post.id = uuid.uuid4()
-        request_body = self.get_post_data(self.post, self.author) 
+        request_body = self.get_post_data(self.post, self.author)
         response = self.create_post(request_body)
         self.assertEqual(response.status_code, 201)
 
+    def test_create_post_with_post(self):
+        # Create a post using a post method
+        self.post.id = uuid.uuid4()
+        request_body = self.get_post_data(self.post, self.author)
+        #response = self.create_post_to_id(self.post.id, request_body)
+        #self.assertEqual(response.status_code, 201)
+        pass
+
     def test_update_post_with_post(self):
         # Update an existing post
-        request_body = self.get_post_data(self.post, self.author) 
+        request_body = self.get_post_data(self.post, self.author)
         response = self.create_update_post_with_post(self.post.id, request_body)
         self.assertEqual(response.status_code, 200)
 
@@ -198,7 +212,7 @@ class PostAPITests(APITestCase):
         pass
 
     def get_post_data(self, post, author):
-        return { 
+        return {
 			"title": post.title,
 			"source": post.source,
 			"origin": post.origin,
