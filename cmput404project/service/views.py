@@ -37,7 +37,6 @@ class CommentAPIView(APIView):
     """
     API endpoint that allows the comments of a post to be viewed.
     """
-    #Do if check request time in one function??
     def get_comments(self, postId):
         try:
             return Comment.objects.filter(post_id = postId)
@@ -50,18 +49,16 @@ class CommentAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request, pid):
-        pos=Post.objects.get(id=pid)
-        auth=Author.objects.get(id=request.data['comments']['author']['id'])
-        comment = request.data['comments']['comment']
+        post=Post.objects.get(id=pid)
+        auth=Author.objects.get(id=request.data['comment']['author']['id'])
 
-        serializerPost= PostSerializer(pos, context={'request': request})
-        serializerAuthor= AuthorSerializer(auth, context={'request':request})
-        serializer = CommentSerializerPost(data={'author':serializerAuthor.data,'post':serializerPost.data,'comment':comment})
-
+        serializer = CommentSerializerPost(data=request.data['comment'])
         if serializer.is_valid():
-            serializer.save(author=auth,post=pos)
-            return Response(serializer.validated_data)
+            serializer.save(post=post, author=auth)
+            return Response({ "query": "addComment", "success":"true", "message":"Comment Added"})
+        #print serializer.errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AuthorDetailView(APIView):
     '''
