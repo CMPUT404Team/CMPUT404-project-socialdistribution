@@ -29,8 +29,8 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ('title', 'source', 'origin', 'content','contentType','description', 'author','count','size','next','published','id','visibility')
 
     def create(self, validated_data):
-	author_id = validated_data.pop('author')['id']
-	author = Author.objects.get(id=author_id)
+        author_id = validated_data.pop('author')['id']
+        author = Author.objects.get(id=author_id)
         return Post.objects.create(author=author,**validated_data)
 
     def update(self, post, validated_data):
@@ -95,9 +95,8 @@ class FriendListSerializer(serializers.Serializer):
     authors = serializers.ListField(
 	    child = serializers.UUIDField()
     )
-    
+
 class FriendRequestSerializer(serializers.Serializer):
     query = serializers.CharField(max_length=50)
     author = FriendSerializer()
     friend = FriendSerializer()
-
