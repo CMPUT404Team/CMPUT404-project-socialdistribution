@@ -5,6 +5,7 @@ from unittest import skip
 from django.urls import reverse
 from rest_framework import status
 from models.Author import Author
+from AuthorForm import AuthorForm
 import json
 
 class AuthorAPITests(APITestCase):
@@ -31,11 +32,25 @@ class AuthorAPITests(APITestCase):
 	self.assertIn('testHost',json_friend['host'])
 	self.assertIn('testName',json_friend['displayName'])	
         
+class AddAuthorApiTests(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.add_url = reverse('author-add')
+
     def test_add_new_author(self):
-        self.fail()
+        form = AuthorForm({'displayName':'Yolo Swag', 'password':'4ForLife'})
+        if (form.is_valid()):
+            response = self.client.post(self.add_url, form.cleaned_data)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.url, reverse('awaiting-approval'))
+        else:
+            self.fail("You passed invalid data to the form")
 
     def test_add_new_author_with_existing_username(self):
         self.fail()
-
     def test_new_author_is_not_active(self):
+        self.fail()
+
+    def get_valid_author_form_data(self):
         self.fail()
