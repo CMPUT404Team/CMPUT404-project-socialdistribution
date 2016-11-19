@@ -101,7 +101,7 @@ class CommentAPIViewTests(APITestCase):
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
         self.assertEqual(response.status_code, 404)
-        
+
 
     # test create a comment through POST
     def test_post_comment(self):
@@ -158,7 +158,6 @@ class CommentAPIViewTests(APITestCase):
     def test_comment_not_valid_post(self):
         # set invalid post id
         self.post.id="84758741-e737-48e2-afde-c0f55556431c"
-
         comment={
           "query":"addComment",
           "post:":"http://localhost:8000/I-Don't-Care",
@@ -178,13 +177,65 @@ class CommentAPIViewTests(APITestCase):
         try:
             response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
             self.assertEqual(response.status_code, 404)
-        
+
         except Comment.DoesNotExist:
             self.fail("Comment is created")
 
     # TODO update a comment to a non valid post
     def test_comment_update_not_valid_post(self):
-        pass
+        # set invalid post id
+        self.post.id="84758741-e737-48e2-afde-c0f55556431c"
+        comment={
+          "query":"addComment",
+          "post:":"http://localhost:8000/I-Don't-Care",
+          "comment":{
+            "author": {
+              "url": "http://localhost:8000/author/14fdc531-4751-4e02-8cda-5fc5f4d221e1/",
+              "id": self.author.id,
+              "displayName": "KJSHDAKJD",
+              "host": "AKJSBDA",
+              "friends": []
+              },
+            "pubDate": "2016-11-04T03:33:12.786827Z",
+            "comment": "Majestic dog",
+            "guid": "84758741-e737-48e2-afde-c0f56546431c"
+            }
+        }
+        try:
+            response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
+            self.assertEqual(response.status_code, 404, "Updated a comment with a non existent post")
 
-    # TODO put fails
-    # TODO delete fails
+        except Comment.DoesNotExist:
+            self.fail("Comment is created, not updated")
+
+    # put fails
+    def test_comment_put_fail(self):
+        comment={
+          "query":"addComment",
+          "post:":"http://localhost:8000/I-Don't-Care",
+          "comment":{
+            "author": {
+              "url": "http://localhost:8000/author/14fdc531-4751-4e02-8cda-5fc5f4d221e1/",
+              "id": self.author.id,
+              "displayName": "KJSHDAKJD",
+              "host": "AKJSBDA",
+              "friends": []
+              },
+            "pubDate": "2016-11-04T03:33:12.786827Z",
+            "comment": "Majestic dog",
+            "guid": "84758741-e737-48e2-afde-c0f56546531c"
+            }
+        }
+        try:
+            response = self.client.put('/posts/'+str(self.post.id)+'/comments', comment, format='json')
+            self.assertNotEqual(response.status_code, 404, "The put passed")
+        except:
+            self.assertEqual(response.status_code, 404)
+
+    # delete fails
+    def test_comment_delete_fails(self):
+        try:
+            response = self.client.delete('/posts/'+str(self.post.id)+'/comments')
+            self.assertNotEqual(response.status_code, 404, "The delete passed")
+        except:
+            self.assertEqual(response.status_code, 404)
