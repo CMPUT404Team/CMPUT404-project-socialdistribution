@@ -9,6 +9,7 @@ class PostModelTests(TestCase):
 
     def setUp(self):
         self.author = Author(host='127.0.0.1:8000')
+        self.author.save()
         self.post = Post.create(self.author,
             title="A post title about a post about web dev",
             origin="http://whereitcamefrom.com/post/zzzzz",
