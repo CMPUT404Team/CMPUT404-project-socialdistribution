@@ -107,10 +107,12 @@ class PostAPITests(APITestCase):
         self.assertEqual(str(self.post.id), response.data['id'])
         self.assertEqual(str(self.post.author.id), response.data['author']['id'])
 
-    def test_get_posts_with_invalid_post_id(self):
-        #TODO: tests behaviour for when you get posts with incorrectly
-        #formatted ID, or ID that doesn't exist
-        pass
+    def test_get_post_with_invalid_post_id(self):
+        # Tests behaviour for when you get posts with incorrect ID
+        not_a_post = uuid.uuid4()
+        response = self.get_single_post_by_id(not_a_post)
+        print response
+        self.assertEqual(response.status_code, 404)
 
     def test_get_posts_by_page(self):
         #TODO: Returns all of posts on a specific page
