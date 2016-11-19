@@ -41,6 +41,14 @@ class FriendDetailView(APIView):
 	are_friends = author1.is_friend(author2)
 	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
 
+    def delete(self, request, uuid1, uuid2):
+        serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
+        author = self.get_object(uuid1)
+        friend = self.get_object(uuid2)
+        print friend
+        author.friends.remove(friend)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class MutualFriendDetailView(APIView):
     '''
     Used to list all the mutual friends between two authors. A post from an author
