@@ -8,6 +8,9 @@ services:
 # command to install dependencies
 install: "pip install -r cmput404project/requirements.txt"
 
+before_script:
+        - psql -c "CREATE DATABASE mydb;" -U postgres
+
 # command to run tests
 script: 
         - cd cmput404project
