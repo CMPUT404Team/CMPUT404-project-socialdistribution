@@ -86,7 +86,7 @@ class CommentAPIViewTests(APITestCase):
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         self.assertEqual(response.status_code, 404)
 
-    # TODO test post comments with no comments
+    # test post comments with no comments
     def test_get_no_comments(self):
         # call endpoint
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
@@ -94,7 +94,7 @@ class CommentAPIViewTests(APITestCase):
         self.assertEqual(response.status_code, 404)
         #self.assertEqual(str(comment.guid),"")
 
-    # TODO test get empty comment
+    # test get empty comment
     def test_get_empty_comments(self):
         comment = Comment().create_comment("", self.author, self.post)
 
@@ -154,7 +154,7 @@ class CommentAPIViewTests(APITestCase):
         response=self.client.post('/posts/'+str(self.post.id)+'/comments',updated_comment,format='json')
         self.assertEqual(comment.comment, "Your pupper is wonderful", "Comments not equal")
 
-    # TODO create a comment for a post that doesn't exist
+    # create a comment for a post that doesn't exist
     def test_comment_not_valid_post(self):
         # set invalid post id
         self.post.id="84758741-e737-48e2-afde-c0f55556431c"
