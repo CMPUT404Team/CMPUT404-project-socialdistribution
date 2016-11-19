@@ -90,7 +90,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'service',
-        'USER': os.environ['SERVICE_USER'],
+        'USER': serviceuser,
         'PASSWORD': os.environ['SERVICE_PASSWORD'],
         'HOST': 'localhost',
         'PORT': '5432',
