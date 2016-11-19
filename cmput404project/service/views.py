@@ -37,41 +37,51 @@ class CommentAPIView(APIView):
     """
     API endpoint that allows the comments of a post to be viewed.
     """
-    #Do if check request time in one function??
     def get_comments(self, postId):
-        try:
-            return Comment.objects.filter(post_id = postId)
-        except Comment.DoesNotExist:
+        comments = Comment.objects.filter(post_id = postId)
+        if not comments:
             raise Http404
+        return comments
 
+    def get_author(self, authorId):
+        try:
+            author=Author.objects.get(id=authorId)
+        except Author.DoesNotExist:
+            raise Http404
+        return author
+
+    def get_post(self, postId):
+        try:
+            post=Post.objects.get(id=postId)
+        except Post.DoesNotExist:
+            raise Http404
+        return post
+
+    # TODO change to {comments: [...]}
     def get(self, request, pid):
         comments = self.get_comments(pid)
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request, pid):
+        post = self.get_post(pid)
+        auth = self.get_author(request.data['comment']['author']['id'])
         try:
-            pos=Post.objects.get(id=pid)
-            auth=Author.objects.get(id=request.data['comments']['author']['id'])
-            #serializer.validated_data['author'] 
-            #in MutualFriendDetailView()
-            serializer2= PostSerializer(pos, context={'request': request})
-            serializer3= AuthorSerializer(auth, context={'request':request})
-            #print(serializer2.data)
-           # a={"author":{serializer3.data},"comment":request.data['comments']['comment'],"post":serializer2.data}
-            
-            serializer = CommentSerializerPost(data=request.data['comments']['comment'])
-            print(request.data['comments'])
-            #serializer = CommentSerializerPost(data=request.data)
-            print "lalalalala"
-            if serializer.is_valid():
-                serializer.save(author=auth,post=pos)
-            print serializer.errors
-            serializer.validated_data
-        except SuspiciousOperation:
-            raise HTTP_400_BAD_REQUEST
+            comment = Comment.objects.get(guid=request.data['comment']['guid'])
+            #comment already exists, update it
+            serializer = CommentSerializerPost(comment, data=request.data['comment'])
+        except Comment.DoesNotExist:
+            #comment doesn't exist, create it
+            serializer = CommentSerializerPost(data=request.data['comment'])
 
-        return Response(serializer.validated_data)
+        if serializer.is_valid():
+            serializer.save(post=post, author=auth)
+            return Response({ "query": "addComment", "success":"true", "message":"Comment Added"})
+        #print serializer.errors
+        # TODO: change return to json success false
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+>>>>>>> b21bea7256b3bcacbce24184bc1e94632142a030
 
 class AuthorDetailView(APIView):
     '''
