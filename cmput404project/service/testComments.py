@@ -47,8 +47,8 @@ class CommentUnitTest(TestCase):
         comment = 'Nice doggo'
         try:
             comm = Comment().create_comment(comment, "abc", post)
-        except ValueError:
-            print(ValueError)
+        except ValueError as e:
+            self.assertTrue(e, "Successfully detected ValueError")
 
 class CommentAPIViewTests(APITestCase):
 
@@ -69,7 +69,7 @@ class CommentAPIViewTests(APITestCase):
         self.author.save()
         self.post.save()
 
-    #test get comments of a post
+    # test get comments of a post
     def test_get_comment(self):
         #call the endpoint
         comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
@@ -81,11 +81,16 @@ class CommentAPIViewTests(APITestCase):
         self.assertEqual(comment.post.id, self.post.id, "wrong post")
         comment.delete()
 
-    # TODO test get comments of a non existant post
+    # test get comment with non existent post
     def test_get_comment_no_post(self):
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+        self.assertEqual(response.status_code, 404)
+
+    # TODO test post comments with no comments
+    def test_get_no_comments(self):
         pass
 
-    #test create a comment through POST
+    # test create a comment through POST
     def test_post_comment(self):
         comment={
           "query":"addComment",
@@ -110,6 +115,39 @@ class CommentAPIViewTests(APITestCase):
         except Comment.DoesNotExist:
             self.fail("That comment does not exist")
 
-    # TODO test update a comment through POST
+    # test update a comment through POST
     def test_post_update_comment(self):
+        # make comment
+        comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
+        comment.save()
+        updated_comment={
+          "query":"addComment",
+          "post:":"http://localhost:8000/I-Don't-Care",
+          "comment":{
+            "author": {
+              "url": "http://localhost:8000/author/14fdc531-4751-4e02-8cda-5fc5f4d221e1/",
+              "id": self.author.id,
+              "displayName": "KJSHDAKJD",
+              "host": "AKJSBDA",
+              "friends": []
+              },
+            "pubDate": "2016-11-04T03:33:12.786827Z",
+            "comment": "Your pupper is more wonderful",
+            "guid": "84758741-e737-48e2-afde-c0f56546531c"
+            }
+        }
+
+        # update comment
+        response=self.client.post('/posts/'+str(self.post.id)+'/comments',updated_comment,format='json')
+        self.assertEqual(comment.comment, "Your pupper is wonderful", "Comments not equal")
+
+    # TODO create a comment for a post that doesn't exist
+    def test_comment_not_valid_post(self):
         pass
+
+    # TODO update a comment to a non valid post
+    def test_comment_update_not_valid_post(self):
+        pass
+
+    # TODO put fails
+    # TODO delete fails
