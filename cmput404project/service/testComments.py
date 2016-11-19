@@ -88,7 +88,20 @@ class CommentAPIViewTests(APITestCase):
 
     # TODO test post comments with no comments
     def test_get_no_comments(self):
-        pass
+        # call endpoint
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+
+        self.assertEqual(response.status_code, 404)
+        #self.assertEqual(str(comment.guid),"")
+
+    # TODO test get empty comment
+    def test_get_empty_comments(self):
+        comment = Comment().create_comment("", self.author, self.post)
+
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+        #check that they match
+        self.assertEqual(response.status_code, 404)
+        
 
     # test create a comment through POST
     def test_post_comment(self):
@@ -143,7 +156,31 @@ class CommentAPIViewTests(APITestCase):
 
     # TODO create a comment for a post that doesn't exist
     def test_comment_not_valid_post(self):
-        pass
+        # set invalid post id
+        self.post.id="84758741-e737-48e2-afde-c0f55556431c"
+
+        comment={
+          "query":"addComment",
+          "post:":"http://localhost:8000/I-Don't-Care",
+          "comment":{
+            "author": {
+              "url": "http://localhost:8000/author/14fdc531-4751-4e02-8cda-5fc5f4d221e1/",
+              "id": self.author.id,
+              "displayName": "KJSHDAKJD",
+              "host": "AKJSBDA",
+              "friends": []
+              },
+            "pubDate": "2016-11-04T03:33:12.786827Z",
+            "comment": "Majestic dog",
+            "guid": "84758741-e737-48e2-afde-c0f56546431c"
+            }
+        }
+        try:
+            response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
+            self.assertEqual(response.status_code, 404)
+        
+        except Comment.DoesNotExist:
+            self.fail("Comment is created")
 
     # TODO update a comment to a non valid post
     def test_comment_update_not_valid_post(self):

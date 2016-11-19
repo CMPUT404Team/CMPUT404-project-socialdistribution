@@ -22,7 +22,10 @@ class Comment(models.Model):
 
     @classmethod
     def create_comment(cls,comm, auth, post):
-        createdComment = cls(comment = comm, author = auth, post = post)
+        if(comm!="" and (comm is not None)):
+            createdComment = cls(comment = comm, author = auth, post = post)
+        else:
+            createdComment=None
         return createdComment
 
     def __str__(self):

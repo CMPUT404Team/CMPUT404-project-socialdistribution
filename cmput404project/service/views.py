@@ -81,8 +81,6 @@ class CommentAPIView(APIView):
         # TODO: change return to json success false
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
->>>>>>> b21bea7256b3bcacbce24184bc1e94632142a030
-
 class AuthorDetailView(APIView):
     '''
     Used to get the profile information of an author.
