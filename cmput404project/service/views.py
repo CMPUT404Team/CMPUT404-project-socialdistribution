@@ -37,41 +37,49 @@ class CommentAPIView(APIView):
     """
     API endpoint that allows the comments of a post to be viewed.
     """
-    #Do if check request time in one function??
     def get_comments(self, postId):
-        try:
-            return Comment.objects.filter(post_id = postId)
-        except Comment.DoesNotExist:
+        comments = Comment.objects.filter(post_id = postId)
+        if not comments:
             raise Http404
+        return comments
 
+    def get_author(self, authorId):
+        try:
+            author=Author.objects.get(id=authorId)
+        except Author.DoesNotExist:
+            raise Http404
+        return author
+
+    def get_post(self, postId):
+        try:
+            post=Post.objects.get(id=postId)
+        except Post.DoesNotExist:
+            raise Http404
+        return post
+
+    # TODO change to {comments: [...]}
     def get(self, request, pid):
         comments = self.get_comments(pid)
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request, pid):
+        post = self.get_post(pid)
+        auth = self.get_author(request.data['comment']['author']['id'])
         try:
-            pos=Post.objects.get(id=pid)
-            print(request.data )
-            print("type: ", type(request.data) )
-            comment_id = request.data['guid']
-            print('\n comment_id:'+ comment_id)
-            #comment = Comment.objects.get(guid=comment_id)
-            #author=request.data['author']
-            #comment=request.data['comment']
-            #serializer2= PostSerializer(pos,context={'request': request})
-            #print(serializer2.data)
+            comment = Comment.objects.get(guid=request.data['comment']['guid'])
+            #comment already exists, update it
+            serializer = CommentSerializerPost(comment, data=request.data['comment'])
+        except Comment.DoesNotExist:
+            #comment doesn't exist, create it
+            serializer = CommentSerializerPost(data=request.data['comment'])
 
-            serializer = CommentSerializer(data=request.data)
-            print("I AM THAT SECOND:", serializer.data)
-            if serializer.is_valid():
-                serializer.save()
-            #print serializer.errors
-            serializer.validated_data
-        except SuspiciousOperation:
-            raise HTTP_400_BAD_REQUEST
-
-        return Response(serializer.validated_data)
+        if serializer.is_valid():
+            serializer.save(post=post, author=auth)
+            return Response({ "query": "addComment", "success":"true", "message":"Comment Added"})
+        #print serializer.errors
+        # TODO: change return to json success false
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AuthorDetailView(APIView):
     '''
@@ -139,7 +147,7 @@ class PostView(APIView):
         post = self.get_object(pk)
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class VisiblePostsView(APIView):
     """
     Return a list of all posts available to the currently authenticated user
@@ -166,7 +174,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class FriendDetailView(APIView):
     '''
-    Used to determine whether two users are friends with eachother. This 
+    Used to determine whether two users are friends with eachother. This
     means that each user will have the other user in their friends list.
     '''
     def get_object(self, uuid):
@@ -174,7 +182,7 @@ class FriendDetailView(APIView):
 	    return Author.objects.get(id=uuid)
 	except Author.DoesNotExist:
 	    raise Http404
-	
+
     def get(self, request, uuid1, uuid2):
 	author1 = self.get_object(uuid1)
 	author2 = self.get_object(uuid2)
@@ -198,7 +206,7 @@ class MutualFriendDetailView(APIView):
 		if friend in author_all_friends:
 		    mutual_friends.append(friend)
             return Response({'query':'friends','author':author.id,'friends':mutual_friends})
-    
+
     def get_object(self, uuid):
         try:
             return Author.objects.get(id=uuid)
@@ -212,7 +220,7 @@ class MutualFriendDetailView(APIView):
 
 class FriendRequestView(APIView):
     '''
-    Used to make a friend request. 
+    Used to make a friend request.
     '''
     def get_object(self, uuid):
         try:
