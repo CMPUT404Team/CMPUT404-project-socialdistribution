@@ -66,36 +66,50 @@ class CommentAPIViewTests(APITestCase):
             description="How do you pick just ten?!",
             categories = ["list","dog"],
             visibility = "PUBLIC")
-        self.comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
         self.author.save()
         self.post.save()
-        self.comment.save()
+
+    #test get comments of a post
     def test_get_comment(self):
         #call the endpoint
+        comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
+        comment.save()
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
         self.assertEqual(response.status_code, 200)
-        self.assertIn(str(self.comment.guid), response.content)
-    @skip("not implemented")
+        self.assertEqual(str(comment.guid), response.data[0]['guid'])
+        self.assertEqual(comment.post.id, self.post.id, "wrong post")
+        comment.delete()
+
+    # TODO test get comments of a non existant post
+    def test_get_comment_no_post(self):
+        pass
+
+    #test create a comment through POST
     def test_post_comment(self):
         comment={
-              "author": {
-                "url": "http://localhost:8000/author/9be030c0-ecb3-4d76-a4d9-5ad9184a0c9a/",
-                "id": str(self.author.id),
-                "displayName": "KJSHDAKJD",
-                "host": "AKJSBDA",
-                "friends": []
+          "query":"addComment",
+          "post:":"http://localhost:8000/I-Don't-Care",
+          "comment":{
+            "author": {
+              "url": "http://localhost:8000/author/14fdc531-4751-4e02-8cda-5fc5f4d221e1/",
+              "id": self.author.id,
+              "displayName": "KJSHDAKJD",
+              "host": "AKJSBDA",
+              "friends": []
               },
-              "pubDate": "2016-11-04T03:33:12.786827Z",
-              "comment": "Nice dog",
-              "guid": "84758741-e737-48e2-afde-c0f56546531c"
+            "pubDate": "2016-11-04T03:33:12.786827Z",
+            "comment": "Majestic dog",
+            "guid": "84758741-e737-48e2-afde-c0f56546531c"
             }
+        }
         response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
         self.assertEqual(response.status_code, 200)
         try:
-            self.Comment.objects.filter(guid="84758741-e737-48e2-afde-c0f56546531c")
+            Comment.objects.get(comment="Majestic dog")
         except Comment.DoesNotExist:
             self.fail("That comment does not exist")
-        except:
-            self.fail("Something went terribly wrong")
-        
+
+    # TODO test update a comment through POST
+    def test_post_update_comment(self):
+        pass

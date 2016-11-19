@@ -81,12 +81,7 @@ class CommentSerializerPost(serializers.Serializer):
         return comment
 
     def update(self, instance, validated_data):
-        print "update"
-        # probs going to have to call AuthorSerializer to deserialize
-        #instance.author = validated_data.get('author', instance.email)
-        #instance.pubDate = validated_data.get('pubDate', instance.pubDate)
         instance.comment = validated_data.get('comment', instance.comment)
-        #not sure about guid
         instance.save()
         return instance
 
