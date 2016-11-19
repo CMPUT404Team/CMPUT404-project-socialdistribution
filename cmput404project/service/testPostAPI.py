@@ -107,12 +107,16 @@ class PostAPITests(APITestCase):
         self.assertEqual(str(self.post.id), response.data['id'])
         self.assertEqual(str(self.post.author.id), response.data['author']['id'])
 
+    def test_get_nonexistent_post_by_id(self):
+        self.post.id = uuid.uuid4()
+        response = self.get_single_post_by_id(self.post.id)
+        self.assertEqual(404, response.status_code)
+
     def test_get_post_with_invalid_post_id(self):
         # Tests behaviour for when you get posts with incorrect ID
-        not_a_post = uuid.uuid4()
-        response = self.get_single_post_by_id(not_a_post)
-        print response
-        self.assertEqual(response.status_code, 404)
+        not_id = "1234z"
+        response = self.get_single_post_by_id(not_id)
+        self.assertEqual(response.status_code, 400)
 
     def test_get_posts_by_page(self):
         #TODO: Returns all of posts on a specific page
@@ -167,14 +171,6 @@ class PostAPITests(APITestCase):
         response = self.create_update_post_with_put(self.post.id, put_body)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['title'], "The new title")
-
-    def test_update_nonexistent_post(self):
-        # Try to update a post that hasn't been created
-        # Maybe it should have the same result as test_create_post_with_put?
-        self.post.id = uuid.uuid4()
-        put_body = self.get_post_data(self.post, self.author)
-        response = self.create_update_post_with_post(self.post.id, put_body)
-        self.assertEqual(response.status_code, 404)
 
     def test_create_invalid_post(self):
         self.post.id = "not-a-number"
