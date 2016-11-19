@@ -53,7 +53,8 @@ class CommentAPIView(APIView):
         try:
             pos=Post.objects.get(id=pid)
             auth=Author.objects.get(id=request.data['comments']['author']['id'])
-
+            #serializer.validated_data['author'] 
+            #in MutualFriendDetailView()
             serializer2= PostSerializer(pos, context={'request': request})
             serializer3= AuthorSerializer(auth, context={'request':request})
             #print(serializer2.data)
