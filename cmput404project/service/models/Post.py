@@ -23,6 +23,7 @@ class Post(models.Model):
     next = models.CharField(max_length=100)
     count = models.IntegerField(default=0)
     size = models.IntegerField(default=50)
+    comments = []
 
     @classmethod
     def create(cls, author,title,origin,description,categories,visibility):
@@ -32,6 +33,7 @@ class Post(models.Model):
         post.source = author.host
         post.parse_description()
         post.id = uuid.uuid4()
+        post.size = 0
         post.next = "http://service/posts/" + str(post.id) +"/comments"
         return post
 

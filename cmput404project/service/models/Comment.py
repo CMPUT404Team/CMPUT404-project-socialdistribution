@@ -23,6 +23,8 @@ class Comment(models.Model):
     @classmethod
     def create_comment(cls,comm, auth, post):
         createdComment = cls(comment = comm, author = auth, post = post)
+        post.size += 1
+        post.save()
         return createdComment
 
     def __str__(self):

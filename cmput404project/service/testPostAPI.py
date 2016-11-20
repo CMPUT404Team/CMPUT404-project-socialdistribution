@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase, APIClient, force_authenticate
 from models.Post import Post
 from models.Author import Author
+from models.Comment import Comment
 from django.contrib.auth.models import User
 import uuid
 from django.core import serializers
@@ -106,6 +107,19 @@ class PostAPITests(APITestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(str(self.post.id), response.data['id'])
         self.assertEqual(str(self.post.author.id), response.data['author']['id'])
+
+    def test_get_post_returns_comment(self):
+        comment = Comment.create_comment("Look at dat comment", self.author, self.post)
+        comment.save()
+        response = self.get_single_post_by_id(self.post.id)
+        self.assertEqual(200, response.status_code)
+        self.assertIsNotNone(response.data['comments'][0]['guid'])
+        self.assertEqual(str(comment.guid), response.data['comments'][0]['guid'])
+
+    def test_get_post_with_empty_comments(self):
+        response = self.get_single_post_by_id(self.post.id)
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(response.data['comments'])
 
     def test_get_nonexistent_post_by_id(self):
         self.post.id = uuid.uuid4()
@@ -228,24 +242,60 @@ class PostAPITests(APITestCase):
         #TODO: insert an invalidly formatted post
         pass
 
-    def get_post_data(self, post, author):
-        return {
-            "title": post.title,
-            "source": post.source,
-            "origin": post.origin,
-            "description": post.description,
-            "contentType": post.contentType,
-            "content": post.content,
-            "author":{
-                "id": str(author.id),
-                "host": author.host,
-                "displayName": author.displayName,
-            },
-            "categories": post.categories,
-            "count": str(post.count),
-            "size": str(post.size),
-            "next": post.next,
-            "published":str(post.published),
-            "id":str(post.id),
-            "visibility":post.visibility
-        }
+    def get_post_data(self, post, author, comment=None):
+        if comment == None:
+            return {
+                "title": post.title,
+                "source": post.source,
+                "origin": post.origin,
+                "description": post.description,
+                "contentType": post.contentType,
+                "content": post.content,
+                "author":{
+                    "id": str(author.id),
+                    "host": author.host,
+                    "displayName": author.displayName,
+                },
+                "categories": post.categories,
+                "count": str(post.count),
+                "size": str(post.size),
+                "next": post.next,
+                "published":str(post.published),
+                "id":str(post.id),
+                "visibility":post.visibility
+            }
+        else:
+            return {
+                "title": post.title,
+                "source": post.source,
+                "origin": post.origin,
+                "description": post.description,
+                "contentType": post.contentType,
+                "content": post.content,
+                "author":{
+                    "id": str(author.id),
+                    "host": author.host,
+                    "displayName": author.displayName,
+                },
+                "categories": post.categories,
+                "count": str(post.count),
+                "size": str(post.size),
+                "next": post.next,
+                "comments":[
+    				{
+    					"author":{
+                            "id": str(comment.author.id),
+                            "host": comment.author.host,
+                            "displayName": comment.author.displayName,
+                        },
+    					"comment":comment.comment,
+    					# ISO 8601 TIMESTAMP
+    					"published":comment.pubDate,
+    					# ID of the Comment (UUID)
+    					"id":str(comment.guid)
+    				}
+                ],
+                "published":str(post.published),
+                "id":str(post.id),
+                "visibility":post.visibility
+            }

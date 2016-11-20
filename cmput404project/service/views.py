@@ -53,10 +53,7 @@ class CommentAPIView(APIView):
     def post(self, request, pid):
         try:
             pos=Post.objects.get(id=pid)
-            print(request.data )
-            print("type: ", type(request.data) )
             comment_id = request.data['guid']
-            print('\n comment_id:'+ comment_id)
             #comment = Comment.objects.get(guid=comment_id)
             #author=request.data['author']
             #comment=request.data['comment']
@@ -64,7 +61,6 @@ class CommentAPIView(APIView):
             #print(serializer2.data)
 
             serializer = CommentSerializer(data=request.data)
-            print("I AM THAT SECOND:", serializer.data)
             if serializer.is_valid():
                 serializer.save()
             #print serializer.errors
@@ -95,11 +91,11 @@ class PostsView(APIView):
     """
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
-        serializer = PostSerializer(posts, many=True, context={'request':request})
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PostSerializer(data=request.data, context={'request':request})
+        serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -119,15 +115,17 @@ class PostView(APIView):
 
     def get(self, request, pk):
         post = self.get_object(pk)
-        serializer = PostSerializer(post, context={'request':request})
+        comments = Comment.objects.filter(post_id=pk)
+        post.comments = comments
+        serializer = PostSerializerGet(post, context={'request':request})
         return Response(serializer.data)
 
     def post(self, request, pk):
         try:
             post = self.get_object(pk)
-            serializer = PostSerializer(post, data=request.data, context={'request':request})
+            serializer = PostSerializerPutPost(post, data=request.data, context={'request':request})
         except Http404:
-            serializer = PostSerializer(data=request.data, context={'request':request})
+            serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -136,9 +134,9 @@ class PostView(APIView):
     def put(self, request, pk):
         try:
             post = self.get_object(pk)
-            serializer = PostSerializer(post, data=request.data, context={'request':request})
+            serializer = PostSerializerPutPost(post, data=request.data, context={'request':request})
         except Http404:
-            serializer = PostSerializer(data=request.data, context={'request':request})
+            serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -155,7 +153,7 @@ class VisiblePostsView(APIView):
     """
     def get(self, request):
         posts = Post.objects.all()#.filter(visibility="?")
-        serializer = PostSerializer(posts, many=True, context={'request':request})
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
 class AuthorPostsView(APIView):
@@ -168,7 +166,7 @@ class AuthorPostsView(APIView):
         except Author.DoesNotExist:
             raise Http404
         posts = Post.objects.all().filter(author__id=pk)
-        serializer = PostSerializer(posts, many=True, context={'request':request})
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
 class PostViewSet(viewsets.ModelViewSet):

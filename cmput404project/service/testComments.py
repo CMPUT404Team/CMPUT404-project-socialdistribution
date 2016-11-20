@@ -28,7 +28,12 @@ class CommentUnitTest(TestCase):
         author = Author.objects.create()
         #author.create(superuser, 'coolname', '127.0.0.0.1')
         pubDate = datetime.now()
-        post = Post()
+        post = Post.create(author,
+            title="A post title about a post about web dev",
+            origin="http://whereitcamefrom.com/post/zzzzz",
+            description="This post discusses stuff -- brief",
+            categories = ["web","tutorial"],
+            visibility = "PUBLIC")
         comment = 'Nice doggo'
         comm = Comment().create_comment(comment, author, post)
         self.assertEqual(comm.author, author, "Author not equal")
@@ -37,6 +42,7 @@ class CommentUnitTest(TestCase):
         self.assertTrue(self.published_recently(comm.pubDate, pubDate))
         self.assertIsInstance(comm.guid, uuid.UUID, "Not a uuid object")
         self.assertIsInstance(comm, Comment, "Not a comment object")
+        
     @skip("Failing")
     def test_bad_author(self):
         #checks for no author comments
@@ -98,4 +104,3 @@ class CommentAPIViewTests(APITestCase):
             self.fail("That comment does not exist")
         except:
             self.fail("Something went terribly wrong")
-        
