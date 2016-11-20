@@ -13,6 +13,7 @@ class NodeModelTests(TestCase):
         self.remote_username = "testsuperuser"
         self.remote_password = "testpassword"
         superuser = User.objects.create_superuser(su_username, 'test@test.com', su_password)
+        self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
         self.node = Node.create(
             displayName = "The Node",
             baseUrl = "http://localhost:8000/",
@@ -39,5 +40,9 @@ class NodeModelTests(TestCase):
 
     def test_get_posts(self):
         posts = self.node.get_posts()
-        print posts
+        self.assertTrue(hasattr(posts, '__iter__'))
+
+    def test_get_posts_by_author(self):
+        author_id = self.author.id
+        posts = self.node.get_posts_by_author(author_id)
         self.assertTrue(hasattr(posts, '__iter__'))

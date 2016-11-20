@@ -35,6 +35,9 @@ class Node(models.Model):
 
     def get_posts_by_author(self, author_id):
         url = self.baseUrl+ "author/" + str(author_id) + "/posts"
-        r = requests.get(url, auth=(username, password))
-        posts = r.json()
+        r = requests.get(url, auth=(self.username, self.password))
+        try:
+            posts = r.json()
+        except ValueError:
+            posts = []
         return posts
