@@ -83,6 +83,8 @@ class CommentAPIViewTests(APITestCase):
 
     # test get comment with non existent post
     def test_get_comment_no_post(self):
+        # set invalid post id
+        self.post.id="84758741-e737-48e2-afde-c0f55556431c"
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         self.assertEqual(response.status_code, 404)
 
