@@ -3,6 +3,7 @@ from rest_framework import generics, viewsets,status
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from django.utils.six import BytesIO
 from models.Comment import Comment
 from service.serializers import *
@@ -11,6 +12,7 @@ from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
+from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
@@ -121,6 +123,8 @@ class PostView(APIView):
             return Post.objects.get(id=uuid)
         except Post.DoesNotExist:
             raise Http404
+        except ValueError:
+            raise ParseError("Malformed UUID")
 
     def get(self, request, pk):
         post = self.get_object(pk)
@@ -243,5 +247,6 @@ class AuthorCreate(FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        self.success_url = form.create_author(self.request.get_host())
+        form.create_author(self.request.get_host())
+        self.success_url = reverse('awaiting-approval') 
         return super(AuthorCreate, self).form_valid(form)
