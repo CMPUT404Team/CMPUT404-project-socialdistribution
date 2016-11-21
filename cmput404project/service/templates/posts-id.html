@@ -1,0 +1,15 @@
+{% load rest_framework %}
+<html><body>
+{% if post %}
+      <div class='post'>
+        <h1 class='post-title'>{{post.title}}</h1>
+        <p class='author'>{{post.author.displayName}}</p>
+        <p class='post-published'>{{post.published}}</p>
+        <p class='post-description'>{{post.description}}</p>
+        <p class='post-content'>{{post.content}}</p>
+        <a href="/posts/{{post.id}}/comments/">Comments</a>
+      </div>
+{% else %}
+  <p>404. No post found</p>
+{% endif %}
+</body></html>

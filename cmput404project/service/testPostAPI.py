@@ -120,8 +120,8 @@ class PostAPITests(APITestCase):
     def test_get_post_by_id(self):
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(str(self.post.id), response.data['id'])
-        self.assertEqual(str(self.post.author.id), response.data['author']['id'])
+        self.assertEqual(str(self.post.id), response.data['serializer']['id'])
+        self.assertEqual(str(self.post.author.id), response.data['serializer']['author']['id'])
 
     def test_get_posts_with_invalid_post_id(self):
         #TODO: tests behaviour for when you get posts with incorrectly
@@ -133,13 +133,13 @@ class PostAPITests(APITestCase):
         comment.save()
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
-        self.assertIsNotNone(response.data['comments'][0]['guid'])
-        self.assertEqual(str(comment.guid), response.data['comments'][0]['guid'])
+        self.assertIsNotNone(response.data['serializer']['comments'][0]['guid'])
+        self.assertEqual(str(comment.guid), response.data['serializer']['comments'][0]['guid'])
 
     def test_get_post_with_empty_comments(self):
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
-        self.assertFalse(response.data['comments'])
+        self.assertFalse(response.data['serializer']['comments'])
 
     def test_get_nonexistent_post_by_id(self):
         self.post.id = uuid.uuid4()
