@@ -18,7 +18,8 @@ class NodeModelTests(TestCase):
         self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
         self.node = Node.create(
             displayName = "The Node",
-            baseUrl = "http://localhost:8000/", #needs to be changed to our actual server
+            host = "localhost", #needs to be changed to our actual server
+            port = 8000,
             user = superuser,
             username = self.remote_username,
             password = self.remote_password 
@@ -34,8 +35,11 @@ class NodeModelTests(TestCase):
     def test_node_displayName_equal(self):
         self.assertEqual(self.node.displayName, "The Node")
 
-    def test_node_baseUrl_equal(self):
-        self.assertEqual(self.node.baseUrl, "http://localhost:8000/")
+    def test_node_host_equal(self):
+        self.assertEqual(self.node.host, "localhost")
+
+    def test_node_port_equal(self):
+        self.assertEqual(self.node.port, 8000)
 
     def test_node_username_equal(self):
         self.assertEqual(self.node.username, self.remote_username)
