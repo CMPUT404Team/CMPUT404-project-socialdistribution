@@ -166,14 +166,6 @@ class PostAPITests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['title'], "The new title")
 
-    def test_update_nonexistent_post(self):
-        # Try to update a post that hasn't been created
-        # Maybe it should have the same result as test_create_post_with_put?
-        self.post.id = uuid.uuid4()
-        put_body = self.get_post_data(self.post, self.author)
-        response = self.create_update_post_with_post(self.post.id, put_body)
-        self.assertEqual(response.status_code, 404)
-
     def test_create_invalid_post(self):
         self.post.id = "not-a-number"
         put_body = self.get_post_data(self.post, self.author)

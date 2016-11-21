@@ -171,12 +171,12 @@ class AuthorPostsView(APIView):
     """
     Return a list of available posts created by specified user
     """
-    def get(self, request, uuid):
+    def get(self, request, pk):
         try:
-            Author.objects.get(id=uuid)
+            Author.objects.get(id=pk)
         except Author.DoesNotExist:
             raise Http404
-        posts = Post.objects.all().filter(author__id=uuid)
+        posts = Post.objects.all().filter(author__id=pk)
         serializer = PostSerializer(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
@@ -266,5 +266,5 @@ class AuthorCreate(FormView):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         form.create_author(self.request.get_host())
-        self.success_url = reverse('awaiting-approval') 
+        self.success_url = reverse('awaiting-approval')
         return super(AuthorCreate, self).form_valid(form)
