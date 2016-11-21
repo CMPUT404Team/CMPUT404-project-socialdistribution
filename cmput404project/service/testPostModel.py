@@ -3,12 +3,15 @@ from models.Post import Post
 from mock import MagicMock, Mock
 import markdown
 from models.Author import Author
+from models.Comment import Comment
 from unittest import skip
+from django.contrib.auth.models import User
 
 class PostModelTests(TestCase):
 
     def setUp(self):
-        self.author = Author(host='127.0.0.1:8000')
+        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
+        self.author = Author.create(host='127.0.0.1:8000', displayName='testMonkey', user=superuser)
         self.author.save()
         self.post = Post.create(self.author,
             title="A post title about a post about web dev",
@@ -65,6 +68,11 @@ class PostModelTests(TestCase):
 
     def test_Post_Number_Of_Comments_To_Display(self):
         self.assertIsNotNone(self.post.size)
+
+    def test_Post_Add_Comment(self):
+        comment = Comment.create_comment("Look at dat comment", self.author, self.post)
+        comment.save()
+        self.assertEqual(self.post.size, 1)
 
     def test_Edit_Title_Description(self):
         new_description = "my new description"
