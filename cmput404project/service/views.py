@@ -121,6 +121,8 @@ class PostView(APIView):
     """
     Get, update or delete a particular post
     """
+    template_name ="posts-id.html"
+    renderer_classes = [TemplateHTMLRenderer]
     def get_object(self, uuid):
         try:
             return Post.objects.get(id=uuid)
@@ -134,7 +136,7 @@ class PostView(APIView):
         comments = Comment.objects.filter(post_id=pk)
         post.comments = comments
         serializer = PostSerializerGet(post, context={'request':request})
-        return Response(serializer.data)
+        return Response({'serializer': serializer.data, 'post': post})
 
     def post(self, request, pk):
         try:
