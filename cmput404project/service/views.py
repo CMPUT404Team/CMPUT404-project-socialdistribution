@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
+from rest_framework.renderers import TemplateHTMLRenderer
 from AuthorForm import AuthorForm
 from django.core.exceptions import SuspiciousOperation
 import json
@@ -102,13 +103,15 @@ class PostsView(APIView):
     """
     Return a list of all public posts or create a new post
     """
+    template_name ="posts.html"
+    renderer_classes = [TemplateHTMLRenderer]
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        return Response({'serializer': serializer.data, 'posts': posts})
 
     def post(self, request):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
