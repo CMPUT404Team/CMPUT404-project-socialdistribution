@@ -1,5 +1,6 @@
 from django.test import TestCase
 from models.Node import Node
+from models.NodeManager import NodeManager
 from mock import MagicMock, Mock
 from models.Author import Author
 from django.contrib.auth.models import User
@@ -16,12 +17,15 @@ class NodeModelTests(TestCase):
         self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
         self.node = Node.create(
             displayName = "The Node",
-            baseUrl = "http://localhost:8000/",
+            baseUrl = "http://localhost:8000/", #needs to be changed to our actual server
             user = superuser,
             username = self.remote_username,
             password = self.remote_password 
             )
         self.node.save()
+
+        self.nodemanager = NodeManager.create()
+        self.nodemanager.save()
 
     def test_node_creates_id(self):
         self.assertIsNotNone(self.node.id)
@@ -46,3 +50,7 @@ class NodeModelTests(TestCase):
         author_id = self.author.id
         posts = self.node.get_posts_by_author(author_id)
         self.assertTrue(hasattr(posts, '__iter__'))
+
+    def test_get_nodes_from_nodemanager(self):
+        nodes = self.nodemanager.get_nodes()
+        self.assertEqual(len(nodes), 1)
