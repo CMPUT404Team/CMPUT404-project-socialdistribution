@@ -2,8 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
-import uuid, requests
-
+import uuid, base64, requests
 
 class Node(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -21,7 +20,7 @@ class Node(models.Model):
             baseUrl = baseUrl,
             user = user,
             username = username,
-            password = password 
+            password = password
             )
 
     def __str__(self):
@@ -29,13 +28,13 @@ class Node(models.Model):
 
     def get_posts(self):
         url = self.baseUrl + "author/posts"
-        r = requests.get(url, auth=(self.username, self.password))
+        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
         posts = r.json()
         return posts
 
     def get_posts_by_author(self, author_id):
         url = self.baseUrl+ "author/" + str(author_id) + "/posts"
-        r = requests.get(url, auth=(self.username, self.password))
+        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
         try:
             posts = r.json()
         except ValueError:

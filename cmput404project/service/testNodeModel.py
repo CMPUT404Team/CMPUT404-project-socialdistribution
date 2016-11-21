@@ -5,6 +5,7 @@ from mock import MagicMock, Mock
 from models.Author import Author
 from django.contrib.auth.models import User
 from unittest import skip
+import base64
 
 class NodeModelTests(TestCase):
 
@@ -12,7 +13,7 @@ class NodeModelTests(TestCase):
         su_username = "superuser"
         su_password = "test1234"
         self.remote_username = "testsuperuser"
-        self.remote_password = "testpassword"
+        self.remote_password = "dGVzdHBhc3N3b3Jk" #testpassword
         superuser = User.objects.create_superuser(su_username, 'test@test.com', su_password)
         self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
         self.node = Node.create(
