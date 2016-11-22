@@ -13,13 +13,13 @@ class NodeModelTests(TestCase):
         su_username = "superuser"
         su_password = "test1234"
         self.remote_username = "testsuperuser"
-        self.remote_password = "dGVzdHBhc3N3b3Jk" #testpassword
+        self.remote_password = "testpassword"
         superuser = User.objects.create_superuser(su_username, 'test@test.com', su_password)
         self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
         self.node = Node.create(
             displayName = "The Node",
             host = "localhost", #needs to be changed to our actual server
-            port = 8000,
+            path = ":8000",
             user = superuser,
             username = self.remote_username,
             password = self.remote_password 
@@ -38,14 +38,14 @@ class NodeModelTests(TestCase):
     def test_node_host_equal(self):
         self.assertEqual(self.node.host, "localhost")
 
-    def test_node_port_equal(self):
-        self.assertEqual(self.node.port, 8000)
+    def test_node_path_equal(self):
+        self.assertEqual(self.node.path, ":8000")
 
     def test_node_username_equal(self):
         self.assertEqual(self.node.username, self.remote_username)
 
     def test_node_password_equal(self):
-        self.assertEqual(self.node.password, self.remote_password)
+        self.assertEqual(base64.b64decode(self.node.password), self.remote_password)
     
     @skip("Error")
     def test_get_posts(self):
