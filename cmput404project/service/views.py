@@ -3,6 +3,7 @@ from rest_framework import generics, viewsets,status
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from django.utils.six import BytesIO
 from models.Comment import Comment
 from service.serializers import *
@@ -11,6 +12,7 @@ from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
+from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
@@ -102,11 +104,14 @@ class PostsView(APIView):
     """
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
-        serializer = PostSerializer(posts, many=True, context={'request':request})
+        for post in posts:
+            comments = Comment.objects.filter(post_id=post.id)
+            post.comments = comments
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PostSerializer(data=request.data, context={'request':request})
+        serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -121,23 +126,33 @@ class PostView(APIView):
             return Post.objects.get(id=uuid)
         except Post.DoesNotExist:
             raise Http404
+        except ValueError:
+            raise ParseError("Malformed UUID")
 
     def get(self, request, pk):
         post = self.get_object(pk)
-        serializer = PostSerializer(post, context={'request':request})
+        comments = Comment.objects.filter(post_id=pk)
+        post.comments = comments
+        serializer = PostSerializerGet(post, context={'request':request})
         return Response(serializer.data)
 
     def post(self, request, pk):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data, context={'request':request})
+        try:
+            post = self.get_object(pk)
+            serializer = PostSerializerPutPost(post, data=request.data, context={'request':request})
+        except Http404:
+            serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data, context={'request':request})
+        try:
+            post = self.get_object(pk)
+            serializer = PostSerializerPutPost(post, data=request.data, context={'request':request})
+        except Http404:
+            serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -154,16 +169,26 @@ class VisiblePostsView(APIView):
     """
     def get(self, request):
         posts = Post.objects.all()#.filter(visibility="?")
-        serializer = PostSerializer(posts, many=True, context={'request':request})
+        for post in posts:
+            comments = Comment.objects.filter(post_id=post.id)
+            post.comments = comments
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
 class AuthorPostsView(APIView):
     """
     Return a list of available posts created by specified user
     """
-    def get(self, request):
-        posts = Post.objects.all()#.filter(author.id="?")
-        serializer = PostSerializer(posts, many=True, context={'request':request})
+    def get(self, request, pk):
+        try:
+            Author.objects.get(id=pk)
+        except Author.DoesNotExist:
+            raise Http404
+        posts = Post.objects.all().filter(author__id=pk)
+        for post in posts:
+            comments = Comment.objects.filter(post_id=post.id)
+            post.comments = comments        
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -188,6 +213,14 @@ class FriendDetailView(APIView):
 	author2 = self.get_object(uuid2)
 	are_friends = author1.is_friend(author2)
 	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
+
+    def delete(self, request, uuid1, uuid2):
+        serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
+        author = self.get_object(uuid1)
+        friend = self.get_object(uuid2)
+        print friend
+        author.friends.remove(friend)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MutualFriendDetailView(APIView):
     '''
@@ -243,5 +276,6 @@ class AuthorCreate(FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        self.success_url = form.create_author(self.request.get_host())
+        form.create_author(self.request.get_host())
+        self.success_url = reverse('awaiting-approval')
         return super(AuthorCreate, self).form_valid(form)

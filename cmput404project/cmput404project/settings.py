@@ -86,13 +86,32 @@ WSGI_APPLICATION = 'cmput404project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'service',
+        'USER': 'serviceuser',
+        'PASSWORD': os.environ['SERVICE_PASSWORD'],
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+# Update database configuration with $DATABASE_URL.
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
+if 'TRAVIS' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql_psycopg2',
+            'NAME':     'travisci',
+            'USER':     'postgres',
+            'PASSWORD': '',
+            'HOST':     'localhost',
+            'PORT':     '',
+        }
+    }
 
 
 # Password validation
@@ -138,6 +157,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
             os.path.join(PROJECT_ROOT, 'static'),
             )
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
 
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 LOGIN_REDIRECT_URL = '/'
