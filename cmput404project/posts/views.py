@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 def index(index):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return redirect("author-add")

@@ -2,8 +2,14 @@ language: python
 python:
         - "2.7"
 
+services:
+        - postgresql
+
 # command to install dependencies
 install: "pip install -r cmput404project/requirements.txt"
+
+before_script:
+        - psql -c "CREATE DATABASE mydb;" -U postgres
 
 # command to run tests
 script: 

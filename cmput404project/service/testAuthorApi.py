@@ -5,9 +5,10 @@ from unittest import skip
 from django.urls import reverse
 from rest_framework import status
 from models.Author import Author
+from AuthorForm import AuthorForm
 import json
 
-class UserViewSetTests(APITestCase):
+class AuthorAPITests(APITestCase):
     def setUp(self):
         superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
         self.client = APIClient()
@@ -16,46 +17,6 @@ class UserViewSetTests(APITestCase):
 	self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
 	self.author.save()
         self.detail_url = reverse('author-detail', kwargs={'pk': self.author.id})
-
-    @skip("Old user stuff")
-    def test_get_valid_user(self):
-        response = self.get_user(1)
-        self.assertEqual(response.status_code, 200)
-        response.render()
-        self.assertIn('"username":"superuser"', response.content)
-    
-    @skip("Old user stuff")
-    def test_get_invalid_user(self):
-        response = self.get_user(999)
-        self.assertEqual(response.status_code, 404)
-
-    @skip("Old user stuff")
-    def test_create_valid_user(self):
-	response = self.create_user('testUser')
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(len(User.objects.filter(username='testUser')), 1)
-
-    @skip("Old user stuff")
-    def test_create_invalid_user(self):
-	response = self.create_user('I am an Invalid username')
-	self.assertEqual(response.status_code, 400)
-
-    @skip("Old user stuff")
-    def test_create_existing_user(self):
-        User.objects.create_user(username='ExistingUser')
-        response = self.create_user('ExistingUser')
-        self.assertEqual(response.status_code, 400)
-    
-    @skip("Old user stuff")
-    def get_user(self, user_id):
-        """
-        Ensure we can create a new account object.
-        """
-        return self.client.get('/users/'+str(user_id)+'/')
-    
-    @skip("Old user stuff")
-    def create_user(self, username):
-        return self.client.post('/users/', {"username":username}, format='json')
     
     def test_get_Author(self):
         response = self.client.get(self.detail_url)
@@ -70,3 +31,33 @@ class UserViewSetTests(APITestCase):
 	json_friend = response.data.get('friends')[0]
 	self.assertIn('testHost',json_friend['host'])
 	self.assertIn('testName',json_friend['displayName'])	
+        
+class AddAuthorApiTests(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.add_url = reverse('author-add')
+
+    def test_add_new_author(self):
+        form = AuthorForm({'displayName':'Yolo Swag', 'password':'4ForLife'})
+        if (form.is_valid()):
+            response = self.client.post(self.add_url, form.cleaned_data)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.url, reverse('awaiting-approval'))
+	    self.assertTrue(Author.objects.filter(displayName='Yolo Swag').exists())
+	    self.assertTrue(User.objects.filter(username='Yolo Swag').exists())
+            self.assertFalse(User.objects.get(username='Yolo Swag').is_active)
+        else:
+            self.fail("You passed invalid data to the form")
+
+    def test_add_new_author_with_existing_username(self):
+        form = AuthorForm({'displayName':'Yolo Swag', 'password':'4ForLife'})
+        if (form.is_valid()):
+	    user = User.objects.create(username='Yolo Swag')
+	    user.save()
+            response = self.client.post(self.add_url, form.cleaned_data)
+            self.assertEqual(response.status_code, 200)
+	    response.render()
+            self.assertIn('is already in use.', response.content)
+        else:
+            self.fail("You passed invalid data to the form")

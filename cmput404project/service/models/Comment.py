@@ -26,6 +26,8 @@ class Comment(models.Model):
             createdComment = cls(comment = comm, author = auth, post = post)
         else:
             createdComment=None
+        post.size += 1
+        post.save()
         return createdComment
 
     def __str__(self):
