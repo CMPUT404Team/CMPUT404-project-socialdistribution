@@ -104,6 +104,9 @@ class PostsView(APIView):
     """
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
+        for post in posts:
+            comments = Comment.objects.filter(post_id=post.id)
+            post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
@@ -166,6 +169,9 @@ class VisiblePostsView(APIView):
     """
     def get(self, request):
         posts = Post.objects.all()#.filter(visibility="?")
+        for post in posts:
+            comments = Comment.objects.filter(post_id=post.id)
+            post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
@@ -179,6 +185,9 @@ class AuthorPostsView(APIView):
         except Author.DoesNotExist:
             raise Http404
         posts = Post.objects.all().filter(author__id=pk)
+        for post in posts:
+            comments = Comment.objects.filter(post_id=post.id)
+            post.comments = comments        
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
