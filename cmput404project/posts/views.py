@@ -20,7 +20,7 @@ class PostsView(APIView):
     # password='superuser'
     password = os.environ.get('FRONTEND_PASSWORD')
     # host = 'http://localhost:8000/'
-    host = 'http://winter-resonance.herokuapp.com'
+    host = 'http://winter-resonance.herokuapp.com/'
     def get(self, request):
         url = self.host + 'posts/'
         req = urllib2.Request(url)
@@ -35,7 +35,7 @@ class FriendView(APIView):
     password = os.environ.get('FRONTEND_PASSWORD')
     # username = 'admin'
     # password = 'superuser'
-    host = 'http://winter-resonance.herokuapp.com'
+    host = 'http://winter-resonance.herokuapp.com/'
     # host = 'http://localhost:8000/'
     def get(self, request):
 	print (str(request.user.id))
