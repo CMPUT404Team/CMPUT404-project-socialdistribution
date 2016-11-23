@@ -28,7 +28,7 @@ class PostsView(APIView):
         req.add_header("Authorization", "Basic %s" % base64string)
         serialized_data = urllib2.urlopen(req).read()
         posts = json.loads(serialized_data)
-        return render(request, "posts.html", {"posts":posts})
+        return render(request, "posts.html", {"posts":posts['posts']})
 
 
 class FriendView(APIView):
