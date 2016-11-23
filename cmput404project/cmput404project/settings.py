@@ -25,6 +25,9 @@ SECRET_KEY = 'fhi=2hwn4^m=ad0xzj9577$w*01&j97xh(ibxcb7zo9ng9&=*o'
 #Current host
 CURRENT_HOST = 'http://localhost:8000'
 
+#our default frontend user
+USERNAME = 'dogordie'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

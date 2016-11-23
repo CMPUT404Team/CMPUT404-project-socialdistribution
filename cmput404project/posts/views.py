@@ -14,11 +14,8 @@ def index(index):
 class PostView(APIView):
     '''
     '''
-    username = 'dogordie'
-    # username = 'admin'
-    # password='superuser'
+    username = getattr(settings, 'USERNAME')
     password = os.environ.get('FRONTEND_PASSWORD')
-    # host = 'http://localhost:8000/'
     host = getattr(settings, 'CURRENT_HOST')
     def get(self, request, pk):
         url = self.host + '/posts/' + str(pk)
@@ -32,12 +29,9 @@ class PostView(APIView):
 class PostsView(APIView):
     '''
     '''
-    username = 'dogordie'
-    # username = 'admin'
-    # password='superuser'
+    username = getattr(settings, 'USERNAME')
     password = os.environ.get('FRONTEND_PASSWORD')
-    # host = 'http://localhost:8000/'
-    host = 'http://winter-resonance.herokuapp.com/'
+    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request):
         url = self.host + 'frontend/posts/'
         req = urllib2.Request(url)
@@ -50,12 +44,9 @@ class PostsView(APIView):
 class AuthorPostsView(APIView):
     '''
     '''
-    username = 'dogordie'
-    # username = 'admin'
-    # password='superuser'
+    username = getattr(settings, 'USERNAME')
     password = os.environ.get('FRONTEND_PASSWORD')
-    # host = 'http://localhost:8000/'
-    host = 'http://winter-resonance.herokuapp.com/'
+    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request):
         url = self.host + 'frontend/author/posts/'
         req = urllib2.Request(url)
@@ -66,11 +57,9 @@ class AuthorPostsView(APIView):
         return render(request, "author-posts.html", {"posts":posts['posts']})
 
 class FriendView(APIView):
-    username = 'dogordie'
+    username = getattr(settings, 'USERNAME')
     password = os.environ.get('FRONTEND_PASSWORD')
-    #username = 'admin'
-    #password = 'superuser'
-    host = 'http://winter-resonance.herokuapp.com/'
+    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request):
         username = request.user.username
 
