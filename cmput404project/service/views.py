@@ -36,6 +36,69 @@ class GroupViewSet(viewsets.ModelViewSet):
 class CommentAPIView(APIView):
     """
     API endpoint that allows the comments of a post to be viewed.
+
+
+    Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/comments
+
+
+    Output: 
+
+
+    HTTP 200 OK
+    Allow: GET, POST, HEAD, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+
+    [
+        {
+            "author": {
+                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+                "displayName": "asdfg",
+                "host": "asdf",
+                "friends": []
+            },
+            "pubDate": "2016-11-16T21:40:56Z",
+            "comment": "commmmmmm",
+            "guid": "73f06229-395c-4bde-8058-fd3847133658"
+        },
+        {
+            "author": {
+                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+                "displayName": "asdfg",
+                "host": "asdf",
+                "friends": []
+            },
+            "pubDate": "2016-11-16T23:28:33.066754Z",
+            "comment": "",
+            "guid": "ccfb10e5-b04b-46bd-8055-fa49a582e455"
+        },
+        {
+            "author": {
+                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+                "displayName": "asdfg",
+                "host": "asdf",
+                "friends": []
+            },
+            "pubDate": "2016-11-16T23:34:47.129404Z",
+            "comment": "",
+            "guid": "ebcbda5b-afb3-4b13-b82b-8f29cb48e273"
+        },
+        {
+            "author": {
+                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+                "displayName": "asdfg",
+                "host": "asdf",
+                "friends": []
+            },
+            "pubDate": "2016-11-16T23:47:23.826697Z",
+            "comment": "",
+            "guid": "41c28ee7-527a-4bd2-95b2-faed5a10fdde"
+        }
+    ]
     """
     #Do if check request time in one function??
     def get_comments(self, postId):
@@ -76,6 +139,22 @@ class CommentAPIView(APIView):
 class AuthorDetailView(APIView):
     '''
     Used to get the profile information of an author.
+
+    Input: http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/
+    Output: 
+    
+    HTTP 200 OK
+    Allow: GET, HEAD, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+
+    {
+        "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+        "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+        "displayName": "asdfg",
+        "host": "asdf",
+        "friends": []
+    }
     '''
     def get_object(self, uuid):
         try:
@@ -90,7 +169,38 @@ class AuthorDetailView(APIView):
 
 class PostsView(APIView):
     """
-    Return a list of all public posts or create a new post
+    Return a list of all public posts or create a new post \n\n
+    
+    Input: http://localhost:8000/posts/
+    Output: 
+
+    HTTP 200 OK
+    Allow: GET, POST, HEAD, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+
+    [
+        {
+            "title": "cd",
+            "source": "sadf",
+            "origin": "ds",
+            "content": "",
+            "contentType": "text/plain",
+            "description": "",
+            "author": {
+                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+                "displayName": "asdfg",
+                "host": "asdf"
+            },
+            "count": 0,
+            "size": 50,
+            "next": "est",
+            "published": "2016-11-16T21:37:02.127923Z",
+            "id": "1dd49764-c855-4914-9785-508891598503",
+            "visibility": "PUBLIC"
+        }
+    ]
     """
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
@@ -107,6 +217,35 @@ class PostsView(APIView):
 class PostView(APIView):
     """
     Get, update or delete a particular post
+
+    Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/
+    Output: 
+
+    HTTP 200 OK
+    Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+
+    {
+        "title": "cd",
+        "source": "sadf",
+        "origin": "ds",
+        "content": "",
+        "contentType": "text/plain",
+        "description": "",
+        "author": {
+            "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+            "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+            "displayName": "asdfg",
+            "host": "asdf"
+        },
+        "count": 0,
+        "size": 50,
+        "next": "est",
+        "published": "2016-11-16T21:37:02.127923Z",
+        "id": "1dd49764-c855-4914-9785-508891598503",
+        "visibility": "PUBLIC"
+    }
     """
     def get_object(self, uuid):
         try:
@@ -142,7 +281,38 @@ class PostView(APIView):
     
 class VisiblePostsView(APIView):
     """
-    Return a list of all posts available to the currently authenticated user
+    Return a list of all posts available to the currently authenticated user       
+
+    Input: http://localhost:8000/author/posts/
+    Output: 
+
+    HTTP 200 OK
+    Allow: GET, HEAD, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+
+    [
+        {
+            "title": "cd",
+            "source": "sadf",
+            "origin": "ds",
+            "content": "",
+            "contentType": "text/plain",
+            "description": "",
+            "author": {
+                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
+                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
+                "displayName": "asdfg",
+                "host": "asdf"
+            },
+            "count": 0,
+            "size": 50,
+            "next": "est",
+            "published": "2016-11-16T21:37:02.127923Z",
+            "id": "1dd49764-c855-4914-9785-508891598503",
+            "visibility": "PUBLIC"
+        }
+    ]
     """
     def get(self, request):
         posts = Post.objects.all()#.filter(visibility="?")
@@ -152,6 +322,11 @@ class VisiblePostsView(APIView):
 class AuthorPostsView(APIView):
     """
     Return a list of available posts created by specified user
+
+    GET Request object properties:
+    request
+    posts - the list of posts an author has
+    uuid - author id
     """
     def get(self, request):
         posts = Post.objects.all()#.filter(author.id="?")
@@ -168,6 +343,15 @@ class FriendDetailView(APIView):
     '''
     Used to determine whether two users are friends with eachother. This 
     means that each user will have the other user in their friends list.
+
+    GET Request object properties:
+    request
+    author1 - an object with the following properties:
+         *uuid - author1 author id
+         *host - author1 host
+    author2 - an object with the following properties:
+         *uuid - author2 author id
+         *host - author2 host
     '''
     def get_object(self, uuid):
 	try:
@@ -186,10 +370,15 @@ class MutualFriendDetailView(APIView):
     Used to list all the mutual friends between two authors. A post from an author
     will occur, with all their friends, and the uuid in the url will give the link
     of the friend to check it with.
+
+    GET Response object properties:
+    uuid1 - author1's uuid
+    uuid2 - author2's uuid
+    mutual_friends - the list of mutual friends both authors shares in common
     '''
     def post(self, request, uuid):
         serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
-	mutual_friends = []
+	Fmutual_friends = []
         if (serializer.is_valid(raise_exception=True)):
             author = self.get_object(serializer.validated_data['author'])
 	    author_all_friends = author.get_friends()
@@ -213,6 +402,21 @@ class MutualFriendDetailView(APIView):
 class FriendRequestView(APIView):
     '''
     Used to make a friend request. 
+
+    POST Request object properties:
+    request
+    author - an object with the following properties:
+              * uuid - the author id
+              * host - the author host
+    friend - an object with the following properties:
+             * uuid - the friend's author id
+             * host - the friend's host
+             * url - the url where friend is located
+    POST Response object properties:
+    Posting will manipulate the database, but not return any
+    serialized data. A response of success will be returned
+    on a successful request, the response will be an error
+    message otherwise.
     '''
     def get_object(self, uuid):
         try:
