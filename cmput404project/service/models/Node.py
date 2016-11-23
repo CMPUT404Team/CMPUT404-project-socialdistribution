@@ -43,7 +43,6 @@ class Node(models.Model):
         baseUrl = 'http://' + self.host + self.path
         url = baseUrl + "/posts"
         try:
-            posts = r.json()
             r = urllib2.Request(url)
             base64string = base64.b64encode('%s:%s' % (self.username, self.password))
             r.add_header("Authorization", "Basic %s" % base64string)
