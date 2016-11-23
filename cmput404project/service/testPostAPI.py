@@ -102,7 +102,7 @@ class PostAPITests(APITestCase):
         self.new_post_setup(self.author, "PUBLIC")
         response = self.get_public_posts()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data[1]['visibility'], "PUBLIC")
+        self.assertEqual(response.data['posts'][1]['visibility'], "PUBLIC")
 
     def test_get_posts_by_author_id(self):
         # Return all the posts made by an author with a specific ID

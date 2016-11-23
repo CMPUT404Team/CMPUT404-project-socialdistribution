@@ -43,7 +43,7 @@ class CommentAPIView(APIView):
     Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/comments
 
 
-    Output: 
+    Output:
 
 
     HTTP 200 OK
@@ -151,8 +151,8 @@ class AuthorDetailView(APIView):
     Used to get the profile information of an author.
 
     Input: http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/
-    Output: 
-    
+    Output:
+
     HTTP 200 OK
     Allow: GET, HEAD, OPTIONS
     Content-Type: application/json
@@ -180,9 +180,9 @@ class AuthorDetailView(APIView):
 class PostsView(APIView):
     """
     Return a list of all public posts or create a new post \n\n
-    
+
     Input: http://localhost:8000/posts/
-    Output: 
+    Output:
 
     HTTP 200 OK
     Allow: GET, POST, HEAD, OPTIONS
@@ -218,7 +218,7 @@ class PostsView(APIView):
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        return Response({'posts':serializer.data})
 
     def post(self, request):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
@@ -232,7 +232,7 @@ class PostView(APIView):
     Get, update or delete a particular post
 
     Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/
-    Output: 
+    Output:
 
     HTTP 200 OK
     Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
@@ -304,10 +304,10 @@ class PostView(APIView):
 
 class VisiblePostsView(APIView):
     """
-    Return a list of all posts available to the currently authenticated user       
+    Return a list of all posts available to the currently authenticated user
 
     Input: http://localhost:8000/author/posts/
-    Output: 
+    Output:
 
     HTTP 200 OK
     Allow: GET, HEAD, OPTIONS
@@ -362,7 +362,7 @@ class AuthorPostsView(APIView):
         posts = Post.objects.all().filter(author__id=pk)
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
-            post.comments = comments        
+            post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
@@ -442,7 +442,7 @@ class MutualFriendDetailView(APIView):
 
 class FriendRequestView(APIView):
     '''
-    Used to make a friend request. 
+    Used to make a friend request.
 
     POST Request object properties:
     request
