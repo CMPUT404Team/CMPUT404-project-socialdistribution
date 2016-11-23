@@ -344,7 +344,7 @@ class VisiblePostsView(APIView):
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        return Response({'posts':serializer.data})
 
 class AuthorPostsView(APIView):
     """
@@ -491,4 +491,12 @@ class PostsNodesView(APIView):
     """
     def get(self, request):
         posts = NodeManager.get_public_posts()
+        return Response({'query':'frontend-posts', "posts":posts})
+
+class VisiblePostsNodesView(APIView):
+    """
+    Return a list of all posts available to the currently authenticated users
+    """
+    def get(self, request):
+        posts = NodeManager.get_posts()
         return Response({'query':'frontend-posts', "posts":posts})

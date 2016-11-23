@@ -15,7 +15,8 @@ urlpatterns = [
     url(r'^friends/(?P<uuid>[^/]+)/', views.MutualFriendDetailView.as_view(),name='mutual-friend'),
     url(r'^author/(?P<pk>[^/]+)/$', views.AuthorDetailView.as_view(), name='author-detail'),
     url(r'^author/awaiting-approval$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
-    url(r'^frontend/posts/$', views.PostsNodesView.as_view(), name='frontend-public-posts')
+    url(r'^frontend/posts/$', views.PostsNodesView.as_view(), name='frontend-public-posts'),
+    url(r'^frontend/author/posts/$', views.VisiblePostsNodesView.as_view(), name='frontend-visible-posts')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

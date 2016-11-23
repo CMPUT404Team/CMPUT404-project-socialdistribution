@@ -80,8 +80,8 @@ class PostAPITests(APITestCase):
     def test_get_posts_by_current_author(self):
         response = self.get_posts_by_current_user()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(self.post.id), response.data[0]['id'])
-        self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
+        self.assertEqual(str(self.post.id), response.data['posts'][0]['id'])
+        self.assertEqual(str(self.post.author.id), response.data['posts'][0]['author']['id'])
 
     def test_no_posts_by_current_author(self):
         post_id = self.post.id

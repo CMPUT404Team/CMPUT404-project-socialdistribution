@@ -44,3 +44,15 @@ class NodeManager(models.Model):
                 stream.append(jsonData['posts'][i])
                 i+=1
         return stream
+
+    @classmethod
+    def get_posts(self):
+        stream = []
+        nodes = self.get_nodes()
+        for node in nodes:
+            jsonData = node.get_posts()
+            i = 0
+            for post in jsonData['posts']:
+                stream.append(jsonData['posts'][i])
+                i+=1
+        return stream

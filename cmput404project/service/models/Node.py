@@ -32,18 +32,25 @@ class Node(models.Model):
     def get_posts(self):
         baseUrl = 'http://' + self.host + self.path
         url = baseUrl + "/author/posts"
-        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
-        posts = r.json()
+        r = urllib2.Request(url)
+        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
+        r.add_header("Authorization", "Basic %s" % base64string)
+        f = urllib2.urlopen(r).read()
+        posts = json.loads(f)
         return posts
 
     def get_posts_by_author(self, author_id):
         baseUrl = 'http://' + self.host + self.path
-        url = baseUrl+ "/author/" + str(author_id) + "/posts"
-        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
+        url = baseUrl + "/posts"
         try:
             posts = r.json()
+            r = urllib2.Request(url)
+            base64string = base64.b64encode('%s:%s' % (self.username, self.password))
+            r.add_header("Authorization", "Basic %s" % base64string)
+            f = urllib2.urlopen(r).read()
+            posts = json.loads(f)
         except ValueError:
-            posts = []
+            posts = {}
         return posts
 
     def get_public_posts(self):
