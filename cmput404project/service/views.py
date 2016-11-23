@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
 from django.core.exceptions import SuspiciousOperation
+from models.NodeManager import NodeManager
 import json
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -387,16 +388,16 @@ class FriendDetailView(APIView):
          *host - author2 host
     '''
     def get_object(self, uuid):
-	try:
-	    return Author.objects.get(id=uuid)
-	except Author.DoesNotExist:
-	    raise Http404
+        try:
+            return Author.objects.get(id=uuid)
+        except Author.DoesNotExist:
+            raise Http404
 
     def get(self, request, uuid1, uuid2):
-	author1 = self.get_object(uuid1)
-	author2 = self.get_object(uuid2)
-	are_friends = author1.is_friend(author2)
-	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
+        author1 = self.get_object(uuid1)
+        author2 = self.get_object(uuid2)
+        are_friends = author1.is_friend(author2)
+        return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
 
     def delete(self, request, uuid1, uuid2):
         serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
@@ -419,15 +420,15 @@ class MutualFriendDetailView(APIView):
     '''
     def post(self, request, uuid):
         serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
-	Fmutual_friends = []
+        mutual_friends = []
         if (serializer.is_valid(raise_exception=True)):
             author = self.get_object(serializer.validated_data['author'])
-	    author_all_friends = author.get_friends()
-	    friend_check = serializer.validated_data['authors']
-	    for friend in friend_check:
-		if friend in author_all_friends:
-		    mutual_friends.append(friend)
-            return Response({'query':'friends','author':author.id,'friends':mutual_friends})
+        author_all_friends = author.get_friends()
+        friend_check = serializer.validated_data['authors']
+        for friend in friend_check:
+            if friend in author_all_friends:
+                mutual_friends.append(friend)
+                return Response({'query':'friends','author':author.id,'friends':mutual_friends})
 
     def get_object(self, uuid):
         try:
@@ -437,7 +438,7 @@ class MutualFriendDetailView(APIView):
 
     def get(self, request, uuid):
         author = self.get_object(uuid)
-	friends = author.get_friends()
+        friends = author.get_friends()
         return Response({'query':'friends', 'friends':friends})
 
 class FriendRequestView(APIView):
@@ -483,3 +484,11 @@ class AuthorCreate(FormView):
         form.create_author(self.request.get_host())
         self.success_url = reverse('awaiting-approval')
         return super(AuthorCreate, self).form_valid(form)
+
+class PostsNodesView(APIView):
+    """
+    Return a list of all public posts from all Nodes
+    """
+    def get(self, request):
+        posts = NodeManager.get_public_posts()
+        return Response({'query':'frontend-posts', "posts":posts})
