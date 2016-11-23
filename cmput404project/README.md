@@ -12,3 +12,4 @@ and hit the endpoint /docs. Ex) http://localhost:8000/docs
 References
 ==========
 Author: Victor Silva Source: http://stackoverflow.com/a/20012419
+Author: yayitswei Source: http://stackoverflow.com/questions/2407126/python-urllib2-basic-auth-problem
