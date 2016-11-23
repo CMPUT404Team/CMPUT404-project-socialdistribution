@@ -3,14 +3,31 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from rest_framework.renderers import TemplateHTMLRenderer
-import urllib2, base64
-import json
+import urllib2, base64, json, os
 from rest_framework.views import APIView
 from django.template.response import TemplateResponse
-import os
+from django.conf import settings
 
 def index(index):
     return redirect("author-add")
+
+class PostView(APIView):
+    '''
+    '''
+    username = 'dogordie'
+    # username = 'admin'
+    # password='superuser'
+    password = os.environ.get('FRONTEND_PASSWORD')
+    # host = 'http://localhost:8000/'
+    host = getattr(settings, 'CURRENT_HOST')
+    def get(self, request, pk):
+        url = self.host + '/posts/' + str(pk)
+        req = urllib2.Request(url)
+        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
+        req.add_header("Authorization", "Basic %s" % base64string)
+        serialized_data = urllib2.urlopen(req).read()
+        post = json.loads(serialized_data)
+        return render(request, "posts-id.html", {"post":post})
 
 class PostsView(APIView):
     '''
@@ -51,12 +68,12 @@ class AuthorPostsView(APIView):
 class FriendView(APIView):
     username = 'dogordie'
     password = os.environ.get('FRONTEND_PASSWORD')
-    username = 'admin'
-    password = 'superuser'
+    #username = 'admin'
+    #password = 'superuser'
     host = 'http://winter-resonance.herokuapp.com/'
     def get(self, request):
         username = request.user.username
-        
+
         url = self.host + 'friends/' + str(username)
         req = urllib2.Request(url)
         base64string = base64.b64encode('%s:%s' % (username, self.password))

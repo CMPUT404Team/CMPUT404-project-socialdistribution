@@ -5,7 +5,8 @@ from . import views
 
 urlpatterns = [
             url(r'^$', views.index, name='index'),
-            url(r'^dogo/posts/$', views.PostsView.as_view(), name='publicPosts'),
-            url(r'^dogo/friends/$', views.FriendView.as_view(), name='friend-detail'),
-            url(r'^dogo/author/posts/$', views.AuthorPostsView.as_view(), name='authorPosts')
+            url(r'^doggo/posts/$', views.PostsView.as_view(), name='publicPosts'),
+            url(r'^doggo/posts/(?P<pk>[^/]+)/$', views.PostView.as_view(), name='post'),
+            url(r'^doggo/friends/$', views.FriendView.as_view(), name='friend-detail'),
+            url(r'^doggo/author/posts/$', views.AuthorPostsView.as_view(), name='authorPosts')
             ]
