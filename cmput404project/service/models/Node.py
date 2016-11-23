@@ -53,5 +53,5 @@ class Node(models.Model):
         base64string = base64.b64encode('%s:%s' % (self.username, self.password))
         r.add_header("Authorization", "Basic %s" % base64string)
         f = urllib2.urlopen(r).read()
-        #posts = json.loads(f)
-        return f#posts
+        posts = json.loads(f)
+        return posts
