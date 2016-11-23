@@ -19,8 +19,7 @@ class PostsView(APIView):
     #username = 'alex'
     #password='test1234'
     password = os.environ.get('FRONTEND_PASSWORD')
-    print password
-    host = 'http://127.0.0.1:8000/'
+    host = 'http://localhost:5000/'
     def get(self, request):
         url = self.host + 'posts/'
         req = urllib2.Request(url)
