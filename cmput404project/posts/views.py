@@ -11,62 +11,48 @@ from django.conf import settings
 def index(index):
     return redirect("author-add")
 
+def get_json_from_api(self, url):
+    req = urllib2.Request(url)
+    base64string = base64.b64encode('%s:%s' % (getattr(settings, 'USERNAME'), os.environ.get('FRONTEND_PASSWORD')))
+    req.add_header("Authorization", "Basic %s" % base64string)
+    serialized_data = urllib2.urlopen(req).read()
+    return json.loads(serialized_data)
+
 class PostView(APIView):
     '''
     '''
-    username = getattr(settings, 'USERNAME')
-    password = os.environ.get('FRONTEND_PASSWORD')
-    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request, pk):
-        url = self.host + '/posts/' + str(pk)
-        req = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-        req.add_header("Authorization", "Basic %s" % base64string)
-        serialized_data = urllib2.urlopen(req).read()
-        post = json.loads(serialized_data)
+        url = getattr(settings, 'CURRENT_HOST') + '/posts/' + str(pk)
+        post = get_data_from_api(url)
         return render(request, "posts-id.html", {"post":post})
+
+class CommentView(APIView):
+    '''
+    '''
+    def get(self, request, pk):
+        url = getattr(settings, 'CURRENT_HOST') + '/posts/' + str(pk) + '/comments/'
+        post = get_data_from_api(url)
+        return render(request, "posts-id-comments.html", {"post":post})
 
 class PostsView(APIView):
     '''
     '''
-    username = getattr(settings, 'USERNAME')
-    password = os.environ.get('FRONTEND_PASSWORD')
-    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request):
-        url = self.host + 'frontend/posts/'
-        req = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-        req.add_header("Authorization", "Basic %s" % base64string)
-        serialized_data = urllib2.urlopen(req).read()
-        posts = json.loads(serialized_data)
+        url = getattr(settings, 'CURRENT_HOST') + 'frontend/posts/'
+        posts = get_data_from_api(url)
         return render(request, "posts.html", {"posts":posts['posts']})
 
 class AuthorPostsView(APIView):
     '''
     '''
-    username = getattr(settings, 'USERNAME')
-    password = os.environ.get('FRONTEND_PASSWORD')
-    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request):
-        url = self.host + 'frontend/author/posts/'
-        req = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-        req.add_header("Authorization", "Basic %s" % base64string)
-        serialized_data = urllib2.urlopen(req).read()
-        posts = json.loads(serialized_data)
+        url = getattr(settings, 'CURRENT_HOST') + 'frontend/author/posts/'
+        posts = get_data_from_api(url)
         return render(request, "author-posts.html", {"posts":posts['posts']})
 
 class FriendView(APIView):
-    username = getattr(settings, 'USERNAME')
-    password = os.environ.get('FRONTEND_PASSWORD')
-    host = getattr(settings, 'CURRENT_HOST')
     def get(self, request):
         username = request.user.username
-
-        url = self.host + 'friends/' + str(username)
-        req = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (username, self.password))
-        req.add_header("Authorization", "Basic %s" % base64string)
-        serialized_data = urllib2.urlopen(req).read()
-        friends = json.loads(serialized_data)
+        url = getattr(settings, 'CURRENT_HOST') + 'friends/' + str(username)
+        friends = get_data_from_api(url)
         return render(request, "friends.html", {"friends":friends})
