@@ -30,6 +30,23 @@ class PostsView(APIView):
         posts = json.loads(serialized_data)
         return render(request, "posts.html", {"posts":posts['posts']})
 
+class AuthorPostsView(APIView):
+    '''
+    '''
+    username = 'dogordie'
+    # username = 'admin'
+    # password='superuser'
+    password = os.environ.get('FRONTEND_PASSWORD')
+    # host = 'http://localhost:8000/'
+    host = 'http://winter-resonance.herokuapp.com/'
+    def get(self, request):
+        url = self.host + 'frontend/author/posts/'
+        req = urllib2.Request(url)
+        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
+        req.add_header("Authorization", "Basic %s" % base64string)
+        serialized_data = urllib2.urlopen(req).read()
+        posts = json.loads(serialized_data)
+        return render(request, "author-posts.html", {"posts":posts['posts']})
 
 class FriendView(APIView):
     username = 'dogordie'
