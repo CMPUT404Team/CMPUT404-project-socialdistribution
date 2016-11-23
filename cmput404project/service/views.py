@@ -109,7 +109,7 @@ class PostsView(APIView):
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        return Response({'posts':serializer.data})
 
     def post(self, request):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
@@ -188,7 +188,7 @@ class AuthorPostsView(APIView):
         posts = Post.objects.all().filter(author__id=pk)
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
-            post.comments = comments        
+            post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 

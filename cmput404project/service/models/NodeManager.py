@@ -35,18 +35,12 @@ class NodeManager(models.Model):
 
     @classmethod
     def get_public_posts(self):
-        print "hello"
-        # '[{ashdsakshdsjad}]'
         stream = []
         nodes = self.get_nodes()
         for node in nodes:
             jsonData = node.get_public_posts()
-            #stream = jsonData['posts']
-            #print jsonData['posts']
-
-            #print jsonData[0]
-            #stream.append(jsonData[0])
-            #stream = jsonData
-            #stream = self.concatJson(stream, dict(jsonData))
-            #stream += jsonData
-        return jsonData
+            i = 0
+            for post in jsonData['posts']:
+                stream.append(jsonData['posts'][i])
+                i+=1
+        return stream
