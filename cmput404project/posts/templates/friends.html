@@ -1,0 +1,14 @@
+{% load rest_framework %}
+<html><body>
+{% if friends %}
+  <ul class = 'friend-list'>
+      <div class='friend'>
+        {% for friend in friends.friends%}
+        <p>Friends <a class='friend-id' href="/author/{{friend}}/">{{friend}}</a></p>
+      </div>
+        {% endfor %}
+  </ul>
+{% else %}
+  <p>No friends available.</p>
+{% endif %}
+</body></html>
