@@ -16,7 +16,6 @@ from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
-from rest_framework.renderers import TemplateHTMLRenderer
 from AuthorForm import AuthorForm
 from django.core.exceptions import SuspiciousOperation
 import json
@@ -103,12 +102,10 @@ class PostsView(APIView):
     """
     Return a list of all public posts or create a new post
     """
-    template_name ="posts.html"
-    renderer_classes = [TemplateHTMLRenderer]
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'serializer': serializer.data, 'posts': posts})
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
@@ -121,8 +118,6 @@ class PostView(APIView):
     """
     Get, update or delete a particular post
     """
-    template_name ="posts-id.html"
-    renderer_classes = [TemplateHTMLRenderer]
     def get_object(self, uuid):
         try:
             return Post.objects.get(id=uuid)
@@ -136,7 +131,7 @@ class PostView(APIView):
         comments = Comment.objects.filter(post_id=pk)
         post.comments = comments
         serializer = PostSerializerGet(post, context={'request':request})
-        return Response({'serializer': serializer.data, 'post': post})
+        return Response(serializer.data)
 
     def post(self, request, pk):
         try:
