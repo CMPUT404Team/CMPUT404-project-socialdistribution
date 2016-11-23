@@ -22,6 +22,15 @@ class NodeManager(models.Model):
         self.__class__.objects.exclude(id=self.id).delete()
         super(NodeManager, self).save(*args, **kwargs)
 
+    @classmethod
     def get_nodes(self):
         nodes = Node.objects.all()
         return nodes
+
+    @classmethod
+    def get_public_posts(self):
+        stream = []
+        nodes = self.get_nodes()
+        for node in nodes:
+            stream += node.get_public_posts()
+        return stream

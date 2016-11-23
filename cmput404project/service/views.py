@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
 from django.core.exceptions import SuspiciousOperation
+from models.NodeManager import NodeManager
 import json
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -248,7 +249,7 @@ class MutualFriendDetailView(APIView):
 
     def get(self, request, uuid):
         author = self.get_object(uuid)
-	friends = author.get_friends()
+        friends = author.get_friends()
         return Response({'query':'friends', 'friends':friends})
 
 class FriendRequestView(APIView):
@@ -279,3 +280,12 @@ class AuthorCreate(FormView):
         form.create_author(self.request.get_host())
         self.success_url = reverse('awaiting-approval')
         return super(AuthorCreate, self).form_valid(form)
+
+class PostsNodesView(APIView):
+    """
+    Return a list of all public posts from all Nodes
+    """
+    def get(self, request):
+        posts = NodeManager.get_public_posts()
+        print posts
+        return Response({'query':'frontend-posts', 'posts':posts})

@@ -49,5 +49,5 @@ class Node(models.Model):
         baseUrl = 'http://' + self.host + self.path
         url = baseUrl + "/posts"
         r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
-        posts = r.json()
+        posts = r.decode().encode('utf-8').json()
         return posts
