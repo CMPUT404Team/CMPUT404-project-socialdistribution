@@ -4,7 +4,7 @@
   <ul class = 'public-posts'>
     {% for post in posts %}
       <div class='post'>
-        <a href="http://winter-resonance/herokuapp.com/posts/{{post.id}}/">{{post.title}}</a>
+        <a href="/posts/{{post.id}}/">{{post.title}}</a>
         <p class='author'>{{post.author.displayName}}</p>
         <p class='post-published'>{{post.published}}</p>
         <p class='post-description'>{{post.description}}</p>
