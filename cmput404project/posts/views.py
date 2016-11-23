@@ -54,14 +54,12 @@ class FriendView(APIView):
     username = 'admin'
     password = 'superuser'
     host = 'http://winter-resonance.herokuapp.com/'
-    host = 'http://localhost:8000/'
     def get(self, request):
-        user = request.user.username
+        username = request.user.username
         
-        print str(user.username)
-        url = self.host + 'friends/' + str(user.username)
+        url = self.host + 'friends/' + str(username)
         req = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
+        base64string = base64.b64encode('%s:%s' % (username, self.password))
         req.add_header("Authorization", "Basic %s" % base64string)
         serialized_data = urllib2.urlopen(req).read()
         friends = json.loads(serialized_data)
