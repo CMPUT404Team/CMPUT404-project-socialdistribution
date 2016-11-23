@@ -56,6 +56,10 @@ class NodeModelTests(TestCase):
         author_id = self.author.id
         posts = self.node.get_posts_by_author(author_id)
         self.assertTrue(hasattr(posts, '__iter__'))
+    @skip("Error")
+    def test_get_public_posts(self):
+        posts = self.node.get_public_posts()
+        self.assertTrue(hasattr(posts, '__iter__'))
 
     def test_get_nodes_from_nodemanager(self):
         nodes = self.nodemanager.get_nodes()

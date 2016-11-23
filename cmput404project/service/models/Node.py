@@ -44,3 +44,10 @@ class Node(models.Model):
         except ValueError:
             posts = []
         return posts
+
+    def get_public_posts(self):
+        baseUrl = 'http://' + self.host + self.path
+        url = baseUrl + "/posts"
+        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
+        posts = r.json()
+        return posts
