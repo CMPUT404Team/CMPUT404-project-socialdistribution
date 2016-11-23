@@ -204,16 +204,16 @@ class FriendDetailView(APIView):
     means that each user will have the other user in their friends list.
     '''
     def get_object(self, uuid):
-	try:
-	    return Author.objects.get(id=uuid)
-	except Author.DoesNotExist:
-	    raise Http404
+        try:
+            return Author.objects.get(id=uuid)
+        except Author.DoesNotExist:
+            raise Http404
 
     def get(self, request, uuid1, uuid2):
-	author1 = self.get_object(uuid1)
-	author2 = self.get_object(uuid2)
-	are_friends = author1.is_friend(author2)
-	return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
+        author1 = self.get_object(uuid1)
+        author2 = self.get_object(uuid2)
+        are_friends = author1.is_friend(author2)
+        return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
 
     def delete(self, request, uuid1, uuid2):
         serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
@@ -231,15 +231,15 @@ class MutualFriendDetailView(APIView):
     '''
     def post(self, request, uuid):
         serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
-	mutual_friends = []
+        mutual_friends = []
         if (serializer.is_valid(raise_exception=True)):
             author = self.get_object(serializer.validated_data['author'])
-	    author_all_friends = author.get_friends()
-	    friend_check = serializer.validated_data['authors']
-	    for friend in friend_check:
-		if friend in author_all_friends:
-		    mutual_friends.append(friend)
-            return Response({'query':'friends','author':author.id,'friends':mutual_friends})
+        author_all_friends = author.get_friends()
+        friend_check = serializer.validated_data['authors']
+        for friend in friend_check:
+            if friend in author_all_friends:
+                mutual_friends.append(friend)
+                return Response({'query':'friends','author':author.id,'friends':mutual_friends})
 
     def get_object(self, uuid):
         try:
@@ -287,5 +287,4 @@ class PostsNodesView(APIView):
     """
     def get(self, request):
         posts = NodeManager.get_public_posts()
-        print posts
-        return Response({'query':'frontend-posts', 'posts':posts})
+        return Response({'query':'frontend-posts', "posts":posts})

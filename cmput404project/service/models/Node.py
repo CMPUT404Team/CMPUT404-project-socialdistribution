@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
-import uuid, base64, requests
+import uuid, base64, urllib2
+import json
 
 class Node(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -48,6 +49,9 @@ class Node(models.Model):
     def get_public_posts(self):
         baseUrl = 'http://' + self.host + self.path
         url = baseUrl + "/posts"
-        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
-        posts = r.decode().encode('utf-8').json()
-        return posts
+        r = urllib2.Request(url)
+        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
+        r.add_header("Authorization", "Basic %s" % base64string)
+        f = urllib2.urlopen(r).read()
+        #posts = json.loads(f)
+        return f#posts
