@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets,status
 from rest_framework.parsers import JSONParser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -20,8 +21,6 @@ from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
 from models.NodeManager import NodeManager
 import json
-
-from rest_framework.pagination import PageNumberPagination
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -222,8 +221,8 @@ class PostsView(APIView):
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
         paginator = CustomPagination()
-        paginator.paginate_queryset(posts, request)
-        serializer = PostSerializerGet(posts, many=True, context={'request':request})
+        paginator.paginate_queryset(post, request)
+        serializer = PostSerializerGet(post, context={'request':request})
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts')
 
     def post(self, request):
@@ -233,20 +232,6 @@ class PostsView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CustomPagination(PageNumberPagination):
-    def get_paginated_response(self, data, data_field, query):
-        result = {
-            'query': query,
-            'count': self.page.paginator.count,
-            'size': self.page_size,
-            data_field: data
-        }
-        if self.page.has_next():
-            result['next'] = self.get_next_link()
-        if self.page.has_previous():
-            result['previous'] = self.get_previous_link()
-
-        return Response(result)
 
 class PostView(APIView):
     """
@@ -283,7 +268,8 @@ class PostView(APIView):
     """
     def get_object(self, uuid):
         try:
-            return Post.objects.get(id=uuid)
+            #return Post.objects.get(id=uuid)
+            return Post.objects.filter(id=uuid)
         except Post.DoesNotExist:
             raise Http404
         except ValueError:
@@ -293,8 +279,10 @@ class PostView(APIView):
         post = self.get_object(pk)
         comments = Comment.objects.filter(post_id=pk)
         post.comments = comments
-        serializer = PostSerializerGet(post, context={'request':request})
-        return Response(serializer.data)
+        paginator = CustomPagination()
+        paginator.paginate_queryset(post, request)
+        serializer = PostSerializerGet(post, many=True, context={'request':request})
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts')
 
     def post(self, request, pk):
         try:
@@ -363,8 +351,10 @@ class VisiblePostsView(APIView):
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'posts':serializer.data})
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts')
 
 class AuthorPostsView(APIView):
     """
@@ -522,3 +512,18 @@ class VisiblePostsNodesView(APIView):
     def get(self, request):
         posts = NodeManager.get_posts()
         return Response({'query':'frontend-posts', "posts":posts})
+
+class CustomPagination(PageNumberPagination):
+    def get_paginated_response(self, data, data_field, query):
+        result = {
+            'query': query,
+            'count': self.page.paginator.count,
+            'size': self.page_size,
+            data_field: data
+        }
+        if self.page.has_next():
+            result['next'] = self.get_next_link()
+        if self.page.has_previous():
+            result['previous'] = self.get_previous_link()
+
+        return Response(result)
