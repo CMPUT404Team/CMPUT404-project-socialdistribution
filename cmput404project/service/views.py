@@ -384,8 +384,10 @@ class AuthorPostsView(APIView):
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts')
 
 class PostViewSet(viewsets.ModelViewSet):
     """
