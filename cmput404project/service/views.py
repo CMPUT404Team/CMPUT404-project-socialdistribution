@@ -40,9 +40,8 @@ class CommentAPIView(APIView):
     API endpoint that allows the comments of a post to be viewed.
     """
     def get_comments(self, postId):
+        post = self.get_post(postId)
         comments = Comment.objects.filter(post_id = postId)
-        if not comments:
-            raise Http404
         return comments
 
     def get_author(self, authorId):
@@ -187,7 +186,7 @@ class AuthorPostsView(APIView):
         posts = Post.objects.all().filter(author__id=pk)
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
-            post.comments = comments        
+            post.comments = comments
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return Response(serializer.data)
 
