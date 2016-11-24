@@ -12,14 +12,16 @@ from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
+from django.core.paginator import Paginator
 from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
-from django.core.exceptions import SuspiciousOperation
 from models.NodeManager import NodeManager
 import json
+
+from rest_framework.pagination import PageNumberPagination
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -213,13 +215,16 @@ class PostsView(APIView):
         }
     ]
     """
+
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'posts':serializer.data})
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts')
 
     def post(self, request):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
@@ -227,6 +232,21 @@ class PostsView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomPagination(PageNumberPagination):
+    def get_paginated_response(self, data, data_field, query):
+        result = {
+            'query': query,
+            'count': self.page.paginator.count,
+            'size': self.page_size,
+            data_field: data
+        }
+        if self.page.has_next():
+            result['next'] = self.get_next_link()
+        if self.page.has_previous():
+            result['previous'] = self.get_previous_link()
+
+        return Response(result)
 
 class PostView(APIView):
     """
