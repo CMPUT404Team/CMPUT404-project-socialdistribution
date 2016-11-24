@@ -4,7 +4,7 @@
   <ul class = 'comments'>
     {% for comment in comments %}
       <div class='comment'>
-        <a class='comment-post-name' href='http://localhost:8000/posts/{{comment.post_id}}/'>{{comment.post.title}</a>
+        <a href="{{host}}/doggo/posts/{{post.id}}">Back to posts</a>
         <p class='comment'>{{comment.comment}}</p>
         <p class='comment-published'>{{comment.pubDate}}</p>
         <p class='comment-author'>{{comment.author.displayName}}</p>

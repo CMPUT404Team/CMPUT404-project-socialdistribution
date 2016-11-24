@@ -1,7 +1,8 @@
 {% load rest_framework %}
 <html><body>
 {% if posts %}
-  <ul class = 'public-posts'>
+  <ul class = 'author-posts'>
+    <h1 class='author'>{{author.displayName}}</h1>
     {% for post in posts %}
       <div class='post'>
         <a href="{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>

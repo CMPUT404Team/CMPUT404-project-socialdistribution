@@ -32,18 +32,18 @@ class CommentsView(APIView):
     '''
     def get(self, request, pk):
         url = getattr(settings, 'CURRENT_HOST') + '/posts/' + str(pk) + '/comments/'
-        print url
+        post_url = getattr(settings, 'CURRENT_HOST') + '/posts/' + str(pk)
         comments = get_json_from_api(url)
-        print comments
-        return render(request, "posts-id-comments.html", {"comments": comments})
+        post = get_json_from_api(post_url)
+        return render(request, "posts-id-comments.html", {"comments": comments, "host": getattr(settings, 'CURRENT_HOST'), "post": post})
 
 class PostsView(APIView):
     '''
     '''
     def get(self, request):
-        url = getattr(settings, 'CURRENT_HOST') + 'frontend/posts/'
+        url = getattr(settings, 'CURRENT_HOST') + '/posts/'
         posts = get_json_from_api(url)
-        return render(request, "posts.html", {"posts":posts['posts']})
+        return render(request, "posts.html", {"posts":posts, "host": getattr(settings, 'CURRENT_HOST')})
 
 class AuthorPostsView(APIView):
     '''
@@ -52,6 +52,16 @@ class AuthorPostsView(APIView):
         url = getattr(settings, 'CURRENT_HOST') + 'frontend/author/posts/'
         posts = get_json_from_api(url)
         return render(request, "author-posts.html", {"posts":posts['posts']})
+
+class AuthorIdPostsView(APIView):
+    '''
+    '''
+    def get(self, request, pk):
+        url = getattr(settings, 'CURRENT_HOST') + '/author/'+ str(pk)+'/posts/'
+        author_url = getattr(settings, 'CURRENT_HOST') + '/author/'+ str(pk)
+        posts = get_json_from_api(url)
+        author = get_json_from_api(author_url)
+        return render(request, "author-id-posts.html", {"posts":posts, "host": getattr(settings, 'CURRENT_HOST'), "author": author })
 
 class FriendView(APIView):
     def get(self, request):
