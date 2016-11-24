@@ -56,8 +56,8 @@ class AuthorPostsView(APIView):
 
 class FriendView(APIView):
     def get(self, request):
-        author = Author.objects.filter(user_id = request.user.id)
-        url = getattr(settings, 'CURRENT_HOST') + 'friends/' + str(author.id) + '/'
+        author = Author.objects.filter(user_id = request.user.id)[0]
+        url = getattr(settings, 'CURRENT_HOST') + '/friends/' + str(author.id) + '/'
         # url = "127.0.0.1:8000/friends/" + str(author.id) + '/'
         friends = get_json_from_api(url)
         return render(request, "friends.html", {"friends":friends})
