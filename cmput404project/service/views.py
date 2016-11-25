@@ -221,8 +221,9 @@ class PostsView(APIView):
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
         paginator = CustomPagination()
-        paginator.paginate_queryset(post, request)
-        serializer = PostSerializerGet(post, context={'request':request})
+        paginator.paginate_queryset(posts, request)
+        serializer = PostSerializerGet(posts, many=True, context={'request':request})
+        print request.POST
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts')
 
     def post(self, request):
@@ -268,17 +269,16 @@ class PostView(APIView):
     """
     def get_object(self, uuid):
         try:
-            #return Post.objects.get(id=uuid)
-            return Post.objects.filter(id=uuid)
+            return Post.objects.get(id=uuid)
         except Post.DoesNotExist:
             raise Http404
         except ValueError:
             raise ParseError("Malformed UUID")
 
     def get(self, request, pk):
-        post = self.get_object(pk)
+        post = [self.get_object(pk)]
         comments = Comment.objects.filter(post_id=pk)
-        post.comments = comments
+        post[0].comments = comments
         paginator = CustomPagination()
         paginator.paginate_queryset(post, request)
         serializer = PostSerializerGet(post, many=True, context={'request':request})
@@ -514,11 +514,15 @@ class VisiblePostsNodesView(APIView):
         return Response({'query':'frontend-posts', "posts":posts})
 
 class CustomPagination(PageNumberPagination):
-    def get_paginated_response(self, data, data_field, query):
+    def get_paginated_response(self, data, data_field, query, size = None):
+        #page_size_query_param = self.page_size
+        #print page_size_query_param
+        if (size == None):
+            size = self.page_size
         result = {
             'query': query,
             'count': self.page.paginator.count,
-            'size': self.page_size,
+            'size': size,
             data_field: data
         }
         if self.page.has_next():
