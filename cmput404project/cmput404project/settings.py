@@ -87,21 +87,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'cmput404project.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'service',
-        'USER': 'serviceuser',
-        'PASSWORD': os.environ['SERVICE_PASSWORD'],
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
-
 if 'TRAVIS' in os.environ:
     DATABASES = {
         'default': {
