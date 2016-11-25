@@ -34,23 +34,19 @@ class Node(models.Model):
     def make_authenticated_request(self, url):
         return requests.get(url, auth=(self.username, base64.b64decode(self.password)))
 
+    def get_json(self, url):
+        r = self.make_authenticated_request(url)
+        if (r.status_code == 200):
+            return r.json()
+
     def get_posts(self):
         url = self.baseUrl + "/author/posts"
-        r = self.make_authenticated_request(url)
-        posts = r.json()
-        return posts
+        return self.get_json(url) 
 
     def get_posts_by_author(self, author_id):
         url = self.baseUrl+ "/author/" + str(author_id) + "/posts"
-        r = self.make_authenticated_request(url)
-        try:
-            posts = r.json()
-        except ValueError:
-            posts = []
-        return posts
+        return self.get_json(url)
 
     def get_public_posts(self):
         url = self.baseUrl + "/posts"
-        r = self.make_authenticated_request(url)
-        posts = r.json()
-        return posts
+        return self.get_json(url)
