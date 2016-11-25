@@ -104,9 +104,8 @@ class CommentAPIView(APIView):
     ]
     """
     def get_comments(self, postId):
+        post = self.get_post(postId)
         comments = Comment.objects.filter(post_id = postId)
-        if not comments:
-            raise Http404
         return comments
 
     def get_author(self, authorId):

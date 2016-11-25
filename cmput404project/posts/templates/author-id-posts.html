@@ -1,0 +1,19 @@
+{% load rest_framework %}
+<html><body>
+{% if posts %}
+  <ul class = 'author-posts'>
+    <h1 class='author'>{{author.displayName}}</h1>
+    {% for post in posts %}
+      <div class='post'>
+        <a href="{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
+        <p class='post-published'>{{post.published}}</p>
+        <p class='post-description'>{{post.description}}</p>
+        <p class='post-content'>{{post.content}}</p>
+        <a href="/posts/{{post.id}}/comments/">Comments</a>
+      </div>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No public posts available.</p>
+{% endif %}
+</body></html>
