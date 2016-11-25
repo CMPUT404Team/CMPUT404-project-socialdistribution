@@ -54,9 +54,3 @@ class Node(models.Model):
         r = self.make_authenticated_request(url)
         posts = r.json()
         return posts
-
-    def get_author(self, author_id):
-        url = self.baseUrl + "/author/" + str(author_id)
-        r = self.make_authenticated_request(url)
-	if (r.status_code == 200):
-        	return r.json()
