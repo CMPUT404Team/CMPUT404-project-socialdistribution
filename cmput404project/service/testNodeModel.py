@@ -67,6 +67,7 @@ class NodeModelTests(LiveServerTestCase):
     def test_get_posts_by_author(self):
         author_id = self.author.id
         posts = self.node.get_posts_by_author(author_id)
+        #TODO test the contents of the object
         self.assertTrue(hasattr(posts, '__iter__'))
 
     def test_get_public_posts(self):
@@ -75,6 +76,7 @@ class NodeModelTests(LiveServerTestCase):
 
     def test_get_nodes_from_nodemanager(self):
         nodes = self.nodemanager.get_nodes()
+        #TODO test the contents of the object
         self.assertEqual(len(nodes), 1)
         
     def test_get_Author_by_id(self):
