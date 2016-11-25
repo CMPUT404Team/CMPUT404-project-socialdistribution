@@ -20,7 +20,6 @@ from rest_framework import routers
 from service import views
 
 urlpatterns = [
-    url(r'^', include('posts.urls')),
     url(r'^', include('service.urls')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^admin/', admin.site.urls),
