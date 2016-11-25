@@ -572,17 +572,6 @@ class FriendRequestView(APIView):
             author.add_friend(friend)
             return Response(status=204)
 
-class AuthorCreate(FormView):
-    template_name = "author_form.html"
-    form_class = AuthorForm
-
-    def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.create_author(self.request.get_host())
-        self.success_url = reverse('awaiting-approval')
-        return super(AuthorCreate, self).form_valid(form)
-
 class PostsNodesView(APIView):
     """
     Return a list of all public posts from all Nodes
