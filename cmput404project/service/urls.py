@@ -9,7 +9,6 @@ urlpatterns = [
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
     url(r'^author/(?P<pk>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^posts/(?P<pid>[^/]+)/comments', views.CommentAPIView.as_view()),
-    url(r'^author/add/$', views.AuthorCreate.as_view(), name='author-add'),
     url(r'^friendrequest/$', views.FriendRequestView.as_view(), name='friend-request'),
     url(r'^friends/(?P<uuid1>[^/]+)/(?P<uuid2>[^/]+)$', views.FriendDetailView.as_view(), name='friend-detail'),
     url(r'^friends/(?P<uuid>[^/]+)/', views.MutualFriendDetailView.as_view(),name='mutual-friend'),
@@ -22,8 +21,8 @@ urlpatterns = [
     url(r'^doggo/friends/$', frontEndViews.FriendView.as_view(), name='friend-detail'),
     url(r'^doggo/author/posts/$',frontEndViews.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/comments', frontEndViews.CommentsView.as_view(), name='comments'),
+    url(r'^doggo/author/add/$', frontEndViews.AuthorCreateView.as_view(), name='author-add'),
     url(r'^doggo/author/(?P<pk>[^/]+)/posts/$', frontEndViews.AuthorIdPostsView.as_view(), name='authorIdPosts'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
-
