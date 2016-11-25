@@ -14,10 +14,15 @@ def index(index):
 
 def get_json_from_api(url):
     req = urllib2.Request(url)
+    password = os.environ.get('FRONTEND_PASSWORD')
+    if (password == ''):
+        print
+        print "You didn't specify FRONTEND_PASSWORD as an environment variable"
+        print
+        raise Exception("You didn't specify FRONTEND_PASSWORD as an environment variable")
     base64string = base64.b64encode('%s:%s' % (getattr(settings, 'USERNAME'), os.environ.get('FRONTEND_PASSWORD')))
     req.add_header("Authorization", "Basic %s" % base64string)
     serialized_data = urllib2.urlopen(req).read()
-    print serialized_data
     return json.loads(serialized_data)
 
 class PostView(APIView):
@@ -44,13 +49,13 @@ class PostsView(APIView):
     def get(self, request):
         url = getattr(settings, 'CURRENT_HOST') + '/posts/'
         posts = get_json_from_api(url)
-        return render(request, "posts.html", {"posts":posts, "host": getattr(settings, 'CURRENT_HOST')})
+        return render(request, "posts.html", {"posts":posts['posts'], "host": getattr(settings, 'CURRENT_HOST')})
 
 class AuthorPostsView(APIView):
     '''
     '''
     def get(self, request):
-        url = getattr(settings, 'CURRENT_HOST') + 'frontend/author/posts/'
+        url = getattr(settings, 'CURRENT_HOST') + '/frontend/author/posts/'
         posts = get_json_from_api(url)
         return render(request, "author-posts.html", {"posts":posts['posts']})
 

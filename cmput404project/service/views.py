@@ -402,7 +402,6 @@ class FriendDetailView(APIView):
         serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
         author = self.get_object(uuid1)
         friend = self.get_object(uuid2)
-        print friend
         author.friends.remove(friend)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
