@@ -4,6 +4,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
 import uuid, base64, urllib2
 import json
+import requests
 
 class Node(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -16,6 +17,7 @@ class Node(models.Model):
 
     @classmethod
     def create(cls, displayName, host, path, user, username, password):
+        cls.baseUrl = 'http://' + host + path
         return cls(
             id = uuid.uuid4(),
             displayName = displayName,
@@ -23,23 +25,24 @@ class Node(models.Model):
             path = path,
             user = user,
             username = username,
-            password = base64.b64encode(password)
+            password = base64.b64encode(password),
             )
 
     def __str__(self):
         return self.displayName
+    
+    def make_authenticated_request(self, url):
+        return requests.get(url, auth=(self.username, base64.b64decode(self.password)))
 
     def get_posts(self):
-        baseUrl = 'http://' + self.host + self.path
-        url = baseUrl + "/author/posts"
-        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
+        url = self.baseUrl + "/author/posts"
+        r = self.make_authenticated_request(url)
         posts = r.json()
         return posts
 
     def get_posts_by_author(self, author_id):
-        baseUrl = 'http://' + self.host + self.path
-        url = baseUrl+ "/author/" + str(author_id) + "/posts"
-        r = requests.get(url, auth=(self.username, base64.b64decode(self.password)))
+        url = self.baseUrl+ "/author/" + str(author_id) + "/posts"
+        r = self.make_authenticated_request(url)
         try:
             posts = r.json()
         except ValueError:
@@ -47,14 +50,13 @@ class Node(models.Model):
         return posts
 
     def get_public_posts(self):
-        baseUrl = 'http://' + self.host + self.path
-        url = baseUrl + "/posts"
-        r = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-        r.add_header("Authorization", "Basic %s" % base64string)
-        f = urllib2.urlopen(r).read()
-        posts = json.loads(f)
+        url = self.baseUrl + "/posts"
+        r = self.make_authenticated_request(url)
+        posts = r.json()
         return posts
 
     def get_author(self, author_id):
-        pass
+        url = self.baseUrl + "/author/" + str(author_id)
+        r = self.make_authenticated_request(url)
+	if (r.status_code == 200):
+        	return r.json()
