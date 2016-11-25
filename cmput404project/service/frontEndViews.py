@@ -68,6 +68,19 @@ class AuthorIdPostsView(APIView):
         author = views.AuthorDetailView.as_view()(request, pk).data
         return render(request, "author-id-posts.html", {"posts":posts, "host":request.get_host(), "author": author })
 
+class AuthorDetailView(APIView):
+    '''
+    '''
+    def get(self, request, pk):
+        author = views.AuthorDetailView.as_view()(request, pk).data
+        friends = []
+        print author
+        for friend in author["friends"]:
+            f = views.AuthorDetailView.as_view()(request, friend["id"]).data
+            print f
+            friends.append(f)
+        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host()})
+
 class FriendView(APIView):
     def get(self, request):
         #author = Author.objects.filter(user_id = request.user.id)[0]

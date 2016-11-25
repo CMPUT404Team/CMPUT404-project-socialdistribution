@@ -1,0 +1,18 @@
+{% load rest_framework %}
+<html><body>
+{% if author %}
+      <div class='author'>
+        <h1 class='author-displayName'>{{author.displayName}}</h1>
+        <p class='author-published'>{{author.host}}</p>
+        {% if friends%}
+          {% for friend in friends%}
+            <a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
+          {% endfor %}
+        {% else %}
+          <p class='friends'>No friends to display</p>
+        {% endif %}
+      </div>
+{% else %}
+  <p> 404. No author found</p>
+{% endif %}
+</body></html>
