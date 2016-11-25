@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
+from . import views
 
 def index(index):
     return redirect("author-add")
@@ -47,9 +48,11 @@ class PostsView(APIView):
     '''
     '''
     def get(self, request):
-        url = getattr(settings, 'CURRENT_HOST') + '/posts/'
-        posts = get_json_from_api(url)
-        return render(request, "posts.html", {"posts":posts['posts'], "host": getattr(settings, 'CURRENT_HOST')})
+        response = views.PostsView.as_view()(request) 
+        if (response.status_code == 200):
+            return render(request, "posts.html", {"posts":response.data['posts'], "host": getattr(settings, 'CURRENT_HOST')})
+        else:
+            return HttpResponse(status=response.status_code)
 
 class AuthorPostsView(APIView):
     '''
