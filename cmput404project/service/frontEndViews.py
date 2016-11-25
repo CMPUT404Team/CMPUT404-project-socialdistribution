@@ -7,7 +7,7 @@ import urllib2, base64, json, os
 from rest_framework.views import APIView
 from django.template.response import TemplateResponse
 from django.conf import settings
-from service.models.Author import Author
+from models.Author import Author
 
 def index(index):
     return redirect("author-add")
