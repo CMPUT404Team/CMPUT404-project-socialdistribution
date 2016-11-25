@@ -60,7 +60,7 @@ class NodeModelTests(LiveServerTestCase):
 
     def test_get_posts(self):
         posts = self.node.get_posts()
-        self.assertEqual(str(self.post.id), posts[0]['id'])
+        self.assertEqual(str(self.post.id), posts['posts'][0]['id'])
 
     def test_get_posts_by_author(self):
         author_id = self.author.id
