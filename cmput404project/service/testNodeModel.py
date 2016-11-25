@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.core.management import call_command
 from unittest import skip
 from urlparse import urlparse
+import json
+import uuid
 import base64
 
 class NodeModelTests(LiveServerTestCase):
@@ -67,3 +69,15 @@ class NodeModelTests(LiveServerTestCase):
     def test_get_nodes_from_nodemanager(self):
         nodes = self.nodemanager.get_nodes()
         self.assertEqual(len(nodes), 1)
+        
+    def test_get_Author_by_id(self):
+        author = self.node.get_author(self.author.id)
+        self.assertIsNotNone(author)
+        self.assertEqual(author.id, self.author.id)
+        self.assertEqual(author.host, self.author.host)
+        self.assertEqual(author.displayName, self.author.displayName)
+        self.assertEqual(author.url, self.author.url)
+
+    def test_get_Author_by_id_does_not_exist(self):
+        author = self.node.get_author(uuid.uuid4()) 
+        self.assertEqual(None, author)

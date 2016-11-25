@@ -55,3 +55,6 @@ class Node(models.Model):
         f = urllib2.urlopen(r).read()
         posts = json.loads(f)
         return posts
+
+    def get_author(self, author_id):
+        pass
