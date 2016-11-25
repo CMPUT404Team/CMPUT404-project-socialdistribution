@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'service',
     'posts',
     'rest_framework_docs'
 ]
@@ -87,12 +88,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'cmput404project.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'service',
+        'USER': 'serviceuser',
+        'PASSWORD': os.environ['SERVICE_PASSWORD'],
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+# Update database configuration with $DATABASE_URL.
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
 if 'TRAVIS' in os.environ:
     DATABASES = {
         'default': {

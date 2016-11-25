@@ -17,9 +17,11 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from rest_framework import routers
+from service import views
 
 urlpatterns = [
     url(r'^', include('posts.urls')),
+    url(r'^', include('service.urls')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

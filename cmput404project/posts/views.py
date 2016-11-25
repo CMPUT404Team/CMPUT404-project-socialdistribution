@@ -7,9 +7,10 @@ import urllib2, base64, json, os
 from rest_framework.views import APIView
 from django.template.response import TemplateResponse
 from django.conf import settings
+from service.models.Author import Author
 
 def index(index):
-    return HttpResponse("<h1>Welocome to Doggo</h1>")
+    return redirect("author-add")
 
 def get_json_from_api(url):
     req = urllib2.Request(url)
@@ -65,11 +66,8 @@ class AuthorIdPostsView(APIView):
 
 class FriendView(APIView):
     def get(self, request):
-        raise Exception("This needs to be a call to service, not a database query. The databases aren't shared on Heroku")
-    '''
         author = Author.objects.filter(user_id = request.user.id)[0]
         url = getattr(settings, 'CURRENT_HOST') + '/friends/' + str(author.id) + '/'
         # url = "127.0.0.1:8000/friends/" + str(author.id) + '/'
         friends = get_json_from_api(url)
         return render(request, "friends.html", {"friends":friends})
-    '''
