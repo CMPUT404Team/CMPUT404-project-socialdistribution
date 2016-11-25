@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'service',
     'posts',
     'rest_framework_docs'
 ]
@@ -102,10 +101,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-# Update database configuration with $DATABASE_URL.
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
 
 if 'TRAVIS' in os.environ:
     DATABASES = {
