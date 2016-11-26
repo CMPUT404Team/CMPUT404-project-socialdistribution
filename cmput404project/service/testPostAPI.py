@@ -165,7 +165,7 @@ class PostAPITests(APITestCase):
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page(1)
-        self.assertEqual(response.data['size'], 10)
+        self.assertEqual(len(response.data['posts']), 10)
 
     @skip("pagination needs a fix")
     def test_get_partial_page_of_posts(self):
@@ -195,7 +195,7 @@ class PostAPITests(APITestCase):
         for post_count in range(0, 45):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page_and_size(2, 20)
-        self.assertEqual(response.data['size'], 20)
+        self.assertEqual(len(response.data['size']), 20)
 
     #@skip("pagination needs a fix")
     def test_get_posts_by_page_and_partial_size(self):
@@ -203,7 +203,7 @@ class PostAPITests(APITestCase):
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page_and_size(1, 20)
-        self.assertEqual(response.data['size'], 16)
+        self.assertEqual(len(response.data['posts']), 16)
 
     def create_update_post_with_put(self, post_id, put_body):
         #PUT http://service/posts/postid to update/create post
