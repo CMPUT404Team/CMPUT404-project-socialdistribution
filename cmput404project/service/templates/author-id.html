@@ -3,6 +3,10 @@
 {% if author %}
       <div class='author'>
         <h1 class='author-displayName'>{{author.displayName}}</h1>
+	<form action="/frontend/befriend/" method="POST">
+		{% csrf_token %}
+		<input type="submit" value="Friend/Unfriend" />
+	</form>
         <p class='author-published'>{{author.host}}</p>
         {% if friends%}
           {% for friend in friends%}

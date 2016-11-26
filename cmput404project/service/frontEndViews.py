@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse
+from django.views import View
 from django.contrib.auth.decorators import login_required
 from rest_framework.renderers import TemplateHTMLRenderer
 import urllib2, base64, json, os
@@ -12,6 +13,8 @@ from . import views
 from django.views.generic.edit import FormView
 from rest_framework.response import Response
 from AuthorForm import AuthorForm
+from serializers import AuthorSerializer
+from models.NodeManager import NodeManager
 
 def index(index):
     return redirect("author-add")
@@ -89,3 +92,18 @@ class FriendView(APIView):
             f = views.AuthorDetailView.as_view()(request, friend["id"]).data
             friends.append(f)
         return render(request, "friends.html", {"friends":friends})
+
+class BefriendView(APIView):
+    
+    def get_object(self, user):
+        try:
+            return Author.objects.get(user=user)
+        except Author.DoesNotExist:
+            raise Http404	
+
+    def post(self, request):
+        user = request.user
+        author = self.get_object(user) 
+	author_json = AuthorSerializer(author, context={'request':request}).data
+        friend_json = request.body
+        return Response(status=NodeManager.befriend(author_json, friend_json))
