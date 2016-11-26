@@ -20,7 +20,6 @@ urlpatterns = [
     url(r'^frontend/befriend/$', frontEndViews.BefriendView.as_view(), name='frontend-befriend'),
     url(r'^doggo/posts/$', frontEndViews.PostsView.as_view(), name='publicPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/$', frontEndViews.PostView.as_view(), name='post'),
-    url(r'^doggo/friends/$', frontEndViews.FriendView.as_view(), name='friend-detail'),
     url(r'^doggo/author/posts/$',frontEndViews.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/comments', frontEndViews.CommentsView.as_view(), name='comments'),
     url(r'^doggo/author/add/$', frontEndViews.AuthorCreateView.as_view(), name='author-add'),

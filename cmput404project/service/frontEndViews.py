@@ -100,14 +100,14 @@ class FriendView(APIView):
             friends.append(f)
         return render(request, "friends.html", {"friends":friends})
 
-class BefriendView(APIView): 
+class BefriendView(APIView):
 
     def get_friend_json(self, raw_friend_data):
         return ast.literal_eval(raw_friend_data)
 
     def post(self, request):
         try:
-            author = get_author_object(request.user) 
+            author = get_author_object(request.user)
             author_json = AuthorSerializer(author, context={'request':request}).data
             request_dict = dict(request.data.iterlists())
             currently_friends = request_dict.get("currently_friends")[0]
@@ -122,4 +122,3 @@ class BefriendView(APIView):
             return AuthorDetailView.as_view()(request, friend_json['id'])
         except:
             return Response(status=400)
-
