@@ -1,5 +1,8 @@
 {% load rest_framework %}
-<html><body>
+{% load staticfiles %}
+<html>
+<head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
+<body>
 {% if friends %}
   <ul class = 'friend-list'>
       <div class='friend'>

@@ -1,5 +1,10 @@
 {% load rest_framework %}
-<html><body>
+{% load staticfiles %}
+<html>
+<head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
+<body id="background" class="tiled-background">
+  <script> var images = "{% static 'images/' %}";</script>
+  <script src="{% static 'js/LoadBackground.js' %}"></script>
 {% if posts %}
   <ul class = 'public-posts'>
     {% for post in posts %}
