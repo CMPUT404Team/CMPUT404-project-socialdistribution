@@ -41,11 +41,9 @@ class CommentAPIView(APIView):
     API endpoint that allows the comments of a post to be viewed.
 
 
-    Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/comments
-
+    Input: http://localhost:8000/posts/ea8c25f6-35d6-4918-8232-e6df8e697424/comments
 
     Output:
-
 
     HTTP 200 OK
     Allow: GET, POST, HEAD, OPTIONS
@@ -54,52 +52,16 @@ class CommentAPIView(APIView):
 
     [
         {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
+			"author": {
+				"url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+				"id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+				"displayName": "asdf",
+				"host": "a",
+				"friends": []
             },
-            "pubDate": "2016-11-16T21:40:56Z",
-            "comment": "commmmmmm",
-            "guid": "73f06229-395c-4bde-8058-fd3847133658"
-        },
-        {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
-            },
-            "pubDate": "2016-11-16T23:28:33.066754Z",
-            "comment": "",
-            "guid": "ccfb10e5-b04b-46bd-8055-fa49a582e455"
-        },
-        {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
-            },
-            "pubDate": "2016-11-16T23:34:47.129404Z",
-            "comment": "",
-            "guid": "ebcbda5b-afb3-4b13-b82b-8f29cb48e273"
-        },
-        {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
-            },
-            "pubDate": "2016-11-16T23:47:23.826697Z",
-            "comment": "",
-            "guid": "41c28ee7-527a-4bd2-95b2-faed5a10fdde"
+            "pubDate": "2016-11-26T02:08:42Z",
+            "comment": "First Comment!!",
+            "guid": "db42e75f-4045-415a-8969-f8601360981a"
         }
     ]
     """
@@ -150,19 +112,19 @@ class AuthorDetailView(APIView):
     '''
     Used to get the profile information of an author.
 
-    Input: http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/
+    Input: http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/
     Output:
 
     HTTP 200 OK
-    Allow: GET, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
     {
-        "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-        "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-        "displayName": "asdfg",
-        "host": "asdf",
+        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+        "id": "f6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+        "displayName": "asdf",
+        "host": "a",
         "friends": []
     }
     '''
@@ -179,38 +141,54 @@ class AuthorDetailView(APIView):
 
 class PostsView(APIView):
     """
-    Return a list of all public posts or create a new post \n\n
+    Return a list of all public posts or create a new post 
 
     Input: http://localhost:8000/posts/
     Output:
 
     HTTP 200 OK
-    Allow: GET, POST, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	Allow: GET, POST, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
-    [
-        {
-            "title": "cd",
-            "source": "sadf",
-            "origin": "ds",
-            "content": "",
-            "contentType": "text/plain",
-            "description": "",
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf"
-            },
-            "count": 0,
-            "size": 50,
-            "next": "est",
-            "published": "2016-11-16T21:37:02.127923Z",
-            "id": "1dd49764-c855-4914-9785-508891598503",
-            "visibility": "PUBLIC"
-        }
-    ]
+	{
+    	"posts": [
+    	    {
+    	        "title": "My New Post",
+    	        "source": "na",
+    	        "origin": "na",
+    	        "content": "",
+    	        "contentType": "text/plain",
+    	        "description": "",
+    	        "author": {
+    	            "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	            "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	            "displayName": "asdf",
+    	            "host": "a"
+    	        },
+    	        "count": 0,
+    	        "size": 50,
+    	        "next": "na",
+    	        "comments": [
+    	            {
+    	                "author": {
+    	                    "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b2	2b27d9c3/",
+    	                    "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	                    "displayName": "asdf",
+    	                    "host": "a",
+    	                    "friends": []
+    	                },
+    	                "pubDate": "2016-11-26T02:08:42Z",
+    	                "comment": "First Comment!!",
+    	                "guid": "db42e75f-4045-415a-8969-f8601360981a"
+    	            }
+    	        ],
+    	        "published": "2016-11-26T02:00:44.793165Z",
+    	        "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+    	        "visibility": "PUBLIC"
+    	    }
+    	]
+	}
     """
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
@@ -231,34 +209,49 @@ class PostView(APIView):
     """
     Get, update or delete a particular post
 
-    Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/
+    Input: http://localhost:8000/posts/ea8c25f6-35d6-4918-8232-e6df8e697424/
     Output:
 
-    HTTP 200 OK
-    Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	HTTP 200 OK
+	Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
-    {
-        "title": "cd",
-        "source": "sadf",
-        "origin": "ds",
-        "content": "",
-        "contentType": "text/plain",
-        "description": "",
-        "author": {
-            "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-            "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-            "displayName": "asdfg",
-            "host": "asdf"
-        },
-        "count": 0,
-        "size": 50,
-        "next": "est",
-        "published": "2016-11-16T21:37:02.127923Z",
-        "id": "1dd49764-c855-4914-9785-508891598503",
-        "visibility": "PUBLIC"
-    }
+    
+	{
+	    "title": "My New Post",
+	    "source": "na",
+	    "origin": "na",
+	    "content": "",
+	    "contentType": "text/plain",
+	    "description": "",
+	    "author": {
+	        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+	        "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+	        "displayName": "asdf",
+	        "host": "a"
+	    },
+	    "count": 0,
+	    "size": 50,
+	    "next": "na",
+	    "comments": [
+	        {
+	            "author": {
+	                "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+	                "displayName": "asdf",
+	                "host": "a",
+	                "friends": []
+	            },
+	            "pubDate": "2016-11-26T02:08:42Z",
+	            "comment": "First Comment!!",
+	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+	        }
+	    ],
+	    "published": "2016-11-26T02:00:44.793165Z",
+	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+	    "visibility": "PUBLIC"
+	}
     """
     def get_object(self, uuid):
         try:
@@ -310,32 +303,48 @@ class VisiblePostsView(APIView):
     Output:
 
     HTTP 200 OK
-    Allow: GET, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
-    [
-        {
-            "title": "cd",
-            "source": "sadf",
-            "origin": "ds",
-            "content": "",
-            "contentType": "text/plain",
-            "description": "",
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf"
-            },
-            "count": 0,
-            "size": 50,
-            "next": "est",
-            "published": "2016-11-16T21:37:02.127923Z",
-            "id": "1dd49764-c855-4914-9785-508891598503",
-            "visibility": "PUBLIC"
-        }
-    ]
+	{
+    	"posts": [
+    	    {
+    	        "title": "My New Post",
+    	        "source": "na",
+    	        "origin": "na",
+    	        "content": "",
+    	        "contentType": "text/plain",
+    	        "description": "",
+    	        "author": {
+    	            "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	            "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	            "displayName": "asdf",
+    	            "host": "a"
+    	        },
+    	        "count": 0,
+    	        "size": 50,
+    	        "next": "na",
+    	        "comments": [
+    	            {
+    	                "author": {
+    	                    "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+        	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+        	                "displayName": "asdf",
+        	                "host": "a",
+        	                "friends": []
+        	            },
+        	            "pubDate": "2016-11-26T02:08:42Z",
+        	            "comment": "First Comment!!",
+        	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+        	        }
+        	    ],
+        	    "published": "2016-11-26T02:00:44.793165Z",
+        	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+        	    "visibility": "PUBLIC"
+        	}
+    	]
+	}
     """
     def get(self, request):
         posts = Post.objects.all()#.filter(visibility="?")
@@ -349,10 +358,50 @@ class AuthorPostsView(APIView):
     """
     Return a list of available posts created by specified user
 
-    GET Request object properties:
-    request
-    posts - the list of posts an author has
-    uuid - author id
+    Input: http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/posts/
+	output: 
+
+	HTTP 200 OK
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
+
+	[
+    	{
+    	    "title": "My New Post",
+    	    "source": "na",
+    	    "origin": "na",
+    	    "content": "",
+    	    "contentType": "text/plain",
+    	    "description": "",
+    	    "author": {
+    	        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	        "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	        "displayName": "asdf",
+    	        "host": "a"
+    	    },
+    	    "count": 0,
+    	    "size": 50,
+    	    "next": "na",
+    	    "comments": [
+    	        {
+    	            "author": {
+    	                "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	                "displayName": "asdf",
+    	                "host": "a",
+    	                "friends": []
+    	            },
+    	            "pubDate": "2016-11-26T02:08:42Z",
+    	            "comment": "First Comment!!",
+    	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+    	        }
+    	    ],
+    	    "published": "2016-11-26T02:00:44.793165Z",
+    	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+    	    "visibility": "PUBLIC"
+    	}
+	]
     """
     def get(self, request, pk):
         try:
@@ -377,14 +426,21 @@ class FriendDetailView(APIView):
     Used to determine whether two users are friends with eachother. This
     means that each user will have the other user in their friends list.
 
-    GET Request object properties:
-    request
-    author1 - an object with the following properties:
-         *uuid - author1 author id
-         *host - author1 host
-    author2 - an object with the following properties:
-         *uuid - author2 author id
-         *host - author2 host
+    Input: http://localhost:8000/friends/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/3c1f82f3-e207-48bb-9849-a9b03f3bfb96
+    Output:
+    HTTP 200 OK
+	Allow: GET, DELETE, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
+
+	{
+    	"query": "friends",
+    	"friends": true,
+    	"authors": [
+    	    "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	    "3c1f82f3-e207-48bb-9849-a9b03f3bfb96"
+    	]
+	}
     '''
     def get_object(self, uuid):
         try:
@@ -411,10 +467,20 @@ class MutualFriendDetailView(APIView):
     will occur, with all their friends, and the uuid in the url will give the link
     of the friend to check it with.
 
-    GET Response object properties:
-    uuid1 - author1's uuid
-    uuid2 - author2's uuid
-    mutual_friends - the list of mutual friends both authors shares in common
+	Input: http://localhost:8000/friends/3c1f82f3-e207-48bb-9849-a9b03f3bfb96/
+	Output:
+    
+	HTTP 200 OK
+	Allow: GET, POST, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
+
+	{
+    	"query": "friends",
+    	"friends": [
+    	    "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3"
+    	]
+	}
     '''
     def post(self, request, uuid):
         serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
@@ -444,7 +510,7 @@ class FriendRequestView(APIView):
     Used to make a friend request.
 
     POST Request object properties:
-    request
+    query
     author - an object with the following properties:
               * uuid - the author id
               * host - the author host
