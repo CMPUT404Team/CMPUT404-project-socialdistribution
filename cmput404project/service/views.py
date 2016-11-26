@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets,status
 from rest_framework.parsers import JSONParser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -12,12 +13,12 @@ from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
+from django.core.paginator import Paginator
 from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from AuthorForm import AuthorForm
-from django.core.exceptions import SuspiciousOperation
 from models.NodeManager import NodeManager
 import json
 
@@ -84,11 +85,15 @@ class CommentAPIView(APIView):
             raise Http404
         return post
 
-    # TODO change to {comments: [...]}
     def get(self, request, pid):
         comments = self.get_comments(pid)
+        paginator = CustomPagination()
+        paginator.paginate_queryset(comments, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        comments = paginator.page.object_list
         serializer = CommentSerializer(comments, many=True, context={'request': request})
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data, 'comments', 'comments',
+                request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request, pid):
         post = self.get_post(pid)
@@ -190,13 +195,21 @@ class PostsView(APIView):
     	]
 	}
     """
+
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
+
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        posts = paginator.page.object_list
+
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'posts':serializer.data})
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
@@ -204,6 +217,7 @@ class PostsView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PostView(APIView):
     """
@@ -262,11 +276,18 @@ class PostView(APIView):
             raise ParseError("Malformed UUID")
 
     def get(self, request, pk):
-        post = self.get_object(pk)
+        post = [self.get_object(pk)]
         comments = Comment.objects.filter(post_id=pk)
-        post.comments = comments
-        serializer = PostSerializerGet(post, context={'request':request})
-        return Response(serializer.data)
+        post[0].comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(post, request)
+
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        post = paginator.page.object_list
+
+        serializer = PostSerializerGet(post, many=True, context={'request':request})
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request, pk):
         try:
@@ -292,8 +313,11 @@ class PostView(APIView):
 
     def delete(self, request, pk):
         post = self.get_object(pk)
-        post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if (request.user == post.author.user):
+            post.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 class VisiblePostsView(APIView):
     """
@@ -351,8 +375,13 @@ class VisiblePostsView(APIView):
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'posts':serializer.data})
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
 class AuthorPostsView(APIView):
     """
@@ -412,8 +441,13 @@ class AuthorPostsView(APIView):
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
 class PostViewSet(viewsets.ModelViewSet):
     """
@@ -564,3 +598,22 @@ class VisiblePostsNodesView(APIView):
     def get(self, request):
         posts = NodeManager.get_posts()
         return Response({'query':'frontend-posts', "posts":posts})
+
+class CustomPagination(PageNumberPagination):
+    page_size_query_param = 'size'
+
+    def get_paginated_response(self, data, data_field, query, size = None):
+        if (size == None):
+            size = self.page_size
+        result = {
+            'query': query,
+            'count': self.page.paginator.count,
+            'size': size,
+            data_field: data
+        }
+        if self.page.has_next():
+            result['next'] = self.get_next_link()
+        if self.page.has_previous():
+            result['previous'] = self.get_previous_link()
+
+        return Response(result)
