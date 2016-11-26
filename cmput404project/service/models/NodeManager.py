@@ -69,3 +69,28 @@ class NodeManager():
         else:
             #We don't know about a host with that hostname, so we return not found
             return 404
+
+	@classmethod
+	def get_stream():
+		stream=[]
+
+		#get all public posts
+		publicPosts=get_public_posts()
+		for post in publicPosts:
+			stream.append(post)
+
+		'''
+		nodes=self.get_nodes()
+		for node in nodes:
+			#get all public
+			publicPosts=node.get_public_posts()
+            if (publicPosts == None):
+                continue
+            i = 0
+			for post in publicPosts['posts']:
+				json_dict['public']=publicPosts['posts'][i]
+				i+=1
+
+			#get all friends of user
+		'''
+
