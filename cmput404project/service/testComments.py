@@ -83,7 +83,7 @@ class CommentAPIViewTests(APITestCase):
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(comment.guid), response.data[0]['guid'])
+        self.assertEqual(str(comment.guid), response.data['comments'][0]['guid'])
         self.assertEqual(comment.post.id, self.post.id, "wrong post")
         comment.delete()
 
@@ -248,3 +248,25 @@ class CommentAPIViewTests(APITestCase):
             self.assertNotEqual(response.status_code, 404, "The delete passed")
         except:
             self.assertEqual(response.status_code, 404)
+
+    # Tests for pagination of comments
+    def test_get_comments_by_size:
+        pass
+
+    def test_get_comments_by_page_and_size:
+        pass
+
+    def test_get_full_page_of_comments:
+        pass
+
+    def test_get_partial_page_of_comments:
+        pass
+
+    def test_page_does_not_exist_comments:
+        pass
+
+    def test_get_comments_by_page_and_exceeded_size:
+        pass
+
+    def test_get_comments_by_page_and_partial_size:
+        pass

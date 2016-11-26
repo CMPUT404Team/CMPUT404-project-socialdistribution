@@ -123,11 +123,15 @@ class CommentAPIView(APIView):
             raise Http404
         return post
 
-    # TODO change to {comments: [...]}
     def get(self, request, pid):
         comments = self.get_comments(pid)
+        paginator = CustomPagination()
+        paginator.paginate_queryset(comments, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        comments = paginator.page.object_list if 'page' in request.GET else comments
         serializer = CommentSerializer(comments, many=True, context={'request': request})
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data, 'comments', 'comments',
+                request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request, pid):
         post = self.get_post(pid)
@@ -319,7 +323,7 @@ class PostView(APIView):
         if (request.user == post.author.user):
             post.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else: 
+        else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 class VisiblePostsView(APIView):
