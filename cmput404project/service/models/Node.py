@@ -36,6 +36,14 @@ class Node(models.Model):
     def make_authenticated_request(self, url):
         return requests.get(url, auth=(self.username,self.password))
 
+    def make_authenticated_post_request(self, url, data):
+        return requests.post(url, auth=(self.username,self.password), data=data)
+    
+    def get_friend_request_json(self, author_json, friend_json):
+        return {"query":"friendrequest",
+                "author": author_json,
+                "friend": friend_json}
+
     def get_json(self, url):
         r = self.make_authenticated_request(url)
         if (r.status_code == 200):
@@ -52,3 +60,8 @@ class Node(models.Model):
     def get_public_posts(self):
         url = self.get_base_url() + "/posts"
         return self.get_json(url)
+
+    def befriend(self, author_json, friend_json):
+        url = self.get_base_url() + "/friendrequest/"
+        r = self.make_authenticated_post_request(url, self.get_friend_request_json(author_json, friend_json))
+        return r.status_code

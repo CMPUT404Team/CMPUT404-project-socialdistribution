@@ -21,7 +21,7 @@ class NodeModelTests(LiveServerTestCase):
         superuser.save()
         remoteUser = User.objects.create_user(username=self.remote_username, password=self.remote_password)
         remoteUser.save()
-        self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
+        self.author = Author.create(host=self.live_server_url, displayName='testMonkey', user=superuser)
         self.author.save()
         self.parsed_test_url = urlparse(self.live_server_url)
         self.node = Node.create(
@@ -75,3 +75,16 @@ class NodeModelTests(LiveServerTestCase):
         nodes = self.nodemanager.get_nodes()
         #TODO test the contents of the object
         self.assertEqual(len(nodes), 1)
+
+    def test_befriend_remote_author(self):
+        user = User.objects.create(username="hopefulFriend", password='superhopeful')
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user) 
+        friend.save()
+        self.node.befriend(self.get_author_json(self.author), self.get_author_json(friend))
+        self.assertIn(friend, self.author.friends.all())
+
+    def get_author_json(self, author):
+        return {"id": author.id,
+		"host":author.host,
+		"displayName":author.displayName,
+		"url":author.host+"/author/"+str(author.id)}
