@@ -128,7 +128,7 @@ class CommentAPIView(APIView):
         paginator = CustomPagination()
         paginator.paginate_queryset(comments, request)
         paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
-        comments = paginator.page.object_list if 'page' in request.GET else comments
+        comments = paginator.page.object_list
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data, 'comments', 'comments',
                 request.GET['size'] if 'size' in request.GET else None)
