@@ -78,3 +78,12 @@ class AuthorDetailView(APIView):
         for friend in author["friends"]:
             friends.append(friend)
         return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host()})
+
+class FriendView(APIView):
+    def get(self, request):
+        author = views.AuthorDetailView.as_view()(request, pk).data
+        friends = []
+        for friend in author["friends"]:
+            f = views.AuthorDetailView.as_view()(request, friend["id"]).data
+            friends.append(f)
+        return render(request, "friends.html", {"friends":friends})
