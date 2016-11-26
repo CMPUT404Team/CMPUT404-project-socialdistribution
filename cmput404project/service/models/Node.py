@@ -31,7 +31,7 @@ class Node(models.Model):
         return self.displayName
    
     def get_base_url(self):
-        return 'http://' + self.host + self.path
+        return self.host + self.path
 
     def make_authenticated_request(self, url):
         return requests.get(url, auth=(self.username,self.password))

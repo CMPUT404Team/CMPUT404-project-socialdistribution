@@ -23,10 +23,9 @@ class NodeModelTests(LiveServerTestCase):
         remoteUser.save()
         self.author = Author.create(host=self.live_server_url, displayName='testMonkey', user=superuser)
         self.author.save()
-        self.parsed_test_url = urlparse(self.live_server_url)
         self.node = Node.create(
             displayName = "The Node",
-            host = self.parsed_test_url.hostname+":"+str(self.parsed_test_url.port),
+            host = self.live_server_url, 
             path = "",
             user = remoteUser,
             username = self.remote_username,
@@ -49,7 +48,7 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(self.node.displayName, "The Node")
 
     def test_node_host_equal(self):
-        self.assertEqual(self.node.host, self.parsed_test_url.hostname+":"+str(self.parsed_test_url.port))
+        self.assertEqual(self.node.host, self.live_server_url)
 
     def test_node_username_equal(self):
         self.assertEqual(self.node.username, self.remote_username)
@@ -84,13 +83,33 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(204, status)
         self.assertIn(friend, self.author.friends.all())
 
+    def test_befriend_with_malformed_json(self):
+        status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
+        self.assertEqual(400, status)
+
+    def test_befriend_with_friend_with_malformed_host(self):
+         user = User.objects.create(username="hopefulFriendThatWillFail", password='superhopeful')
+         friend = Author.create(host="NotAHostKnownByNodeManager.com", displayName='hopefulFriendThatWillFail', user=user)
+         friend.save()
+         http_response_code = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
+         self.assertEqual(404, http_response_code)
+
+    def test_befriend_through_NodeManager(self):
+        user = User.objects.create(username="hopefulFriend", password='superhopeful')
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user)
+        friend.save()
+        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
+        self.assertEqual(204, status)
+        self.assertIn(friend, self.author.friends.all())
+        
+    def test_befriend_through_NodeManager_with_bad_json(self):
+        status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
+        self.assertEqual(400, status)
+
     def get_author_json(self, author):
-        return {
-                "id": str(author.id),
-		"host":author.host,
-		"displayName":author.displayName,
-		"url":author.host+"/author/"+str(author.id)
-                }
+        author_json = self.get_friend_json(author)
+        author_json['url'] = author.host+"/author/"+str(author.id)
+        return author_json
 
     def get_friend_json(self, friend):
 	return {
