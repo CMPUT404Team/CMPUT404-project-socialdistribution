@@ -1,0 +1,13 @@
+.tiled-background{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  overflow: auto;
+}
+
+.tiled-photo{
+  height: 16.66%;
+  width: 16.66%;
+  filter: blur(8px);
+}
