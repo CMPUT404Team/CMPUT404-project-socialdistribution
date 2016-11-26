@@ -159,7 +159,6 @@ class PostAPITests(APITestCase):
         response = self.get_posts_by_page(1)
         self.assertEqual(response.status_code, 200)
 
-    #@skip("pagination needs a fix")
     def test_get_full_page_of_posts(self):
         # Retrieves a full page of posts
         for post_count in range(0, 15):
@@ -167,21 +166,18 @@ class PostAPITests(APITestCase):
         response = self.get_posts_by_page(1)
         self.assertEqual(len(response.data['posts']), 10)
 
-    @skip("pagination needs a fix")
     def test_get_partial_page_of_posts(self):
         # Retrieves a partial page of posts
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page(2)
-        self.assertEqual(response.data['size'], 6)
+        self.assertEqual(len(response.data['posts']), 6)
 
-    #@skip("pagination needs a fix")
     def test_page_does_not_exist(self):
         # Tests what is returned if requested page of posts does not exist
         response = self.get_posts_by_page(77)
         self.assertEqual(response.status_code, 404)
 
-    #@skip("pagination needs a fix")
     def test_get_posts_by_page_and_size(self):
         # Retrieves a page of posts with specific size of page
         for post_count in range(0, 25):
@@ -189,15 +185,13 @@ class PostAPITests(APITestCase):
         response = self.get_posts_by_page_and_size(2, 20)
         self.assertEqual(response.status_code, 200)
 
-    #@skip("pagination needs a fix")
     def test_get_posts_by_page_and_exceeded_size(self):
         # Retrieves a page where there are more posts than the specified size
         for post_count in range(0, 45):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page_and_size(2, 20)
-        self.assertEqual(len(response.data['size']), 20)
+        self.assertEqual(len(response.data['posts']), 20)
 
-    #@skip("pagination needs a fix")
     def test_get_posts_by_page_and_partial_size(self):
         # Retrives a page where the size is smaller than the one specified
         for post_count in range(0, 15):
