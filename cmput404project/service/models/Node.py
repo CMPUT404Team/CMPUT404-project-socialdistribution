@@ -37,12 +37,14 @@ class Node(models.Model):
         return requests.get(url, auth=(self.username,self.password))
 
     def make_authenticated_post_request(self, url, data):
-        return requests.post(url, auth=(self.username,self.password), data=data)
+        return requests.post(url, auth=(self.username,self.password), json=data)
     
     def get_friend_request_json(self, author_json, friend_json):
-        return {"query":"friendrequest",
+        return {
+                "query":"friendrequest",
                 "author": author_json,
-                "friend": friend_json}
+                "friend": friend_json
+                }
 
     def get_json(self, url):
         r = self.make_authenticated_request(url)
