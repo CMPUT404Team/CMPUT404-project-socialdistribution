@@ -21,12 +21,11 @@ class NodeModelTests(LiveServerTestCase):
         superuser.save()
         remoteUser = User.objects.create_user(username=self.remote_username, password=self.remote_password)
         remoteUser.save()
-        self.author = Author.create(host='local', displayName='testMonkey', user=superuser)
+        self.author = Author.create(host=self.live_server_url, displayName='testMonkey', user=superuser)
         self.author.save()
-        self.parsed_test_url = urlparse(self.live_server_url)
         self.node = Node.create(
             displayName = "The Node",
-            host = self.parsed_test_url.hostname+":"+str(self.parsed_test_url.port),
+            host = self.live_server_url, 
             path = "",
             user = remoteUser,
             username = self.remote_username,
@@ -35,7 +34,6 @@ class NodeModelTests(LiveServerTestCase):
         self.node.save()
 
         self.nodemanager = NodeManager.create()
-        self.nodemanager.save()
         self.create_post(self.author)
 
     def create_post(self, author):
@@ -50,17 +48,17 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(self.node.displayName, "The Node")
 
     def test_node_host_equal(self):
-        self.assertEqual(self.node.host, self.parsed_test_url.hostname+":"+str(self.parsed_test_url.port))
+        self.assertEqual(self.node.host, self.live_server_url)
 
     def test_node_username_equal(self):
         self.assertEqual(self.node.username, self.remote_username)
 
     def test_node_password_equal(self):
-        self.assertEqual(base64.b64decode(self.node.password), self.remote_password)
+        self.assertEqual(self.node.password, self.remote_password)
 
     def test_get_posts(self):
         posts = self.node.get_posts()
-        self.assertEqual(str(self.post.id), posts[0]['id'])
+        self.assertEqual(str(self.post.id), posts['posts'][0]['id'])
 
     def test_get_posts_by_author(self):
         author_id = self.author.id
@@ -76,3 +74,46 @@ class NodeModelTests(LiveServerTestCase):
         nodes = self.nodemanager.get_nodes()
         #TODO test the contents of the object
         self.assertEqual(len(nodes), 1)
+
+    def test_befriend_remote_author(self):
+        user = User.objects.create(username="hopefulFriend", password='superhopeful')
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user) 
+        friend.save()
+        status = self.node.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
+        self.assertEqual(204, status)
+        self.assertIn(friend, self.author.friends.all())
+
+    def test_befriend_with_malformed_json(self):
+        status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
+        self.assertEqual(400, status)
+
+    def test_befriend_with_friend_with_malformed_host(self):
+         user = User.objects.create(username="hopefulFriendThatWillFail", password='superhopeful')
+         friend = Author.create(host="NotAHostKnownByNodeManager.com", displayName='hopefulFriendThatWillFail', user=user)
+         friend.save()
+         http_response_code = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
+         self.assertEqual(404, http_response_code)
+
+    def test_befriend_through_NodeManager(self):
+        user = User.objects.create(username="hopefulFriend", password='superhopeful')
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user)
+        friend.save()
+        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
+        self.assertEqual(204, status)
+        self.assertIn(friend, self.author.friends.all())
+        
+    def test_befriend_through_NodeManager_with_bad_json(self):
+        status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
+        self.assertEqual(400, status)
+
+    def get_author_json(self, author):
+        author_json = self.get_friend_json(author)
+        author_json['url'] = author.host+"/author/"+str(author.id)
+        return author_json
+
+    def get_friend_json(self, friend):
+	return {
+                "id": str(friend.id),
+                "host":friend.host,
+                "displayName":friend.displayName
+                }

@@ -1,0 +1,18 @@
+{% load rest_framework %}
+<html><body>
+{% if comments %}
+  <ul class = 'comments'>
+    {% for comment in comments %}
+      <div class='comment'>
+        <a href="{{host}}/doggo/posts/{{post.id}}">Back to posts</a>
+        <p class='comment'>{{comment.comment}}</p>
+        <p class='comment-published'>{{comment.pubDate}}</p>
+        <p class='comment-author'>{{comment.author.displayName}}</p>
+        <a class='comment-content' href>{{comment.content}}</p>
+      </div>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No comments available.</p>
+{% endif %}
+</body></html>

@@ -39,13 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'service',
-    'posts',
     'rest_framework_docs'
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': (
-        'rest_framework.pagination.LimitOffsetPagination',),
+        'rest_framework.pagination.PageNumberPagination',),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
