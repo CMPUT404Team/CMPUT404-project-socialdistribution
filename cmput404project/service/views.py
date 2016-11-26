@@ -227,7 +227,7 @@ class PostsView(APIView):
         paginator.paginate_queryset(posts, request)
 
         paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
-        posts = paginator.page.object_list if 'page' in request.GET else posts
+        posts = paginator.page.object_list
 
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
@@ -290,7 +290,7 @@ class PostView(APIView):
         paginator.paginate_queryset(post, request)
 
         paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
-        post = paginator.page.object_list if 'page' in request.GET else post
+        post = paginator.page.object_list
 
         serializer = PostSerializerGet(post, many=True, context={'request':request})
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
@@ -369,7 +369,7 @@ class VisiblePostsView(APIView):
         paginator = CustomPagination()
         paginator.paginate_queryset(posts, request)
         paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
-        posts = paginator.page.object_list if 'page' in request.GET else posts
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
                 request.GET['size'] if 'size' in request.GET else None)
@@ -395,7 +395,7 @@ class AuthorPostsView(APIView):
         paginator = CustomPagination()
         paginator.paginate_queryset(posts, request)
         paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
-        posts = paginator.page.object_list if 'page' in request.GET else posts
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
                 request.GET['size'] if 'size' in request.GET else None)
