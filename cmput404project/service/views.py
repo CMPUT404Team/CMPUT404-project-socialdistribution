@@ -371,7 +371,7 @@ class VisiblePostsView(APIView):
 	}
     """
     def get(self, request):
-        posts = Post.objects.all()#.filter(visibility="?")
+        posts = Post.objects.all().exclude(visibility="PRIVATE").exclude(visibility="SERVERONLY")
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
