@@ -83,7 +83,7 @@ class CommentAPIViewTests(APITestCase):
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(comment.guid), response.data[0]['guid'])
+        self.assertEqual(str(comment.guid), response.data['comments'][0]['guid'])
         self.assertEqual(comment.post.id, self.post.id, "wrong post")
         comment.delete()
 
@@ -248,3 +248,67 @@ class CommentAPIViewTests(APITestCase):
             self.assertNotEqual(response.status_code, 404, "The delete passed")
         except:
             self.assertEqual(response.status_code, 404)
+
+    # Tests for pagination of comments
+
+    def new_comment_setup(self):
+        new_post = Comment.create_comment("neat dog", self.author, self.post)
+        new_post.save()
+
+    def test_get_comments_by_size(self):
+        # retrieves comments with specific size per page
+        for i in range(0, 5):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=2')
+        self.assertEqual(len(response.data['comments']), 2)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_comments_by_page_and_size(self):
+        # retrieves comments with a specific size and page
+        for i in range(0, 10):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=2&page=3')
+        self.assertEqual(len(response.data['comments']), 2)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=9&page=1')
+        self.assertEqual(len(response.data['comments']), 9)
+
+    def test_get_full_page_of_comments(self):
+        # retrieves a full page of comments
+        for i in range(0, 22):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2')
+        self.assertEqual(len(response.data['comments']), 10)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_partial_page_of_comments(self):
+        # retrieves a partial page of comments
+        for i in range(0, 22):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3')
+        self.assertEqual(len(response.data['comments']), 2)
+        self.assertEqual(response.status_code, 200)
+
+    def test_page_does_not_exist_comments(self):
+        # retrieves a page of comments that doesn't exist
+        for i in range(0, 2):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2')
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_comments_by_page_and_exceeded_size(self):
+        # retrieves a page where there are more comments than the specified size
+        for i in range(0, 10):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2&size=4')
+        self.assertEqual(len(response.data['comments']), 4)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_comments_by_page_and_partial_size(self):
+        # retrieves a page where there are less comments than the specified size
+        for i in range(0, 10):
+            self.new_comment_setup()
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3&size=4')
+        self.assertEqual(len(response.data['comments']), 2)
+        self.assertEqual(response.status_code, 200)

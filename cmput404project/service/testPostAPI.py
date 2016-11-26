@@ -178,6 +178,14 @@ class PostAPITests(APITestCase):
         response = self.get_posts_by_page(77)
         self.assertEqual(response.status_code, 404)
 
+    def test_get_comments_by_size(self):
+        # retrieves a page with specific size per page
+        for i in range(0, 5):
+            self.new_post_setup(self.author, "PUBLIC")
+        response = self.client.get('/author/posts/?size=2')
+        self.assertEqual(len(response.data['posts']), 2)
+        self.assertEqual(response.status_code, 200)
+
     def test_get_posts_by_page_and_size(self):
         # Retrieves a page of posts with specific size of page
         for post_count in range(0, 25):
@@ -243,7 +251,7 @@ class PostAPITests(APITestCase):
         post_id = self.post.id
         response = self.delete_post(post_id)
         self.assertEqual(response.status_code, 204)
-    
+
     def test_delete_post_if_requester_created_post(self):
         post_id = self.post.id
         client = APIClient()
