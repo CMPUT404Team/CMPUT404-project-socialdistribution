@@ -80,11 +80,21 @@ class NodeModelTests(LiveServerTestCase):
         user = User.objects.create(username="hopefulFriend", password='superhopeful')
         friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user) 
         friend.save()
-        self.node.befriend(self.get_author_json(self.author), self.get_author_json(friend))
+        status = self.node.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
+        self.assertEqual(204, status)
         self.assertIn(friend, self.author.friends.all())
 
     def get_author_json(self, author):
-        return {"id": author.id,
+        return {
+                "id": str(author.id),
 		"host":author.host,
 		"displayName":author.displayName,
-		"url":author.host+"/author/"+str(author.id)}
+		"url":author.host+"/author/"+str(author.id)
+                }
+
+    def get_friend_json(self, friend):
+	return {
+                "id": str(friend.id),
+                "host":friend.host,
+                "displayName":friend.displayName
+                }
