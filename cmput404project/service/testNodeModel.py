@@ -35,7 +35,6 @@ class NodeModelTests(LiveServerTestCase):
         self.node.save()
 
         self.nodemanager = NodeManager.create()
-        self.nodemanager.save()
         self.create_post(self.author)
 
     def create_post(self, author):
@@ -56,7 +55,7 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(self.node.username, self.remote_username)
 
     def test_node_password_equal(self):
-        self.assertEqual(base64.b64decode(self.node.password), self.remote_password)
+        self.assertEqual(self.node.password, self.remote_password)
 
     def test_get_posts(self):
         posts = self.node.get_posts()

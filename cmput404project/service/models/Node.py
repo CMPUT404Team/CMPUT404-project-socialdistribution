@@ -24,7 +24,7 @@ class Node(models.Model):
             path = path,
             user = user,
             username = username,
-            password = password.encode('base64'),
+            password = password,
             )
 
     def __str__(self):
@@ -34,7 +34,7 @@ class Node(models.Model):
         return 'http://' + self.host + self.path
 
     def make_authenticated_request(self, url):
-        return requests.get(url, auth=(self.username,self.password.decode('utf-8')))
+        return requests.get(url, auth=(self.username,self.password))
 
     def get_json(self, url):
         r = self.make_authenticated_request(url)
@@ -43,7 +43,6 @@ class Node(models.Model):
 
     def get_posts(self):
         url = self.get_base_url() + "/author/posts"
-        print "get_post"
         return self.get_json(url) 
 
     def get_posts_by_author(self, author_id):
