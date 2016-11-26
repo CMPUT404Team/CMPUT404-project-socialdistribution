@@ -299,8 +299,11 @@ class PostView(APIView):
 
     def delete(self, request, pk):
         post = self.get_object(pk)
-        post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if (request.user == post.author.user):
+            post.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else: 
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 class VisiblePostsView(APIView):
     """

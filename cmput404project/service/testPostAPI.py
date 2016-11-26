@@ -250,6 +250,14 @@ class PostAPITests(APITestCase):
         post_id = self.post.id
         response = self.delete_post(post_id)
         self.assertEqual(response.status_code, 204)
+    
+    def test_delete_post_if_requester_created_post(self):
+        post_id = self.post.id
+        client = APIClient()
+        evilUser = User.objects.create_user(username='evil', password='DeleteThePosts')
+        client.force_authenticate(user=evilUser)
+        response = client.delete("/posts/"+str(post_id)+"/")
+        self.assertEqual(401, response.status_code)
 
     def test_delete_nonexistent_post(self):
         post_id = uuid.uuid4()
