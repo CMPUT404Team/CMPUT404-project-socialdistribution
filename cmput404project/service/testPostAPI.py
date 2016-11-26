@@ -129,7 +129,7 @@ class PostAPITests(APITestCase):
         pass
 
     def test_get_post_returns_comment(self):
-        comment = Comment.create_comment("Look at dat comment", self.author, self.post)
+        comment = Comment.create_comment("Look at dat comment", self.author, self.post, 'text/plain')
         comment.save()
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)

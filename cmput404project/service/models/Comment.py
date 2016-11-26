@@ -14,16 +14,19 @@ Assumptions based on requirements
 '''
 #@python_2_unicode_compatible
 class Comment(models.Model):
+    CONTENT_TYPE = (('text/plain','text/plain'),('text/markdown','text/markdown'))
+
     author = models.ForeignKey(Author, on_delete = models.CASCADE)
     pubDate = models.DateTimeField(default=timezone.now, null=True)
     comment = models.CharField(max_length=200)
     guid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    contentType = models.CharField(max_length=100, choices=CONTENT_TYPE, default='text/plain')
 
     @classmethod
-    def create_comment(cls,comm, auth, post):
+    def create_comment(cls,comm, auth, post, ct):
         if(comm!="" and (comm is not None)):
-            createdComment = cls(comment = comm, author = auth, post = post)
+            createdComment = cls(comment = comm, author = auth, post = post, contentType = ct)
         else:
             createdComment=None
         return createdComment
