@@ -94,7 +94,10 @@ class NodeManager():
             stream.append(post)
         return stream
 
-        
+<<<<<<< 525faf90bec4fe02698ec00e7b07a9889757ec7a
+
+=======
+>>>>>>> nodemanager.py
     @classmethod
     def get_posts_by_friends(self, author_ids):
         stream = []
