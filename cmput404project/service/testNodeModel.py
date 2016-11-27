@@ -41,10 +41,15 @@ class NodeModelTests(LiveServerTestCase):
         self.post = Post.create(author, "Yolo", "here", "Stuff", "Moar stuff", "PUBLIC")
         self.post.save()
 
-    def create_private_post(self, author):
-        #create(cls, author,title,origin,description,categories,visibility):
-        self.post = Post.create(author, "Private post", "here", "Secrets", "More secrets", "PRIVATE")
-        self.post.save()
+	def create_friend_post(self,author):
+		post = Post.create(author, "YoloING", "here", "Stuff", "Moar stuff!", "FRIENDS")
+        post.save()
+		return post
+
+	def create_private_post(self,author):
+		post = Post.create(author, "NotYourBus", "here", "Stuff", "Moar stuff!", "PRIVATE")
+        post.save()
+		return post
 
     def test_node_creates_id(self):
         self.assertIsNotNone(self.node.id)
@@ -164,24 +169,6 @@ class NodeModelTests(LiveServerTestCase):
         posts = self.nodemanager.get_posts_by_friends(friend_ids)
         self.assertEqual(posts, [])
 
-    def test_get_private_posts(self):
-        self.create_private_post(self.author)
-        self.create_post(self.author)
-        self.create_private_post(self.author)
-        posts = self.nodemanager.get_private_posts(self.author)
-        self.assertEqual(posts[0]['visibility'], "PRIVATE")
-        self.assertEqual(posts[1]['visibility'], "PRIVATE")
-
-    def test_get_private_posts_empty(self):
-        # Test for not displaying private posts of other users
-        user = User.objects.create(username="hopefulSpy", password='superhopefulspy')
-        spy = Author.create(host=self.live_server_url, displayName='hopefulSpy', user=user)
-        spy.save()
-        self.create_private_post(spy)
-        posts = self.nodemanager.get_private_posts(self.author)
-        self.assertEqual(posts, [])
-
-
 
     def get_author_json(self, author):
         author_json = self.get_friend_json(author)
@@ -194,3 +181,16 @@ class NodeModelTests(LiveServerTestCase):
                 "host":friend.host,
                 "displayName":friend.displayName
                 }
+
+	def test_get_stream(self,user):
+		test=[]
+		test.append(self.create_post(author))
+		friendPost=self.create_friend_post(author)
+		privPost=self.create_private_post(author)
+
+		test.append(friendPost)
+		test.append(privPost)
+
+		stream=NodeManager.get_stream(user)
+		self.assertEqual()
+		

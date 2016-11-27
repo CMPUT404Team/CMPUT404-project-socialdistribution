@@ -81,13 +81,18 @@ class NodeManager():
 		for post in publicPosts:
 			stream.append(post)
 
-		#get all friends of user
+		#get all posts from friends of user
 		friends=author.get_friends()
 		friendPosts=get_posts_by_friends(friends)
 		for post in friendPosts:
 			if post not in stream:
 				stream.append(post)
 
+		#get user private posts
+		private=get_private_posts(user)
+		for post in private:
+			stream.append(post)
+		return stream
 
     @classmethod
     def get_posts_by_friends(self, author_ids):
