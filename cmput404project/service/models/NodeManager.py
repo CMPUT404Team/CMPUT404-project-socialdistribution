@@ -66,7 +66,6 @@ class NodeManager():
         print "friend json", friend_json
         if (friend_json):
             host = friend_json.get('host')
-            print "host",host
             if (Node.objects.filter(host__icontains=host).exists()):
                 return Node.objects.get(host__startswith=host).befriend(author_json, friend_json)
         #We don't know about a host with that hostname, so we return not found

@@ -110,6 +110,4 @@ class BefriendView(APIView):
         if (not friend_json):
             return Response(status=400)
         status_code = NodeManager.befriend(author_json, friend_json)
-        print status_code
-        print "req-type",type(request)
         return HttpResponseNotModified()

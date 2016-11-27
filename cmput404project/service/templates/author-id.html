@@ -5,7 +5,7 @@
         <h1 class='author-displayName'>{{author.displayName}}</h1>
 	<form action="/frontend/befriend/" method="post">
 		<input type="hidden" name="friend" value="{{author}}">
-		<input type="submit" value="Friend/Unfriend" />
+		<input type="submit" value="Friend" />
 	</form>
         <p class='author-published'>{{author.host}}</p>
         {% if friends%}
