@@ -77,10 +77,8 @@ class AuthorDetailView(APIView):
     def get(self, request, pk):
         author = views.AuthorDetailView.as_view()(request, pk).data
         friends = []
-        print author
         for friend in author["friends"]:
             f = views.AuthorDetailView.as_view()(request, friend["id"]).data
-            print f
             friends.append(f)
         return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host()})
 
@@ -105,5 +103,8 @@ class BefriendView(APIView):
         user = request.user
         author = self.get_object(user) 
 	author_json = AuthorSerializer(author, context={'request':request}).data
-        friend_json = request.body
+        friend_json = request.data
+        if (not friend_json):
+            return Response(status=400)
+        status_code = NodeManager.befriend(author_json, friend_json)
         return Response(status=NodeManager.befriend(author_json, friend_json))
