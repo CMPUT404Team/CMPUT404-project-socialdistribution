@@ -22,6 +22,7 @@ from django.http.request import QueryDict
 from AuthorForm import AuthorForm
 from models.NodeManager import NodeManager
 import json
+from rest_framework.renderers import TemplateHTMLRenderer
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -147,7 +148,7 @@ class AuthorDetailView(APIView):
 
 class PostsView(APIView):
     """
-    Return a list of all public posts or create a new post 
+    Return a list of all public posts or create a new post
 
     Input: http://localhost:8000/posts/
     Output:
@@ -196,7 +197,6 @@ class PostsView(APIView):
     	]
 	}
     """
-
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         paginator = CustomPagination()
@@ -210,9 +210,12 @@ class PostsView(APIView):
                 request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request):
+        print request.data
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
+        print serializer
         if serializer.is_valid():
             serializer.save()
+            print serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -229,7 +232,7 @@ class PostView(APIView):
 	Content-Type: application/json
 	Vary: Accept
 
-    
+
 	{
 	    "title": "My New Post",
 	    "source": "na",
@@ -388,7 +391,7 @@ class AuthorPostsView(APIView):
     Return a list of available posts created by specified user
 
     Input: http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/posts/
-	output: 
+	output:
 
 	HTTP 200 OK
 	Allow: GET, HEAD, OPTIONS
@@ -498,7 +501,7 @@ class MutualFriendDetailView(APIView):
 
 	Input: http://localhost:8000/friends/3c1f82f3-e207-48bb-9849-a9b03f3bfb96/
 	Output:
-    
+
 	HTTP 200 OK
 	Allow: GET, POST, HEAD, OPTIONS
 	Content-Type: application/json
