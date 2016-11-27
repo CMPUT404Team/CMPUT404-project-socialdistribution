@@ -91,3 +91,9 @@ class NodeManager():
         posts = Post.objects.all().filter(author=author, visibility="PRIVATE")
         posts_list = list(posts.values())
         return posts_list
+
+    @classmethod
+    def get_serveronly_posts(self, author):
+        posts = Post.objects.all().filter(author=author, visibility="SERVERONLY")
+        posts_list = list(posts.values())
+        return posts_list

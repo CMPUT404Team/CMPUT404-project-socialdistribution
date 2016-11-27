@@ -46,6 +46,11 @@ class NodeModelTests(LiveServerTestCase):
         self.post = Post.create(author, "Private post", "here", "Secrets", "More secrets", "PRIVATE")
         self.post.save()
 
+    def create_serveronly_post(self, author):
+        #create(cls, author,title,origin,description,categories,visibility):
+        self.post = Post.create(author, "ServerOnly post", "here", "Local secrets", "More local secrets", "SERVERONLY")
+        self.post.save()
+
     def test_node_creates_id(self):
         self.assertIsNotNone(self.node.id)
 
@@ -181,7 +186,18 @@ class NodeModelTests(LiveServerTestCase):
         posts = self.nodemanager.get_private_posts(self.author)
         self.assertEqual(posts, [])
 
+    def test_get_serveronly_posts(self):
+        self.create_serveronly_post(self.author)
+        self.create_post(self.author)
+        self.create_serveronly_post(self.author)
+        posts = self.nodemanager.get_serveronly_posts(self.author)
+        self.assertEqual(posts[0]['visibility'], "SERVERONLY")
+        self.assertEqual(posts[1]['visibility'], "SERVERONLY")
 
+    def test_get_serveronly_posts_empty(self):
+        # Test for having no posts with visibility SERVERONLY
+        posts = self.nodemanager.get_serveronly_posts(self.author)
+        self.assertEqual(posts, [])
 
     def get_author_json(self, author):
         author_json = self.get_friend_json(author)
