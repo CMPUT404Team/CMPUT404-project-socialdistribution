@@ -32,18 +32,102 @@
   padding: 5%;
   bottom: 5%;
   width: 80%;
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+.create-post {
+  background-color: white;
+  margin-bottom: 5%;
+  padding: 5%;
+}
+
+input[type="text"] {
+  border: none;
+  width: 50%;
+  border-bottom: 2px solid #d3d3d3;
+  font-family: Raleway-Light;
+}
+
+input[type="submit"] {
+  display: block;
+  border: none;
+  font-family: Raleway-Bold;
+  font-size: 150%;
+  background-color: white;
+}
+
+label.category {
+  display: inline;
+  font-family: Raleway-Light;
+  font-size: 100%;
+  padding-bottom: 1%;
+  align-self: center;
+}
+
+#category{
+  display: flex;
+}
+
+input.category {
+  display:inline;
+  align-self: center;
+}
+
+.radio{
+  padding: 1%;
+}
+
+label.radio{
+  display:inline;
+  font-size: 100%;
+}
+
+input[type="radio"] {
+  display: inline-block;
+  border: none;
+  font-family: Raleway-Bold;
+  font-size: 150%;
+  background-color: white;
+}
+
+input[type="submit"] {
+  border: 2px solid #d3d3d3;
+}
+
+label {
+  display: block;
+  font-family: Raleway-Bold;
+  font-size: 150%;
 }
 
 .post {
-  overflow-y: auto;
-  min-height: 0px;
   background-color: white;
   padding: 5%;
   font-family: Raleway-Light;
   color: black;
+  bottom: 5%;
 }
 
 .post-title {
   font-family: Raleway-Bold;
   font-size: 150%;
+  display:inline-block;
+}
+
+a:hover{
+  color:#d3d3d3;
+}
+
+.by{
+  display:inline-block;
+}
+
+.post-author{
+  font-family: Raleway-Bold;
+  display:inline-block;
+}
+
+a {
+  color: black;
 }

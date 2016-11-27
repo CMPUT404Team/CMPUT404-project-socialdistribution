@@ -20,6 +20,7 @@ from AuthorForm import AuthorForm
 from django.core.exceptions import SuspiciousOperation
 from models.NodeManager import NodeManager
 import json
+from rest_framework.renderers import TemplateHTMLRenderer
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -212,6 +213,9 @@ class PostsView(APIView):
         }
     ]
     """
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts.html'
+
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         for post in posts:
@@ -221,9 +225,12 @@ class PostsView(APIView):
         return Response({'posts':serializer.data})
 
     def post(self, request):
+        print request.data
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
+        print serializer
         if serializer.is_valid():
             serializer.save()
+            print serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

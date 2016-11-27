@@ -29,10 +29,10 @@ class Post(models.Model):
     def create(cls, author,title,origin,description,categories,visibility):
         post = cls(author=author, title=title, origin=origin, description=description, categories=categories,
         visibility=visibility)
-        post.origin = author.host
-        post.source = author.host
-        post.parse_description()
         post.id = uuid.uuid4()
+        post.origin = "http://" + author.host +"/posts/" + str()
+        post.source = "http://" + author.host +"/posts/" + str()
+        post.parse_description()
         post.size = 0
         post.next = "http://service/posts/" + str(post.id) +"/comments"
         return post
