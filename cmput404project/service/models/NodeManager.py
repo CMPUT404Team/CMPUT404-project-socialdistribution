@@ -100,24 +100,23 @@ class NodeManager():
 
     @classmethod
     def get_post_by_postid(self, post_id):
-        post_queryset = Post.objects.filter(id=post_id)
-        if not post_queryset:
-            nodes = self.get_nodes()
-            for node in nodes:
-                jsonData = node.get_post(post_id)
-                if (jsonData == None):
-                    continue
+        nodes = self.get_nodes()
+        for node in nodes:
+            jsonData = node.get_post(post_id)
+            if (jsonData == None):
+                continue
+            else:
+                # need to account for diferrent format of single post endpoint
+                if 'posts' in jsonData:
+                    return jsonData['posts'][0]
                 else:
                     return jsonData
-            return 404
-        else:
-            post = post_queryset.values()
-            return post
+        return 404
 
     @classmethod
     def check_post_auth(self, post, author):
-        post_author_id = post.author.id
-        visibility = post.visibility
+        post_author_id = post['author']
+        visibility = post['visibility']
         if author.id == post_author_id:
             return True
         elif visibility == "PUBLIC":
