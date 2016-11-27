@@ -4,6 +4,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
 from Author import Author
 from Node import Node
+from Post import Post
 import uuid, json
 
 class NodeManager():
@@ -84,3 +85,9 @@ class NodeManager():
                     stream.append(jsonData['posts'][i])
                     i+=1
         return stream
+
+    @classmethod
+    def get_private_posts(self, author):
+        posts = Post.objects.all().filter(author=author, visibility="PRIVATE")
+        posts_list = list(posts.values())
+        return posts_list
