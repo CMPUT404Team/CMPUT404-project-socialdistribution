@@ -105,7 +105,9 @@ class BefriendView(APIView):
         user = request.user
         author = self.get_object(user) 
 	author_json = AuthorSerializer(author, context={'request':request}).data
-        raw = request.data['friend']
+        raw = request.data.get("friend")
+        if(not raw):
+            return Response(status=400)
         friend_json = ast.literal_eval(raw)
         if (not friend_json):
             return Response(status=400)

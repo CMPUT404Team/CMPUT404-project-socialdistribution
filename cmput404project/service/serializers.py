@@ -36,7 +36,6 @@ class CommentSerializer(serializers.Serializer):
         #return Comment.create_comment(validated_data['comment'],validated_data["author"],post)
 
     def update(self, instance, validated_data):
-        print "update"
         # probs going to have to call AuthorSerializer to deserialize
         #instance.author = validated_data.get('author', instance.email)
         #instance.pubDate = validated_data.get('pubDate', instance.pubDate)

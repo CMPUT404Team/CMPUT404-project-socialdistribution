@@ -41,6 +41,6 @@ class FrontEndViewTest(LiveServerTestCase):
         self.assertEqual(400, response.status_code)
 
     def test_should_befriend_from_frontend(self):
-	response = self.client.post('/frontend/befriend/', data=self.get_friend_json(self.friend))
+	response = self.client.post('/frontend/befriend/', data = friend=self.get_friend_json(self.friend))
 	self.assertEqual(204, response.status_code)
 	self.assertIn(self.friend, self.author.friends.all())

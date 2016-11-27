@@ -63,7 +63,6 @@ class NodeManager():
 
     @classmethod
     def befriend(self, author_json, friend_json):
-        print "friend json", friend_json
         if (friend_json):
             host = friend_json.get('host')
             if (Node.objects.filter(host__icontains=host).exists()):
