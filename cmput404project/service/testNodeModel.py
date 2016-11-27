@@ -224,7 +224,7 @@ class NodeModelTests(LiveServerTestCase):
                 }
 
     def test_get_stream(self):
-        test=[]
+        created_post_id_list=[]
 
         #set up users
         user1 = User.objects.create(username="hopefulFriend1", password='superhopeful1')
@@ -244,11 +244,13 @@ class NodeModelTests(LiveServerTestCase):
         friendPost=self.create_friend_post(friend2)
         privPost=self.create_private_post(friend1)
 
-        test.append(publicPost)
-        test.append(friendPost)
-        test.append(privPost)
+        created_posts=Post.objects.all()
+        created_post_id_list=[str(p.id) for p in created_posts]
+
         self.nodemanager = NodeManager.create()
         stream=self.nodemanager.get_stream(user1)
 
         #self.assertEqual(test[0]['vilibility'],stream[0]['title'])
-        self.assertEqual('Yolo',str(stream[0]['title']))
+        self.assertEqual(len(created_posts),len(stream))
+        for stream_post in stream:
+            self.assertIn(str(stream_post['id']),created_post_id_list)
