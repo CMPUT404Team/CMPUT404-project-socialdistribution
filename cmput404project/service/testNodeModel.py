@@ -121,14 +121,14 @@ class NodeModelTests(LiveServerTestCase):
         user1 = User.objects.create(username="hopefulFriend1", password='superhopeful1')
         friend1 = Author.create(host=self.live_server_url, displayName='hopefulFriend1', user=user1)
         friend1.save()
-        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend1))
+        self.author.add_friend(friend1)
         self.create_post(friend1)
         self.create_post(friend1)
 
         user2 = User.objects.create(username="hopefulFriend2", password='superhopeful2')
         friend2 = Author.create(host=self.live_server_url, displayName='hopefulFriend2', user=user2)
         friend2.save()
-        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend2))
+        self.author.add_friend(friend2)
         self.create_post(friend2)
 
         friend_ids = self.author.get_friends()
@@ -136,34 +136,35 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(posts[0]['author']['displayName'], "hopefulFriend1")
         self.assertEqual(posts[2]['author']['displayName'], "hopefulFriend2")
 
-    def test_get_posts_by_friends(self):
-        # Test for one friend having a post and the other having no posts
-        user1 = User.objects.create(username="hopefulFriend1", password='superhopeful1')
-        friend1 = Author.create(host=self.live_server_url, displayName='hopefulFriend1', user=user1)
-        friend1.save()
-        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend1))
-        self.create_post(friend1)
+    def test_get_posts_by_friends_fof(self):
+        # Test for one friend having a post and friend of friend having a post
+        user1 = User.objects.create(username="hopefulFriend", password='superhopeful')
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user1)
+        friend.save()
+        self.author.add_friend(friend)
+        self.create_post(friend)
 
-        user2 = User.objects.create(username="hopefulFriend2", password='superhopeful2')
-        friend2 = Author.create(host=self.live_server_url, displayName='hopefulFriend2', user=user2)
-        friend2.save()
-        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend2))
+        user2 = User.objects.create(username="FriendOfFriend", password='superhopeful2')
+        fof = Author.create(host=self.live_server_url, displayName='FriendOfFriend', user=user2)
+        fof.save()
+        friend.add_friend(fof)
+        self.create_post(fof)
 
         friend_ids = self.author.get_friends()
         posts = self.nodemanager.get_posts_by_friends(friend_ids)
-        self.assertEqual(posts[0]['author']['displayName'], "hopefulFriend1")
+        self.assertEqual(posts[0]['author']['displayName'], "hopefulFriend")
 
     def test_get_posts_by_friends_without_posts(self):
         # Test for multiple friends having no posts
         user1 = User.objects.create(username="hopefulFriend1", password='superhopeful1')
         friend1 = Author.create(host=self.live_server_url, displayName='hopefulFriend1', user=user1)
         friend1.save()
-        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend1))
+        self.author.add_friend(friend1)
 
         user2 = User.objects.create(username="hopefulFriend2", password='superhopeful2')
         friend2 = Author.create(host=self.live_server_url, displayName='hopefulFriend2', user=user2)
         friend2.save()
-        status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend2))
+        self.author.add_friend(friend2)
 
         friend_ids = self.author.get_friends()
         posts = self.nodemanager.get_posts_by_friends(friend_ids)
