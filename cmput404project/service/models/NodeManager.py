@@ -97,3 +97,47 @@ class NodeManager():
         posts = Post.objects.all().filter(author=author, visibility="SERVERONLY")
         posts_list = list(posts.values())
         return posts_list
+
+    @classmethod
+    def get_post_by_postid(self, post_id):
+        post_queryset = Post.objects.filter(id=post_id)
+        if not post_queryset:
+            nodes = self.get_nodes()
+            for node in nodes:
+                jsonData = node.get_post(post_id)
+                if (jsonData == None):
+                    continue
+                else:
+                    return jsonData
+            return 404
+        else:
+            post = post_queryset.values()
+            return post
+
+    @classmethod
+    def check_post_auth(self, post, author):
+        post_author_id = post.author.id
+        visibility = post.visibility
+        if author.id == post_author_id:
+            return True
+        elif visibility == "PUBLIC":
+            return True
+        elif visibility == "Friend":
+            is_friend = author.is_friend(post.author)
+            if is_friend:
+                return True
+        elif visibility == "SERVERONLY":
+            if post.author.host == author.host:
+                return True
+        return False
+
+    @classmethod
+    def get_post_for_user(self, post_id, author):
+        post = self.get_post_by_postid(post_id)
+        if post == 404:
+            return 404
+        else:
+            is_authorized = self.check_post_auth(post, author)
+            if not is_authorized:
+                return 404
+        return post
