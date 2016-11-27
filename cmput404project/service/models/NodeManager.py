@@ -89,10 +89,10 @@ class NodeManager():
                 stream.append(post)
 
         #get user private posts
-        private=self.get_private_posts(user)
+        private=self.get_private_posts(author)
         for post in private:
             stream.append(post)
-            return stream
+        return stream
 
     @classmethod
     def get_posts_by_friends(self, author_ids):

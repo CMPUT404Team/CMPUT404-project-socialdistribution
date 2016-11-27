@@ -38,8 +38,9 @@ class NodeModelTests(LiveServerTestCase):
 
     def create_post(self, author):
         #create(cls, author,title,origin,description,categories,visibility):
-        self.post = Post.create(author, "Yolo", "here", "Stuff", "Moar stuff", "PUBLIC")
-        self.post.save()
+        post = Post.create(author, "Yolo", "here", "Stuff", "Moar stuff", "PUBLIC")
+        post.save()
+        return post
 
     def create_friend_post(self,author):
         post = Post.create(author, "YoloING", "here", "Stuff", "Moar stuff!", "FRIENDS")
@@ -72,8 +73,12 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(self.node.password, self.remote_password)
 
     def test_get_posts(self):
+        user = User.objects.create(username="hopefulFriend", password='superhopeful')
+        author = Author.create(host=self.live_server_url, displayName='testMonkey', user=user)
+
+        post = self.create_post(author)
         posts = self.node.get_posts()
-        self.assertEqual(str(self.post.id), posts['posts'][0]['id'])
+        self.assertEqual(str(post.id), posts['posts'][0]['id'])
 
     def test_get_posts_by_author(self):
         author_id = self.author.id
@@ -83,7 +88,8 @@ class NodeModelTests(LiveServerTestCase):
 
     def test_get_public_posts(self):
         posts = self.node.get_public_posts()
-        self.assertEqual(str(self.post.id), posts['posts'][0]['id'])
+        post = self.create_post(self.author)
+        self.assertEqual(str(post.id), posts['posts'][0]['id'])
 
     def test_get_nodes_from_nodemanager(self):
         nodes = self.nodemanager.get_nodes()
@@ -234,14 +240,15 @@ class NodeModelTests(LiveServerTestCase):
         friend1.add_friend(friend2)
 
         #create posts, append to test
-        test.append(self.create_post(friend1))
+        publicPost=self.create_post(friend1)
         friendPost=self.create_friend_post(friend2)
         privPost=self.create_private_post(friend1)
 
+        test.append(publicPost)
         test.append(friendPost)
         test.append(privPost)
+        self.nodemanager = NodeManager.create()
+        stream=self.nodemanager.get_stream(user1)
 
-        stream=self.nodemanager.get_stream(friend1)
-
-        print stream
-        self.assertEqual(test,stream)
+        #self.assertEqual(test[0]['vilibility'],stream[0]['title'])
+        self.assertEqual('Yolo',str(stream[0]['title']))
