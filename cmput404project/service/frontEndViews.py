@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotModified
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from rest_framework.renderers import TemplateHTMLRenderer
-import urllib2, base64, json, os
+from rest_framework.request import Request
 from rest_framework.views import APIView
+import urllib2, base64, json, os
 from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
@@ -110,4 +111,5 @@ class BefriendView(APIView):
             return Response(status=400)
         status_code = NodeManager.befriend(author_json, friend_json)
         print status_code
-        return Response(status=status_code)
+        print "req-type",type(request)
+        return HttpResponseNotModified()
