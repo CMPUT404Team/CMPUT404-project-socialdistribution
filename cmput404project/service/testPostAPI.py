@@ -168,10 +168,11 @@ class PostAPITests(APITestCase):
 
     def test_get_partial_page_of_posts(self):
         # Retrieves a partial page of posts
-        for post_count in range(0, 12):
+        for post_count in range(0, 13):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page(3)
-        self.assertEqual(len(response.data['posts']), 2)
+        #will be 4 because it includes the saved post from setup
+        self.assertEqual(len(response.data['posts']), 4)
 
     def test_page_does_not_exist(self):
         # Tests what is returned if requested page of posts does not exist

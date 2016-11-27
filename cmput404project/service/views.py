@@ -236,7 +236,7 @@ class PostsView(APIView):
         i = 0
         for p in serializer.data:
             response = CommentAPIView.as_view()(request, pid=p['id'], from_comment=False)
-            print response.data, '\n'
+            #print response.data, '\n'
             for field in response.data:
                 f = ['comments', 'count', 'size', 'previous', 'next']
                 if (field in f):
@@ -570,7 +570,7 @@ class CustomPagination(PageNumberPagination):
 class PaginationOfCommentInPost():
     def add_to_post(self, data, request):
         i = 0
-        print data[i], '\n'
+        #print data[i], '\n'
         for p in data:
             response = CommentAPIView.as_view()(request, pid=p['id'])
             #print response.data['count']
