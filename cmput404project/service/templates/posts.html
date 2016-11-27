@@ -10,7 +10,7 @@
     <form action="/posts/" method="post">
       <label for="">Title:</label>
       <input type="text" name="title" value="{{title}}" required="required">
-      <label for="">Descrition: </label>
+      <label for="">Description: </label>
       <input type="text" name="description" value="{{description}}">
       <label for="">Content: </label>
       <input type="text" name="content" value="{{description}}">
@@ -53,8 +53,15 @@
         {% else %}
           <p class="comment-content"> No comments yet.</p>
         {% endif %}
-        </div>
         <br>
+          <div class='create comment'>
+            <form action="/posts/" method="post">
+              <p>comment here</p>
+              <label for="">Content: </label>
+              <input type="text" name="content" value="{{description}}">
+            </form>
+          </div>
+        </div>
       </div>
     {% endfor %}
 {% else %}
