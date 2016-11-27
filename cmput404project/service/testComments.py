@@ -280,15 +280,15 @@ class CommentAPIViewTests(APITestCase):
         for i in range(0, 22):
             self.new_comment_setup()
         response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2')
-        self.assertEqual(len(response.data['comments']), 10)
+        self.assertEqual(len(response.data['comments']), 5)
         self.assertEqual(response.status_code, 200)
 
     def test_get_partial_page_of_comments(self):
         # retrieves a partial page of comments
-        for i in range(0, 22):
+        for i in range(0, 13):
             self.new_comment_setup()
         response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3')
-        self.assertEqual(len(response.data['comments']), 2)
+        self.assertEqual(len(response.data['comments']), 3)
         self.assertEqual(response.status_code, 200)
 
     def test_page_does_not_exist_comments(self):

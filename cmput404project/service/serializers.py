@@ -46,8 +46,11 @@ class PostSerializerGet(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('title', 'source', 'origin', 'content',
-        'contentType','description', 'author','count','size',
-        'next','comments','published','id','visibility')
+        'contentType','description', 'author', 'comments',
+        'published','id','visibility')
+        #fields = ('title', 'source', 'origin', 'content',
+        #'contentType','description', 'author','count','size',
+        #'next','comments','published','id','visibility')
 
     def create(self, validated_data):
         author_id = validated_data.pop('author')['id']
@@ -63,9 +66,6 @@ class PostSerializerGet(serializers.ModelSerializer):
         post.description = validated_data.get('description', post.description)
         post.contentType = validated_data.get('contentType', post.contentType)
         post.content = validated_data.get('content', post.content)
-        post.count = validated_data.get('count', post.count)
-        post.size = validated_data.get('size', post.size)
-        post.next = validated_data.get('next', post.next)
         post.published = validated_data.get('published', post.published)
         post.id = validated_data.get('id', post.id)
         post.visibility = validated_data.get('visibility', post.visibility)
@@ -80,8 +80,7 @@ class PostSerializerPutPost(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('title', 'source', 'origin', 'content',
-        'contentType','description', 'author','count','size',
-        'next', 'published','id','visibility')
+        'contentType','description', 'author', 'published','id','visibility')
 
     def create(self, validated_data):
         author_id = validated_data.pop('author')['id']
@@ -97,9 +96,6 @@ class PostSerializerPutPost(serializers.ModelSerializer):
         post.description = validated_data.get('description', post.description)
         post.contentType = validated_data.get('contentType', post.contentType)
         post.content = validated_data.get('content', post.content)
-        post.count = validated_data.get('count', post.count)
-        post.size = validated_data.get('size', post.size)
-        post.next = validated_data.get('next', post.next)
         post.published = validated_data.get('published', post.published)
         post.id = validated_data.get('id', post.id)
         post.visibility = validated_data.get('visibility', post.visibility)

@@ -164,14 +164,14 @@ class PostAPITests(APITestCase):
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page(1)
-        self.assertEqual(len(response.data['posts']), 10)
+        self.assertEqual(len(response.data['posts']), 5)
 
     def test_get_partial_page_of_posts(self):
         # Retrieves a partial page of posts
-        for post_count in range(0, 15):
+        for post_count in range(0, 12):
             self.new_post_setup(self.author, "PUBLIC")
-        response = self.get_posts_by_page(2)
-        self.assertEqual(len(response.data['posts']), 6)
+        response = self.get_posts_by_page(3)
+        self.assertEqual(len(response.data['posts']), 2)
 
     def test_page_does_not_exist(self):
         # Tests what is returned if requested page of posts does not exist
@@ -321,9 +321,6 @@ class PostAPITests(APITestCase):
                     "displayName": author.displayName,
                 },
                 "categories": post.categories,
-                "count": str(post.count),
-                "size": str(post.size),
-                "next": post.next,
                 "published":str(post.published),
                 "id":str(post.id),
                 "visibility":post.visibility
@@ -342,9 +339,6 @@ class PostAPITests(APITestCase):
                     "displayName": author.displayName,
                 },
                 "categories": post.categories,
-                "count": str(post.count),
-                "size": str(post.size),
-                "next": post.next,
                 "comments":[
     				{
     					"author":{

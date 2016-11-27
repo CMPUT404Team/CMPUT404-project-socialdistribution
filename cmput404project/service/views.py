@@ -123,15 +123,19 @@ class CommentAPIView(APIView):
             raise Http404
         return post
 
-    def get(self, request, pid):
+    def get(self, request, pid, from_comment = True):
         comments = self.get_comments(pid)
         paginator = CustomPagination()
         paginator.paginate_queryset(comments, request)
-        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        if from_comment:
+            paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+            s = request.GET['size'] if 'size' in request.GET else None
+        elif not from_comment:
+            s = None
         comments = paginator.page.object_list
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data, 'comments', 'comments',
-                request.GET['size'] if 'size' in request.GET else None)
+                s)
 
     def post(self, request, pid):
         post = self.get_post(pid)
@@ -225,11 +229,22 @@ class PostsView(APIView):
             post.comments = comments
         paginator = CustomPagination()
         paginator.paginate_queryset(posts, request)
-
         paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
         posts = paginator.page.object_list
-
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
+
+        i = 0
+        for p in serializer.data:
+            response = CommentAPIView.as_view()(request, pid=p['id'], from_comment=False)
+            print response.data, '\n'
+            for field in response.data:
+                f = ['comments', 'count', 'size', 'previous', 'next']
+                if (field in f):
+                    serializer.data[i][field] = response.data[field]
+            i += 1
+
+        #cip = PaginationOfCommentInPost()
+        #data = cip.add_to_post(serializer.data, request)
         return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
                 request.GET['size'] if 'size' in request.GET else None)
 
@@ -284,7 +299,7 @@ class PostView(APIView):
 
     def get(self, request, pk):
         post = [self.get_object(pk)]
-        comments = Comment.objects.filter(post_id=pk)
+        comments = Comment.objects.filter(post_id=uuid.UUID(pk))
         post[0].comments = comments
         paginator = CustomPagination()
         paginator.paginate_queryset(post, request)
@@ -551,3 +566,20 @@ class CustomPagination(PageNumberPagination):
             result['previous'] = self.get_previous_link()
 
         return Response(result)
+
+class PaginationOfCommentInPost():
+    def add_to_post(self, data, request):
+        i = 0
+        print data[i], '\n'
+        for p in data:
+            response = CommentAPIView.as_view()(request, pid=p['id'])
+            #print response.data['count']
+            for field in response.data:
+                #print 'field: ', field
+                f = ['comments', 'count', 'size', 'previous', 'next']
+                if (field in f):
+                    #print 'field2: ', field
+                    data[i][field] = response.data[field]
+            i += 1
+        #print data[0]['count']
+        return data
