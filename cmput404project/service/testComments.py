@@ -35,7 +35,7 @@ class CommentUnitTest(TestCase):
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
         comment = 'Nice doggo'
-        comm = Comment().create_comment(comment, author, post)
+        comm = Comment().create_comment(comment, author, post, 'text/plain')
         self.assertEqual(comm.author, author, "Author not equal")
         self.assertEqual(comm.comment, 'Nice doggo', "Comment not equal")
         self.assertIsInstance(comm.pubDate, datetime, "Not a datetime object")
@@ -52,7 +52,7 @@ class CommentUnitTest(TestCase):
         post = Post()
         comment = 'Nice doggo'
         try:
-            comm = Comment().create_comment(comment, "abc", post)
+            comm = Comment().create_comment(comment, "abc", post, 'text/plain')
         except ValueError as e:
             self.assertTrue(e, "Successfully detected ValueError")
 
@@ -74,11 +74,12 @@ class CommentAPIViewTests(APITestCase):
             visibility = "PUBLIC")
         self.author.save()
         self.post.save()
+        self.ct = 'text/plain'
 
     # test get comments of a post
     def test_get_comment(self):
         #call the endpoint
-        comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
+        comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post, self.ct)
         comment.save()
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
@@ -105,7 +106,7 @@ class CommentAPIViewTests(APITestCase):
     @skip("failing")
     # test get empty comment
     def test_get_empty_comments(self):
-        comment = Comment().create_comment("", self.author, self.post)
+        comment = Comment().create_comment("", self.author, self.post, self.ct)
 
         response = self.client.get('/posts/'+str(self.post.id)+'/comments')
         #check that they match
@@ -140,7 +141,7 @@ class CommentAPIViewTests(APITestCase):
     # test update a comment through POST
     def test_post_update_comment(self):
         # make comment
-        comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post)
+        comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post, self.ct)
         comment.save()
         updated_comment={
           "query":"addComment",
@@ -252,7 +253,7 @@ class CommentAPIViewTests(APITestCase):
     # Tests for pagination of comments
 
     def new_comment_setup(self):
-        new_post = Comment.create_comment("neat dog", self.author, self.post)
+        new_post = Comment.create_comment("neat dog", self.author, self.post, self.ct)
         new_post.save()
 
     def test_get_comments_by_size(self):
@@ -279,15 +280,15 @@ class CommentAPIViewTests(APITestCase):
         for i in range(0, 22):
             self.new_comment_setup()
         response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2')
-        self.assertEqual(len(response.data['comments']), 10)
+        self.assertEqual(len(response.data['comments']), 5)
         self.assertEqual(response.status_code, 200)
 
     def test_get_partial_page_of_comments(self):
         # retrieves a partial page of comments
-        for i in range(0, 22):
+        for i in range(0, 13):
             self.new_comment_setup()
         response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3')
-        self.assertEqual(len(response.data['comments']), 2)
+        self.assertEqual(len(response.data['comments']), 3)
         self.assertEqual(response.status_code, 200)
 
     def test_page_does_not_exist_comments(self):

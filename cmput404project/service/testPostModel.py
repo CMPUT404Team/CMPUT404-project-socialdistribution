@@ -62,13 +62,6 @@ class PostModelTests(TestCase):
     def test_Post_Has_Published(self):
         self.assertIsNotNone(self.post.published)
 
-    def test_Post_Next_Equal(self):
-        post_next = "http://service/posts/" + str(self.post.id) +"/comments"
-        self.assertEqual(self.post.next, post_next)
-
-    def test_Post_Number_Of_Comments_To_Display(self):
-        self.assertIsNotNone(self.post.size)
-
     @skip("Failing")
     def test_Post_Add_Comment(self):
         comment = Comment.create_comment("Look at dat comment", self.author, self.post)

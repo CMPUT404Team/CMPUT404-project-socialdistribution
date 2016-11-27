@@ -129,7 +129,7 @@ class PostAPITests(APITestCase):
         pass
 
     def test_get_post_returns_comment(self):
-        comment = Comment.create_comment("Look at dat comment", self.author, self.post)
+        comment = Comment.create_comment("Look at dat comment", self.author, self.post, 'text/plain')
         comment.save()
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
@@ -164,14 +164,15 @@ class PostAPITests(APITestCase):
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page(1)
-        self.assertEqual(len(response.data['posts']), 10)
+        self.assertEqual(len(response.data['posts']), 5)
 
     def test_get_partial_page_of_posts(self):
         # Retrieves a partial page of posts
-        for post_count in range(0, 15):
+        for post_count in range(0, 13):
             self.new_post_setup(self.author, "PUBLIC")
-        response = self.get_posts_by_page(2)
-        self.assertEqual(len(response.data['posts']), 6)
+        response = self.get_posts_by_page(3)
+        #will be 4 because it includes the saved post from setup
+        self.assertEqual(len(response.data['posts']), 4)
 
     def test_page_does_not_exist(self):
         # Tests what is returned if requested page of posts does not exist
@@ -321,9 +322,6 @@ class PostAPITests(APITestCase):
                     "displayName": author.displayName,
                 },
                 "categories": post.categories,
-                "count": str(post.count),
-                "size": str(post.size),
-                "next": post.next,
                 "published":str(post.published),
                 "id":str(post.id),
                 "visibility":post.visibility
@@ -342,9 +340,6 @@ class PostAPITests(APITestCase):
                     "displayName": author.displayName,
                 },
                 "categories": post.categories,
-                "count": str(post.count),
-                "size": str(post.size),
-                "next": post.next,
                 "comments":[
     				{
     					"author":{
