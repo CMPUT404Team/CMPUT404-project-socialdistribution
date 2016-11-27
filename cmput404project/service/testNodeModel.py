@@ -34,7 +34,7 @@ class NodeModelTests(LiveServerTestCase):
         self.node.save()
 
         self.nodemanager = NodeManager.create()
-        self.create_post(self.author)
+        #self.create_post(self.author)
 
     def create_post(self, author):
         #create(cls, author,title,origin,description,categories,visibility):
@@ -73,12 +73,9 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(self.node.password, self.remote_password)
 
     def test_get_posts(self):
-        user = User.objects.create(username="hopefulFriend", password='superhopeful')
-        author = Author.create(host=self.live_server_url, displayName='testMonkey', user=user)
-
-        post = self.create_post(author)
+        post = self.create_post(self.author)
         posts = self.node.get_posts()
-        self.assertEqual(str(post.id), posts['posts'][0]['id'])
+        self.assertEqual(str(post.id), str(posts['posts'][0]['id']))
 
     def test_get_posts_by_author(self):
         author_id = self.author.id
@@ -87,9 +84,10 @@ class NodeModelTests(LiveServerTestCase):
         self.assertTrue(hasattr(posts, '__iter__'))
 
     def test_get_public_posts(self):
-        posts = self.node.get_public_posts()
+
         post = self.create_post(self.author)
-        self.assertEqual(str(post.id), posts['posts'][0]['id'])
+        posts = self.node.get_public_posts()
+        self.assertEqual(str(post.id), str(posts['posts'][0]['id']))
 
     def test_get_nodes_from_nodemanager(self):
         nodes = self.nodemanager.get_nodes()
@@ -239,7 +237,7 @@ class NodeModelTests(LiveServerTestCase):
         friend2.add_friend(friend1)
         friend1.add_friend(friend2)
 
-        #create posts, append to test
+        #create posts, append post id to created_post_id_list
         publicPost=self.create_post(friend1)
         friendPost=self.create_friend_post(friend2)
         privPost=self.create_private_post(friend1)
@@ -250,7 +248,7 @@ class NodeModelTests(LiveServerTestCase):
         self.nodemanager = NodeManager.create()
         stream=self.nodemanager.get_stream(user1)
 
-        #self.assertEqual(test[0]['vilibility'],stream[0]['title'])
         self.assertEqual(len(created_posts),len(stream))
         for stream_post in stream:
             self.assertIn(str(stream_post['id']),created_post_id_list)
+            created_post_id_list.remove(str(stream_post['id']))
