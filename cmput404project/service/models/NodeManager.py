@@ -71,28 +71,28 @@ class NodeManager():
             #We don't know about a host with that hostname, so we return not found
             return 404
 
-	@classmethod
-	def get_stream(user):
-		stream=[]
-		author=Author.objects.get(user_id=user.id)
+    @classmethod
+    def get_stream(self,user):
+        stream=[]
+        author=Author.objects.get(user_id=user.id)
 
-		#get all public posts
-		publicPosts=get_public_posts()
-		for post in publicPosts:
-			stream.append(post)
+        #get all public posts
+        publicPosts=self.get_public_posts()
+        for post in publicPosts:
+            stream.append(post)
 
-		#get all posts from friends of user
-		friends=author.get_friends()
-		friendPosts=get_posts_by_friends(friends)
-		for post in friendPosts:
-			if post not in stream:
-				stream.append(post)
+        #get all posts from friends of user
+        friends=author.get_friends()
+        friendPosts=self.get_posts_by_friends(friends)
+        for post in friendPosts:
+            if post not in stream:
+                stream.append(post)
 
-		#get user private posts
-		private=get_private_posts(user)
-		for post in private:
-			stream.append(post)
-		return stream
+        #get user private posts
+        private=self.get_private_posts(user)
+        for post in private:
+            stream.append(post)
+            return stream
 
     @classmethod
     def get_posts_by_friends(self, author_ids):
@@ -113,5 +113,11 @@ class NodeManager():
     @classmethod
     def get_private_posts(self, author):
         posts = Post.objects.all().filter(author=author, visibility="PRIVATE")
+        posts_list = list(posts.values())
+        return posts_list
+
+    @classmethod
+    def get_serveronly_posts(self, author):
+        posts = Post.objects.all().filter(author=author, visibility="SERVERONLY")
         posts_list = list(posts.values())
         return posts_list
