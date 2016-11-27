@@ -5,7 +5,7 @@ from django.urls import reverse
 from Author import Author
 from Node import Node
 from Post import Post
-import uuid, json
+import uuid, json, requests
 
 class NodeManager():
     @classmethod
@@ -97,3 +97,35 @@ class NodeManager():
         posts = Post.objects.all().filter(author=author, visibility="SERVERONLY")
         posts_list = list(posts.values())
         return posts_list
+
+    @classmethod
+    def get_author_posts(self, id, user):
+        stream = []
+        try:
+            author = Author.objects.get(id=id)
+            local = True if author.host == request.get_host() else False
+            # if they are the same person they can see private posts
+            if (id == user):
+                stream = Post.objects.filter(author=local, visibility="PRIVATE")
+            #check if friends, then get friend posts if they are
+
+            requests.get(url, auth=(self.username,self.password))
+            views.FriendDetailView.as_view(request, )
+            if (friends)
+
+        except Author.DoesNotExist:
+            #local = None
+            nodes = self.get_nodes()
+            for node in nodes:
+                '''
+                for each node get:
+                    - private if they are the same author
+                    - all friend posts if id and user are friends
+                    - public posts of that id
+                    - serveronly if on our server
+                    - (FOAF posts)
+                    - (posts for that user)
+                '''
+                pass
+            pass
+        return stream
