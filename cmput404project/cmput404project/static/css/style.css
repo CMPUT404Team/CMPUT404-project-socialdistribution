@@ -1,3 +1,13 @@
+@font-face {
+  font-family: Raleway-Bold;
+  src: url("../fonts/Raleway-Bold.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: Raleway-Light;
+  src: url("../fonts/Raleway-Light.ttf") format("opentype");
+}
+
 .tiled-background{
   display: flex;
   flex-direction: row;
@@ -10,4 +20,30 @@
   height: 16.66%;
   width: 16.66%;
   filter: blur(8px);
+}
+
+.post-list {
+  background-color:rgba(0, 0, 0, 0.5);
+  top: 5%;
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  left: 5%;
+  padding: 5%;
+  bottom: 5%;
+  width: 80%;
+}
+
+.post {
+  overflow-y: auto;
+  min-height: 0px;
+  background-color: white;
+  padding: 5%;
+  font-family: Raleway-Light;
+  color: black;
+}
+
+.post-title {
+  font-family: Raleway-Bold;
+  font-size: 150%;
 }

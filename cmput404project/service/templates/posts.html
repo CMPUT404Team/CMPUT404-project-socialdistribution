@@ -6,16 +6,26 @@
   <script> var images = "{% static 'images/' %}";</script>
   <script src="{% static 'js/LoadBackground.js' %}"></script>
 {% if posts %}
-  <ul class = 'public-posts'>
+  <ul class = 'post-list'>
+    <div class='post'>
     {% for post in posts %}
-      <div class='post'>
-        <a href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
+        </br>
+        <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
         <p class='post-published'>{{post.published}}</p>
         <p class='post-description'>{{post.description}}</p>
         <p class='post-content'>{{post.content}}</p>
-        <a href="http://{{host}}/doggo/posts/{{post.id}}/comments/">Comments</a>
-      </div>
+        <div class='comment'>
+        {% if post.comments %}
+          {% for comment in post.comments %}
+            <p class="comment-content">{{comment.comment}}</p>
+          {% endfor %}
+        {% else %}
+          <p class="comment-content"> No comments yet.</p>
+        {% endif %}
+        <a href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
+      </br>
     {% endfor %}
+    </div>
   </ul>
 {% else %}
   <p>No public posts available.</p>
