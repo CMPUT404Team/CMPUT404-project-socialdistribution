@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from AuthorForm import AuthorForm
 from serializers import AuthorSerializer
 from models.NodeManager import NodeManager
+import ast
 
 def index(index):
     return redirect("author-add")
@@ -103,8 +104,10 @@ class BefriendView(APIView):
         user = request.user
         author = self.get_object(user) 
 	author_json = AuthorSerializer(author, context={'request':request}).data
-        friend_json = request.data
+        raw = request.data['friend']
+        friend_json = ast.literal_eval(raw)
         if (not friend_json):
             return Response(status=400)
         status_code = NodeManager.befriend(author_json, friend_json)
-        return Response(status=NodeManager.befriend(author_json, friend_json))
+        print status_code
+        return Response(status=status_code)

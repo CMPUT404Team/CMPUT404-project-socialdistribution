@@ -65,5 +65,7 @@ class Node(models.Model):
 
     def befriend(self, author_json, friend_json):
         url = self.get_base_url() + "/friendrequest/"
+        print "url",url
         r = self.make_authenticated_post_request(url, self.get_friend_request_json(author_json, friend_json))
+        print "stat code: ", r.status_code
         return r.status_code
