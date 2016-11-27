@@ -17,7 +17,7 @@ class Post(models.Model):
     origin = models.CharField(max_length=100)
     description = models.CharField(max_length=200, blank=True)
     content = models.CharField(max_length=200, blank=True)
-    contentType = models.CharField(max_length=100, editable=False, default='text/plain')
+    contentType = models.CharField(max_length=100, choices=CONTENT_TYPE, default='text/plain')
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     categories = models.CharField(max_length=200, blank=True) #This would best be implemented by creating a categories model
     comments = []
