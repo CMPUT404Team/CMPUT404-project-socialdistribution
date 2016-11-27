@@ -41,6 +41,11 @@ class NodeModelTests(LiveServerTestCase):
         self.post = Post.create(author, "Yolo", "here", "Stuff", "Moar stuff", "PUBLIC")
         self.post.save()
 
+    def create_private_post(self, author):
+        #create(cls, author,title,origin,description,categories,visibility):
+        self.post = Post.create(author, "Private post", "here", "Secrets", "More secrets", "PRIVATE")
+        self.post.save()
+
     def test_node_creates_id(self):
         self.assertIsNotNone(self.node.id)
 
@@ -158,6 +163,24 @@ class NodeModelTests(LiveServerTestCase):
         friend_ids = self.author.get_friends()
         posts = self.nodemanager.get_posts_by_friends(friend_ids)
         self.assertEqual(posts, [])
+
+    def test_get_private_posts(self):
+        self.create_private_post(self.author)
+        self.create_post(self.author)
+        self.create_private_post(self.author)
+        posts = self.nodemanager.get_private_posts(self.author)
+        self.assertEqual(posts[0]['visibility'], "PRIVATE")
+        self.assertEqual(posts[1]['visibility'], "PRIVATE")
+
+    def test_get_private_posts_empty(self):
+        # Test for not displaying private posts of other users
+        user = User.objects.create(username="hopefulSpy", password='superhopefulspy')
+        spy = Author.create(host=self.live_server_url, displayName='hopefulSpy', user=user)
+        spy.save()
+        self.create_private_post(spy)
+        posts = self.nodemanager.get_private_posts(self.author)
+        self.assertEqual(posts, [])
+
 
 
     def get_author_json(self, author):
