@@ -44,7 +44,7 @@
 
 input[type="text"] {
   border: none;
-  width: 50%;
+  width: 100%;
   border-bottom: 2px solid #d3d3d3;
   font-family: Raleway-Light;
 }
@@ -96,6 +96,10 @@ input[type="radio"] {
   align-self: center;
 }
 
+h1, p, a {
+  word-break: break-all;
+}
+
 .full-post{
   display: flex;
   flex-direction: row;
@@ -118,6 +122,12 @@ input[type="submit"] {
   border: 2px solid #d3d3d3;
 }
 
+input[type="submit"].comment {
+  border: 2px solid #d3d3d3;
+  font-size: 100%;
+}
+
+
 label {
   display: block;
   font-family: Raleway-Bold;
@@ -129,6 +139,15 @@ label {
   color: black;
   bottom: 5%;
   align-self: center;
+  width:75%;
+}
+
+.comment-content{
+  margin:0%;
+}
+
+.post-content {
+  font-size: 120%;
 }
 
 .post-title {
@@ -145,6 +164,10 @@ a:hover{
 .by{
   display:inline-block;
   margin-bottom: 0%;
+}
+
+label.comment {
+  font-size: 100%;
 }
 
 .post-author{
