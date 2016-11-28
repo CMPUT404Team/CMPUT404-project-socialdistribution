@@ -49,7 +49,7 @@ class PostsView(APIView):
     def get(self, request):
         response = views.PostsView.as_view()(request)
         if (response.status_code == 200):
-            return render(request, "posts.html", {"posts":response.data['posts'], "host": request.get_host()})
+            return render(request, "posts.html", {"posts":response.data['posts']})
         else:
             return HttpResponse(status=response.status_code)
 
