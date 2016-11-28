@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('host', models.CharField(max_length=30)),
                 ('displayName', models.CharField(max_length=30)),
                 ('friends', models.ManyToManyField(blank=True, to='service.Author')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
