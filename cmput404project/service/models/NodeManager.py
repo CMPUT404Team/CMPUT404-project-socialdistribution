@@ -121,3 +121,10 @@ class NodeManager():
         posts = Post.objects.all().filter(author=author, visibility="SERVERONLY")
         posts_list = list(posts.values())
         return posts_list
+
+    @classmethod
+    def get_author(self, author_id):
+        for node in self.get_nodes():
+            author = node.get_author(author_id)
+            if (author != None):
+                return author

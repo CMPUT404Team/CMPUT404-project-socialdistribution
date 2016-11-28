@@ -83,7 +83,7 @@ class AuthorDetailView(APIView):
     '''
     '''
     def get(self, request, pk):
-        author = views.AuthorDetailView.as_view()(request, pk).data
+        author = NodeManager.get_author(pk)
         currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
         for friend in author["friends"]:
