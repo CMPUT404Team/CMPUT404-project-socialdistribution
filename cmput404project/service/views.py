@@ -463,7 +463,7 @@ class FriendDetailView(APIView):
     Input: http://localhost:8000/friends/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/3c1f82f3-e207-48bb-9849-a9b03f3bfb96
     Output:
     HTTP 200 OK
-	Allow: GET, DELETE, HEAD, OPTIONS
+	Allow: GET, HEAD, OPTIONS
 	Content-Type: application/json
 	Vary: Accept
 
@@ -487,13 +487,6 @@ class FriendDetailView(APIView):
         author2 = self.get_object(uuid2)
         are_friends = author1.is_friend(author2)
         return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
-
-    def delete(self, request, uuid1, uuid2):
-        serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
-        author = self.get_object(uuid1)
-        friend = self.get_object(uuid2)
-        author.friends.remove(friend)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MutualFriendDetailView(APIView):
     '''

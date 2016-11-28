@@ -21,6 +21,12 @@ import ast
 def index(index):
     return redirect("author-add")
 
+def get_author_object(user):
+    try:
+        return Author.objects.get(user=user)
+    except Author.DoesNotExist:
+        raise Http404
+
 class PostView(APIView):
     '''
     '''
@@ -78,11 +84,12 @@ class AuthorDetailView(APIView):
     '''
     def get(self, request, pk):
         author = views.AuthorDetailView.as_view()(request, pk).data
+        currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
         for friend in author["friends"]:
             f = views.AuthorDetailView.as_view()(request, friend["id"]).data
             friends.append(f)
-        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host()})
+        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host(), "currently_friends":currently_friends})
 
 class FriendView(APIView):
     def get(self, request):
@@ -93,23 +100,31 @@ class FriendView(APIView):
             friends.append(f)
         return render(request, "friends.html", {"friends":friends})
 
-class BefriendView(APIView):
-    
-    def get_object(self, user):
-        try:
-            return Author.objects.get(user=user)
-        except Author.DoesNotExist:
-            raise Http404	
+class BefriendView(APIView): 
+
+    def get_friend_json(self, raw_friend_data):
+        if (raw_friend_data!=None or raw_friend_data!=""):
+            friend_json = None
+            try:
+                friend_json=ast.literal_eval(raw_friend_data)
+            except:
+                return friend_json
+            return friend_json 
 
     def post(self, request):
-        user = request.user
-        author = self.get_object(user) 
-	author_json = AuthorSerializer(author, context={'request':request}).data
-        raw = request.data.get("friend")
-        if(not raw):
-            return Response(status=400)
-        friend_json = ast.literal_eval(raw)
+        author = get_author_object(request.user) 
+        author_json = AuthorSerializer(author, context={'request':request}).data
+        request_dict = dict(request.data.iterlists())
+        currently_friends = request_dict.get("currently_friends")[0]
+        friend_json = self.get_friend_json(request_dict.get("friend")[0])
         if (not friend_json):
             return Response(status=400)
-        status_code = NodeManager.befriend(author_json, friend_json)
-        return HttpResponseNotModified()
+        if (currently_friends == str(True)):
+            #You are unfriending them
+            author.remove_friend(Author.objects.get(id=friend_json['id']))
+            return HttpResponseNotModified()
+        else:
+            #You are befriending them
+            status_code = NodeManager.befriend(author_json, friend_json)
+            return HttpResponseNotModified()
+
