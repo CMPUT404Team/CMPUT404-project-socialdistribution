@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
     url(r'^posts/(?P<pk>[^/]+)/$', views.PostView.as_view(), name='post'),
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
+    url(r'^posts/add/$', views.CreatePostView.as_view(), name='createPost'),
     url(r'^author/(?P<pk>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^posts/(?P<pid>[^/]+)/comments', views.CommentAPIView.as_view()),
     url(r'^friendrequest/$', views.FriendRequestView.as_view(), name='friend-request'),

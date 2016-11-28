@@ -22,6 +22,7 @@ from django.http.request import QueryDict
 from AuthorForm import AuthorForm
 from models.NodeManager import NodeManager
 import json
+from PostForm import PostForm
 from rest_framework.renderers import TemplateHTMLRenderer
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -620,3 +621,15 @@ class PaginationOfCommentInPost():
                     data[i][field] = response.data[field]
             i += 1
         return data
+
+class CreatePostView(APIView):
+
+    def get_object(self, user):
+        try:
+            return Author.objects.get(user=user)
+        except Author.DoesNotExist:
+            raise Http404
+
+    def post(self, request):
+        user = request.user
+        author = self.get_object(user)
