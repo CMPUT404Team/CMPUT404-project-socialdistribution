@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse, HttpResponseNotModified
 from django.urls import reverse
 from django.views import View
@@ -115,11 +115,11 @@ class BefriendView(APIView):
             if (currently_friends == str(True)):
                 #You are unfriending them
                 author.remove_friend(Author.objects.get(id=friend_json['id']))
-                return HttpResponseNotModified()
             else:
                 #You are befriending them
                 status_code = NodeManager.befriend(author_json, friend_json)
-                return HttpResponseNotModified()
+            request.method = "get"
+            return AuthorDetailView.as_view()(request, friend_json['id'])
         except:
             return Response(status=400)
 
