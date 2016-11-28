@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^doggo/author/posts/$',frontEndViews.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/comments', frontEndViews.CommentsView.as_view(), name='comments'),
     url(r'^doggo/author/add/$', frontEndViews.AuthorCreateView.as_view(), name='author-add'),
-    url(r'^doggo/author/(?P<pk>[^/]+)/$', frontEndViews.AuthorDetailView.as_view(), name='author-detail'),
+    url(r'^doggo/author/(?P<pk>[^/]+)/$', frontEndViews.AuthorDetailView.as_view(), name='frontend-author-detail'),
     url(r'^doggo/author/(?P<pk>[^/]+)/posts/$', frontEndViews.AuthorIdPostsView.as_view(), name='authorIdPosts'),
 ]
 
