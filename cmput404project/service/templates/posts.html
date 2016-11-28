@@ -23,14 +23,16 @@
        <option value="PRIVATE">Private</option>
        <option value="SERVERONLY">Server Only</option>
       </select>
+      <div id="category">
+        <label for="">Categories:</label>
+        <br>
+        <script src="{% static 'js/CreateCategories.js' %}"></script>
+      </div>
       <div class="radio">
         <input type="radio" name="contentType" value="text/plain" checked>
         <label class="radio" for="">text/plain</label>
         <input type="radio" name="contentType" value="text/x-markdown">
         <label class="radio" for="">text/x-markdown</label>
-      </div>
-      <div id="category">
-        <script src="{% static 'js/CreateCategories.js' %}"></script>
       </div>
       <input type="submit" value="POST">
     </form>
@@ -50,9 +52,13 @@
         <p class='post-content'>{{post.content}}</p>
         <div class='comment'>
         {% if post.comments %}
+          <p class="comment-content"> Comments:</p>
+          <br>
           {% for comment in post.comments %}
+            <a class="comment-author" href="http://{{host}}/author/{{comment.author.id}}/">{{comment.author.displayName}}</a>
+            <p class="by">:</p>
             <p class="comment-content">{{comment.comment}}</p>
-          <a href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
+          <a class="comment-link" href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
           {% endfor %}
         {% else %}
           <p class="comment-content"> No comments yet.</p>

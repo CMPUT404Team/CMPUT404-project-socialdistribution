@@ -49,6 +49,10 @@ input[type="text"] {
   font-family: Raleway-Light;
 }
 
+input[type="text"]:hover {
+  background-color: #d3d3d3;
+}
+
 input[type="submit"] {
   display: block;
   border: none;
@@ -94,6 +98,11 @@ input[type="radio"] {
 .post-image {
   width:25%;
   align-self: center;
+}
+
+.comment-author {
+  margin:0%;
+  padding:0%;
 }
 
 h1, p, a {
@@ -144,6 +153,11 @@ label {
 
 .comment-content{
   margin:0%;
+  display:inline-block;
+}
+
+.comment-link {
+  display:block;
 }
 
 .post-content {
@@ -162,8 +176,9 @@ a:hover{
 }
 
 .by{
-  display:inline-block;
-  margin-bottom: 0%;
+  display:inline;
+  margin: 0%;
+  padding:0%;
 }
 
 label.comment {
