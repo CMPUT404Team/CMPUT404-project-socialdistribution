@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets,status
 from rest_framework.parsers import JSONParser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -12,12 +13,13 @@ from django.http import Http404
 from models.Post import Post
 from itertools import chain
 from django.core import serializers
+from django.core.paginator import Paginator
 from django.urls import reverse
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
+from django.http.request import QueryDict
 from AuthorForm import AuthorForm
-from django.core.exceptions import SuspiciousOperation
 from models.NodeManager import NodeManager
 import json
 from PostForm import PostForm
@@ -43,11 +45,9 @@ class CommentAPIView(APIView):
     API endpoint that allows the comments of a post to be viewed.
 
 
-    Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/comments
-
+    Input: http://localhost:8000/posts/ea8c25f6-35d6-4918-8232-e6df8e697424/comments
 
     Output:
-
 
     HTTP 200 OK
     Allow: GET, POST, HEAD, OPTIONS
@@ -56,52 +56,16 @@ class CommentAPIView(APIView):
 
     [
         {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
+			"author": {
+				"url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+				"id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+				"displayName": "asdf",
+				"host": "a",
+				"friends": []
             },
-            "pubDate": "2016-11-16T21:40:56Z",
-            "comment": "commmmmmm",
-            "guid": "73f06229-395c-4bde-8058-fd3847133658"
-        },
-        {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
-            },
-            "pubDate": "2016-11-16T23:28:33.066754Z",
-            "comment": "",
-            "guid": "ccfb10e5-b04b-46bd-8055-fa49a582e455"
-        },
-        {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
-            },
-            "pubDate": "2016-11-16T23:34:47.129404Z",
-            "comment": "",
-            "guid": "ebcbda5b-afb3-4b13-b82b-8f29cb48e273"
-        },
-        {
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf",
-                "friends": []
-            },
-            "pubDate": "2016-11-16T23:47:23.826697Z",
-            "comment": "",
-            "guid": "41c28ee7-527a-4bd2-95b2-faed5a10fdde"
+            "pubDate": "2016-11-26T02:08:42Z",
+            "comment": "First Comment!!",
+            "guid": "db42e75f-4045-415a-8969-f8601360981a"
         }
     ]
     """
@@ -124,11 +88,15 @@ class CommentAPIView(APIView):
             raise Http404
         return post
 
-    # TODO change to {comments: [...]}
     def get(self, request, pid):
         comments = self.get_comments(pid)
+        paginator = CustomPagination()
+        paginator.paginate_queryset(comments, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        comments = paginator.page.object_list
         serializer = CommentSerializer(comments, many=True, context={'request': request})
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data, 'comments', 'comments',
+                    request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request, pid):
         post = self.get_post(pid)
@@ -152,19 +120,19 @@ class AuthorDetailView(APIView):
     '''
     Used to get the profile information of an author.
 
-    Input: http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/
+    Input: http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/
     Output:
 
     HTTP 200 OK
-    Allow: GET, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
     {
-        "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-        "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-        "displayName": "asdfg",
-        "host": "asdf",
+        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+        "id": "f6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+        "displayName": "asdf",
+        "host": "a",
         "friends": []
     }
     '''
@@ -181,92 +149,124 @@ class AuthorDetailView(APIView):
 
 class PostsView(APIView):
     """
-    Return a list of all public posts or create a new post \n\n
+    Return a list of all public posts or create a new post
 
     Input: http://localhost:8000/posts/
     Output:
 
     HTTP 200 OK
-    Allow: GET, POST, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	Allow: GET, POST, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
-    [
-        {
-            "title": "cd",
-            "source": "sadf",
-            "origin": "ds",
-            "content": "",
-            "contentType": "text/plain",
-            "description": "",
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf"
-            },
-            "count": 0,
-            "size": 50,
-            "next": "est",
-            "published": "2016-11-16T21:37:02.127923Z",
-            "id": "1dd49764-c855-4914-9785-508891598503",
-            "visibility": "PUBLIC"
-        }
-    ]
+	{
+    	"posts": [
+    	    {
+    	        "title": "My New Post",
+    	        "source": "na",
+    	        "origin": "na",
+    	        "content": "",
+    	        "contentType": "text/plain",
+    	        "description": "",
+    	        "author": {
+    	            "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	            "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	            "displayName": "asdf",
+    	            "host": "a"
+    	        },
+    	        "count": 0,
+    	        "size": 50,
+    	        "next": "na",
+    	        "comments": [
+    	            {
+    	                "author": {
+    	                    "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b2	2b27d9c3/",
+    	                    "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	                    "displayName": "asdf",
+    	                    "host": "a",
+    	                    "friends": []
+    	                },
+    	                "pubDate": "2016-11-26T02:08:42Z",
+    	                "comment": "First Comment!!",
+    	                "guid": "db42e75f-4045-415a-8969-f8601360981a"
+    	            }
+    	        ],
+    	        "published": "2016-11-26T02:00:44.793165Z",
+    	        "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+    	        "visibility": "PUBLIC"
+    	    }
+    	]
+	}
     """
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'posts.html'
 
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
-        for post in posts:
-            comments = Comment.objects.filter(post_id=post.id)
-            post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'posts':serializer.data})
+        cip = PaginationOfCommentInPost()
+        data = cip.add_to_post(serializer.data, request)
+        return paginator.get_paginated_response(data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request):
-        print request.data
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
-        print serializer
         if serializer.is_valid():
             serializer.save()
             print serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class PostView(APIView):
     """
     Get, update or delete a particular post
 
-    Input: http://localhost:8000/posts/1dd49764-c855-4914-9785-508891598503/
+    Input: http://localhost:8000/posts/ea8c25f6-35d6-4918-8232-e6df8e697424/
     Output:
 
-    HTTP 200 OK
-    Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	HTTP 200 OK
+	Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
-    {
-        "title": "cd",
-        "source": "sadf",
-        "origin": "ds",
-        "content": "",
-        "contentType": "text/plain",
-        "description": "",
-        "author": {
-            "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-            "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-            "displayName": "asdfg",
-            "host": "asdf"
-        },
-        "count": 0,
-        "size": 50,
-        "next": "est",
-        "published": "2016-11-16T21:37:02.127923Z",
-        "id": "1dd49764-c855-4914-9785-508891598503",
-        "visibility": "PUBLIC"
-    }
+
+	{
+	    "title": "My New Post",
+	    "source": "na",
+	    "origin": "na",
+	    "content": "",
+	    "contentType": "text/plain",
+	    "description": "",
+	    "author": {
+	        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+	        "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+	        "displayName": "asdf",
+	        "host": "a"
+	    },
+	    "count": 0,
+	    "size": 50,
+	    "next": "na",
+	    "comments": [
+	        {
+	            "author": {
+	                "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+	                "displayName": "asdf",
+	                "host": "a",
+	                "friends": []
+	            },
+	            "pubDate": "2016-11-26T02:08:42Z",
+	            "comment": "First Comment!!",
+	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+	        }
+	    ],
+	    "published": "2016-11-26T02:00:44.793165Z",
+	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+	    "visibility": "PUBLIC"
+	}
     """
     def get_object(self, uuid):
         try:
@@ -277,11 +277,18 @@ class PostView(APIView):
             raise ParseError("Malformed UUID")
 
     def get(self, request, pk):
-        post = self.get_object(pk)
-        comments = Comment.objects.filter(post_id=pk)
-        post.comments = comments
-        serializer = PostSerializerGet(post, context={'request':request})
-        return Response(serializer.data)
+        post = [self.get_object(pk)]
+        comments = Comment.objects.filter(post_id=uuid.UUID(pk))
+        post[0].comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(post, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        post = paginator.page.object_list
+        serializer = PostSerializerGet(post, many=True, context={'request':request})
+        cip = PaginationOfCommentInPost()
+        data = cip.add_to_post(serializer.data, request)
+        return paginator.get_paginated_response(data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request, pk):
         try:
@@ -307,8 +314,11 @@ class PostView(APIView):
 
     def delete(self, request, pk):
         post = self.get_object(pk)
-        post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if (request.user == post.author.user):
+            post.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 class VisiblePostsView(APIView):
     """
@@ -318,49 +328,112 @@ class VisiblePostsView(APIView):
     Output:
 
     HTTP 200 OK
-    Allow: GET, HEAD, OPTIONS
-    Content-Type: application/json
-    Vary: Accept
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
 
-    [
-        {
-            "title": "cd",
-            "source": "sadf",
-            "origin": "ds",
-            "content": "",
-            "contentType": "text/plain",
-            "description": "",
-            "author": {
-                "url": "http://localhost:8000/author/f8c3b851-2e6a-44d1-b397-548a24b83f72/",
-                "id": "f8c3b851-2e6a-44d1-b397-548a24b83f72",
-                "displayName": "asdfg",
-                "host": "asdf"
-            },
-            "count": 0,
-            "size": 50,
-            "next": "est",
-            "published": "2016-11-16T21:37:02.127923Z",
-            "id": "1dd49764-c855-4914-9785-508891598503",
-            "visibility": "PUBLIC"
-        }
-    ]
+	{
+    	"posts": [
+    	    {
+    	        "title": "My New Post",
+    	        "source": "na",
+    	        "origin": "na",
+    	        "content": "",
+    	        "contentType": "text/plain",
+    	        "description": "",
+    	        "author": {
+    	            "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	            "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	            "displayName": "asdf",
+    	            "host": "a"
+    	        },
+    	        "count": 0,
+    	        "size": 50,
+    	        "next": "na",
+    	        "comments": [
+    	            {
+    	                "author": {
+    	                    "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+        	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+        	                "displayName": "asdf",
+        	                "host": "a",
+        	                "friends": []
+        	            },
+        	            "pubDate": "2016-11-26T02:08:42Z",
+        	            "comment": "First Comment!!",
+        	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+        	        }
+        	    ],
+        	    "published": "2016-11-26T02:00:44.793165Z",
+        	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+        	    "visibility": "PUBLIC"
+        	}
+    	]
+	}
     """
     def get(self, request):
-        posts = Post.objects.all()#.filter(visibility="?")
+        posts = Post.objects.all().exclude(visibility="PRIVATE").exclude(visibility="SERVERONLY")
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response({'posts':serializer.data})
+        cip = PaginationOfCommentInPost()
+        data = cip.add_to_post(serializer.data, request)
+        return paginator.get_paginated_response(data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
 class AuthorPostsView(APIView):
     """
     Return a list of available posts created by specified user
 
-    GET Request object properties:
-    request
-    posts - the list of posts an author has
-    uuid - author id
+    Input: http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/posts/
+	output:
+
+	HTTP 200 OK
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
+
+	[
+    	{
+    	    "title": "My New Post",
+    	    "source": "na",
+    	    "origin": "na",
+    	    "content": "",
+    	    "contentType": "text/plain",
+    	    "description": "",
+    	    "author": {
+    	        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	        "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	        "displayName": "asdf",
+    	        "host": "a"
+    	    },
+    	    "count": 0,
+    	    "size": 50,
+    	    "next": "na",
+    	    "comments": [
+    	        {
+    	            "author": {
+    	                "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
+    	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	                "displayName": "asdf",
+    	                "host": "a",
+    	                "friends": []
+    	            },
+    	            "pubDate": "2016-11-26T02:08:42Z",
+    	            "comment": "First Comment!!",
+    	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+    	        }
+    	    ],
+    	    "published": "2016-11-26T02:00:44.793165Z",
+    	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
+    	    "visibility": "PUBLIC"
+    	}
+	]
     """
     def get(self, request, pk):
         try:
@@ -371,8 +444,15 @@ class AuthorPostsView(APIView):
         for post in posts:
             comments = Comment.objects.filter(post_id=post.id)
             post.comments = comments
+        paginator = CustomPagination()
+        paginator.paginate_queryset(posts, request)
+        paginator.page_size = request.GET['size'] if 'size' in request.GET else paginator.page_size
+        posts = paginator.page.object_list
         serializer = PostSerializerGet(posts, many=True, context={'request':request})
-        return Response(serializer.data)
+        cip = PaginationOfCommentInPost()
+        data = cip.add_to_post(serializer.data, request)
+        return paginator.get_paginated_response(serializer.data, 'posts', 'posts',
+                request.GET['size'] if 'size' in request.GET else None)
 
 class PostViewSet(viewsets.ModelViewSet):
     """
@@ -385,14 +465,21 @@ class FriendDetailView(APIView):
     Used to determine whether two users are friends with eachother. This
     means that each user will have the other user in their friends list.
 
-    GET Request object properties:
-    request
-    author1 - an object with the following properties:
-         *uuid - author1 author id
-         *host - author1 host
-    author2 - an object with the following properties:
-         *uuid - author2 author id
-         *host - author2 host
+    Input: http://localhost:8000/friends/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/3c1f82f3-e207-48bb-9849-a9b03f3bfb96
+    Output:
+    HTTP 200 OK
+	Allow: GET, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
+
+	{
+    	"query": "friends",
+    	"friends": true,
+    	"authors": [
+    	    "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
+    	    "3c1f82f3-e207-48bb-9849-a9b03f3bfb96"
+    	]
+	}
     '''
     def get_object(self, uuid):
         try:
@@ -406,23 +493,26 @@ class FriendDetailView(APIView):
         are_friends = author1.is_friend(author2)
         return Response({'query':'friends','authors': [str(uuid1), str(uuid2)], 'friends':are_friends})
 
-    def delete(self, request, uuid1, uuid2):
-        serializer = FriendRequestSerializer(request.data, data=request.data, context={'request':request})
-        author = self.get_object(uuid1)
-        friend = self.get_object(uuid2)
-        author.friends.remove(friend)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 class MutualFriendDetailView(APIView):
     '''
     Used to list all the mutual friends between two authors. A post from an author
     will occur, with all their friends, and the uuid in the url will give the link
     of the friend to check it with.
 
-    GET Response object properties:
-    uuid1 - author1's uuid
-    uuid2 - author2's uuid
-    mutual_friends - the list of mutual friends both authors shares in common
+	Input: http://localhost:8000/friends/3c1f82f3-e207-48bb-9849-a9b03f3bfb96/
+	Output:
+
+	HTTP 200 OK
+	Allow: GET, POST, HEAD, OPTIONS
+	Content-Type: application/json
+	Vary: Accept
+
+	{
+    	"query": "friends",
+    	"friends": [
+    	    "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3"
+    	]
+	}
     '''
     def post(self, request, uuid):
         serializer = FriendListSerializer(request.data, data=request.data, context={'request':request})
@@ -452,7 +542,7 @@ class FriendRequestView(APIView):
     Used to make a friend request.
 
     POST Request object properties:
-    request
+    query
     author - an object with the following properties:
               * uuid - the author id
               * host - the author host
@@ -506,4 +596,39 @@ class CreatePostView(APIView):
 
     def post(self, request):
         user = request.user
-        author = self.get_object(user) 
+        author = self.get_object(user)
+
+class CustomPagination(PageNumberPagination):
+    page_size_query_param = 'size'
+
+    def get_paginated_response(self, data, data_field, query, size = None):
+        if (size == None):
+            size = self.page_size
+        result = {
+            'query': query,
+            'count': self.page.paginator.count,
+            'size': size,
+            data_field: data
+        }
+        if self.page.has_next():
+            result['next'] = self.get_next_link()
+        if self.page.has_previous():
+            result['previous'] = self.get_previous_link()
+
+        return Response(result)
+
+class PaginationOfCommentInPost():
+
+    def add_to_post(self, data, request):
+        #make a copy of the request without the query params
+        r = request
+        r.GET = QueryDict('')
+        i = 0
+        for p in data:
+            response = CommentAPIView.as_view()(r, pid=p['id'])
+            for field in response.data:
+                f = ['comments', 'count', 'size', 'previous', 'next']
+                if (field in f):
+                    data[i][field] = response.data[field]
+            i += 1
+        return data

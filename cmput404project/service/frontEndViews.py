@@ -1,20 +1,32 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, render_to_response
+from django.http import HttpResponse, HttpResponseNotModified
 from django.urls import reverse
+from django.views import View
 from django.contrib.auth.decorators import login_required
 from rest_framework.renderers import TemplateHTMLRenderer
-import urllib2, base64, json, os
+from rest_framework.request import Request
 from rest_framework.views import APIView
+import urllib2, base64, json, os
 from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
+from models.NodeManager import NodeManager
 from . import views
 from django.views.generic.edit import FormView
 from rest_framework.response import Response
 from AuthorForm import AuthorForm
+from serializers import AuthorSerializer
+from models.NodeManager import NodeManager
+import ast
 
 def index(index):
     return redirect("author-add")
+
+def get_author_object(user):
+    try:
+        return Author.objects.get(user=user)
+    except Author.DoesNotExist:
+        raise Http404
 
 class PostView(APIView):
     '''
@@ -57,8 +69,7 @@ class AuthorPostsView(APIView):
     '''
     '''
     def get(self, request):
-        response = views.VisiblePostsNodesView.as_view()(request)
-        posts = response.data['posts']
+        posts = NodeManager.get_stream(request.user)
         return render(request, "author-posts.html", {"posts":posts})
 
 class AuthorIdPostsView(APIView):
@@ -75,11 +86,12 @@ class AuthorDetailView(APIView):
     '''
     def get(self, request, pk):
         author = views.AuthorDetailView.as_view()(request, pk).data
+        currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
-        print author
         for friend in author["friends"]:
-            friends.append(friend)
-        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host()})
+            f = views.AuthorDetailView.as_view()(request, friend["id"]).data
+            friends.append(f)
+        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host(), "currently_friends":currently_friends})
 
 class FriendView(APIView):
     def get(self, request):
@@ -89,3 +101,26 @@ class FriendView(APIView):
             f = views.AuthorDetailView.as_view()(request, friend["id"]).data
             friends.append(f)
         return render(request, "friends.html", {"friends":friends})
+
+class BefriendView(APIView):
+
+    def get_friend_json(self, raw_friend_data):
+        return ast.literal_eval(raw_friend_data)
+
+    def post(self, request):
+        try:
+            author = get_author_object(request.user)
+            author_json = AuthorSerializer(author, context={'request':request}).data
+            request_dict = dict(request.data.iterlists())
+            currently_friends = request_dict.get("currently_friends")[0]
+            friend_json = self.get_friend_json(request_dict.get("friend")[0])
+            if (currently_friends == str(True)):
+                #You are unfriending them
+                author.remove_friend(Author.objects.get(id=friend_json['id']))
+            else:
+                #You are befriending them
+                status_code = NodeManager.befriend(author_json, friend_json)
+            request.method = "get"
+            return AuthorDetailView.as_view()(request, friend_json['id'])
+        except:
+            return Response(status=400)
