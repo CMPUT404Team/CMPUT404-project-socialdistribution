@@ -9,7 +9,7 @@ Make a distributed social network!
 
 Documentation
 =============
-To get the documentation, run the app by following the instructions in the readme inside of 
+To get the documentation, run the app by following the instructions in the readme inside of
 cmput404project/ in this repo and hit the endpoint /docs. Ex) http://localhost:8000/docs
 
 Contributors / Licensing
@@ -34,3 +34,11 @@ Contributors:
     Olexiy Berjanskii
     Erin Torbiak
     Abram Hindle
+
+Sources
+=======
+
+Source: Matt McInerney Location:https://www.fontsquirrel.com/fonts/raleway
+Source:choise location: http://stackoverflow.com/questions/3245141/using-otf-fonts-on-web-browsers
+Source: Jose Cabo location: http://stackoverflow.com/questions/14962468/flexbox-and-vertical-scroll-in-a-full-height-app-using-newer-flexbox-api
+Source: Quentin Location: http://stackoverflow.com/questions/866239/creating-the-checkbox-dynamically-using-javascript
