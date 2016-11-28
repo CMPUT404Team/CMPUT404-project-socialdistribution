@@ -2,33 +2,42 @@
 {% load staticfiles %}
 <html>
 <head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
-<body>
-{% if author %}
-      <div class='author'>
-        <h1 class='author-displayName'>{{author.displayName}}</h1>
-	{% if currently_friends %}
-		<form action="/frontend/befriend/" method="post">
-			<input type="hidden" name="friend" value="{{author}}">
-			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-			<input type="submit" value="Unfollow" />
-		</form>		
-	{% else %}
-		<form action="/frontend/befriend/" method="post">
-			<input type="hidden" name="friend" value="{{author}}">
-			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-			<input type="submit" value="Follow & Send Friend Request" />
-		</form>
-	{% endif %}
-        <p class='author-published'>{{author.host}}</p>
-        {% if friends%}
-          {% for friend in friends%}
-            <a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
-          {% endfor %}
-        {% else %}
-          <p class='friends'>No friends to display</p>
-        {% endif %}
-      </div>
-{% else %}
-  <p> 404. No author found</p>
-{% endif %}
+<body id="background" class="tiled-background">
+  <script> var images = "{% static 'images/' %}";</script>
+  <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
+  <div class='author-page'>
+    <div class="author">
+      {% if author %}
+          <div id="profile-picture">
+            <script src="{% static 'js/LoadProfilePicture.js' %}"></script>
+          </div>
+          <h1 class='author-displayName'>{{author.displayName}}</h1>
+        	{% if currently_friends %}
+        		<form class="befriend" action="/frontend/befriend/" method="post">
+        			<input type="hidden" name="friend" value="{{author}}">
+        			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
+        			<input type="submit" value="Unfollow" />
+        		</form>
+        	{% else %}
+        		<form class="befriend" action="/frontend/befriend/" method="post">
+        			<input type="hidden" name="friend" value="{{author}}">
+        			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
+        			<input type="submit" value="Follow & Send Friend Request" />
+        		</form>
+        	{% endif %}
+          <div class="friends-list">
+            {% if friends%}
+              <h4 class="friends">Friends List</h4>
+              {% for friend in friends%}
+                <a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
+              {% endfor %}
+            {% else %}
+              <p class='friends'>No friends to display</p>
+            {% endif %}
+          </div>
+      {% else %}
+        <p> 404. No author found</p>
+      {% endif %}
+    </div>
+  </div>
 </body></html>

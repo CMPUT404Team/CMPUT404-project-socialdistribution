@@ -1,11 +1,11 @@
 @font-face {
   font-family: Raleway-Bold;
-  src: url("../fonts/Raleway-Bold.ttf") format("opentype");
+  src: url("../fonts/Raleway-Bold.575e4317521b.ttf") format("opentype");
 }
 
 @font-face {
   font-family: Raleway-Light;
-  src: url("../fonts/Raleway-Light.ttf") format("opentype");
+  src: url("../fonts/Raleway-Light.b1bdea561f24.ttf") format("opentype");
 }
 
 .tiled-background{

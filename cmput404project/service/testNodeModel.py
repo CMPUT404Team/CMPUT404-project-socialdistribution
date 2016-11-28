@@ -25,14 +25,13 @@ class NodeModelTests(LiveServerTestCase):
         self.author.save()
         self.node = Node.create(
             displayName = "The Node",
-            host = self.live_server_url, 
+            host = self.live_server_url,
             path = "",
             user = remoteUser,
             username = self.remote_username,
             password = self.remote_password
             )
         self.node.save()
-
         self.nodemanager = NodeManager.create()
         self.create_post(self.author)
 
@@ -87,7 +86,7 @@ class NodeModelTests(LiveServerTestCase):
 
     def test_befriend_remote_author(self):
         user = User.objects.create(username="hopefulFriend", password='superhopeful')
-        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user) 
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user)
         friend.save()
         status = self.node.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
         self.assertEqual(204, status)
@@ -111,7 +110,7 @@ class NodeModelTests(LiveServerTestCase):
         status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
         self.assertEqual(204, status)
         self.assertIn(friend, self.author.friends.all())
-        
+
     def test_befriend_through_NodeManager_with_bad_json(self):
         status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
         self.assertEqual(400, status)

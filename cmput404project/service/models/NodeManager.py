@@ -3,10 +3,11 @@ from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
 from Author import Author
+from Post import Post
 from Node import Node
 import uuid, json
 
-class NodeManager(models.Model):
+class NodeManager():
     @classmethod
     def create(cls):
         return cls()
