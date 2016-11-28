@@ -34,10 +34,11 @@ class CommentsView(APIView):
 class PostsView(APIView):
     '''
     '''
+    #TODO: replace get_public_posts()
     def get(self, request):
         response = views.PostsView.as_view()(request)
         if (response.status_code == 200):
-            return render(request, "posts.html", {"posts":response.data['posts'], "host": request.get_host()})
+            return render(request, "posts.html", {"posts":response.data['posts'], })
         else:
             return HttpResponse(status=response.status_code)
 
@@ -66,7 +67,8 @@ class AuthorIdPostsView(APIView):
     def get(self, request, pk):
         posts =  views.AuthorPostsView.as_view()(request, pk).data
         author = views.AuthorDetailView.as_view()(request, pk).data
-        return render(request, "author-id-posts.html", {"posts":posts, "host":request.get_host(), "author": author })
+        return render(request, "author-id-posts.html", {"posts":posts, "host":request.get_host(),
+            "author": author })
 
 class AuthorDetailView(APIView):
     '''

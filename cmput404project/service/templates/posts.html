@@ -1,10 +1,10 @@
 {% load rest_framework %}
 {% load staticfiles %}
 <html>
-<head><link href="{% static 'css/style.css?Sunday 27th of November 2016 10:45:24 AM' %}" rel="stylesheet" type="text/css"></head>
+<head><link href="{% static 'css/style.css?100' %}" rel="stylesheet" type="text/css"></head>
 <body id="background" class="tiled-background">
   <script> var images = "{% static 'images/' %}";</script>
-  <script src="{% static 'js/LoadBackground.js' %}"></script>
+  <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
 <ul class = 'post-list'>
   <div class="create-post">
     <form action="/posts/" method="post">
@@ -15,7 +15,7 @@
       <label for="">Content: </label>
       <input type="text" name="content" value="{{description}}">
       <br>
-      <label for="">Visibility</label>
+      <label class="visibility" for="">Visibility: </label>
       <select name="visibility">
        <option value="PUBLIC">Public</option>
        <option value="FRIENDS">Friends</option>
@@ -37,6 +37,10 @@
   </div>
 {% if posts %}
     {% for post in posts %}
+    <div class="full-post">
+      <div class="post-image">
+        <img class= "image" src="{% static 'images/0.png' %}">
+      </div>
       <div class='post'>
         <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
         <p class="by">by</p>
@@ -56,6 +60,7 @@
         </div>
         <br>
       </div>
+    </div>
     {% endfor %}
 {% else %}
 <div class="post">
