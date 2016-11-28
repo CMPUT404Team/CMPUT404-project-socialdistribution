@@ -57,8 +57,7 @@ class AuthorPostsView(APIView):
     '''
     '''
     def get(self, request):
-        response = NodeManager.get_stream(request.user)
-        posts = response.data['posts']
+        posts = NodeManager.get_stream(request.user)
         return render(request, "author-posts.html", {"posts":posts})
 
 class AuthorIdPostsView(APIView):
