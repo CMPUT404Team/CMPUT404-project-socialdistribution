@@ -198,9 +198,6 @@ class PostsView(APIView):
     	]
 	}
     """
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'posts.html'
-
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         paginator = CustomPagination()
@@ -587,7 +584,7 @@ class VisiblePostsNodesView(APIView):
     def get(self, request):
         posts = NodeManager.get_posts()
         return Response({'query':'frontend-posts', "posts":posts})
-
+        
 class CustomPagination(PageNumberPagination):
     page_size_query_param = 'size'
 

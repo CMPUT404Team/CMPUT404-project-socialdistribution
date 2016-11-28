@@ -27,6 +27,9 @@ class Post(models.Model):
         post = cls(author=author, title=title, origin=origin, description=description, categories=categories,
         visibility=visibility)
         post.id = uuid.uuid4()
+        post.origin = "http://" + author.host +"/posts/" + str(post.id)
+        post.source = "http://" + author.host +"/posts/" + str(post.id)
+        post.parse_description()
         return post
 
     def __str__(self):
