@@ -98,34 +98,58 @@ class NodeManager():
         posts_list = list(posts.values())
         return posts_list
 
-    @classmethod
+    @classmethod # add FOAF if our endpoint works
     def get_author_posts(self, id, user):
         stream = []
+        friends = True
+        local = False
+        nodes = self.get_nodes()
+        print type(user)
+
         try:
             author = Author.objects.get(id=id)
-            local = True if author.host == request.get_host() else False
-            # if they are the same person they can see private posts
-            if (id == user):
-                stream = Post.objects.filter(author=local, visibility="PRIVATE")
-            #check if friends, then get friend posts if they are
-
-            requests.get(url, auth=(self.username,self.password))
-            views.FriendDetailView.as_view(request, )
-            if (friends)
-
+            local = True if author.host == request.get_host()# else False
         except Author.DoesNotExist:
-            #local = None
-            nodes = self.get_nodes()
+            friends = False
+            author = None
+
+        #a user can see their own private posts
+        if (local and id == user):
+                private = Post.objects.filter(author=author, visibility="PRIVATE")
+                for post in private:
+                    stream.append(post)
+
+        if (author == None):
+            #find the author's host
             for node in nodes:
-                '''
-                for each node get:
-                    - private if they are the same author
-                    - all friend posts if id and user are friends
-                    - public posts of that id
-                    - serveronly if on our server
-                    - (FOAF posts)
-                    - (posts for that user)
-                '''
+                try:
+                    url = node.get_base_url()+'/author/'
+                    print url
+                    #requests.get(url, auth=(self.username,self.password))
+                    json_data = node.make_authenticated_request(url)
+                    # TODO: find result of json_data
+                except:
+                    pass
+
+        #check if id and user are friends
+        if (friends):
+            #see if can find author in friends list of user
+            user_auth = Author.objects.get(id=user)
+            # user is not friends with that author
+            if author not in user_auth.friends:
+                friends = False
+            # user is friends, but is it mutal?
+            else:
+                # TODO
+                #do remote query for friends - have host
+                # TODO: set friends based on json result
                 pass
-            pass
+
+        # TODO
+        # query /author/posts
+        # sort
+        # add posts marked public
+        # if local : add posts marked server only
+        # if friends: add posts marked friends
+
         return stream
