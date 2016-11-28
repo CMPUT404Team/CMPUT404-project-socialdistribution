@@ -67,8 +67,8 @@
           <div class='create comment'>
             <form action="/posts/{{post.id}}/comments" method="post">
               <label class="comment" for="">Enter your comment here:</label>
-              <input type="text" name="New Comment" value="{{comment}}">
-              <input type="hidden" name="author" value="{{comment.author}}">
+              <input type="text" name="comment" value="author:{{author}}">
+              <input type="hidden" name="author" value="comment:[author:{{author}}]">
               <div class="radio">
                 <input type="radio" name="contentType" value="text/plain" checked>
                 <label class="radio" for="">text/plain</label>

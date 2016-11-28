@@ -49,8 +49,9 @@ class PostsView(APIView):
     #TODO: replace get_public_posts()
     def get(self, request):
         response = views.PostsView.as_view()(request)
+        author=Author.objects.get(user_id=request.user.id)
         if (response.status_code == 200):
-            return render(request, "posts.html", {"posts":response.data['posts'], })
+            return render(request, "posts.html", {"posts":response.data['posts'], "author":author})
         else:
             return HttpResponse(status=response.status_code)
 
