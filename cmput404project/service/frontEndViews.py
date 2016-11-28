@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
+from models.NodeManager import NodeManager
 from . import views
 from django.views.generic.edit import FormView
 from rest_framework.response import Response
@@ -56,7 +57,7 @@ class AuthorPostsView(APIView):
     '''
     '''
     def get(self, request):
-        response = views.VisiblePostsNodesView.as_view()(request)
+        response = NodeManager.get_stream(request.user)
         posts = response.data['posts']
         return render(request, "author-posts.html", {"posts":posts})
 
