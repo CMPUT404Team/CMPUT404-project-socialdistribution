@@ -53,12 +53,13 @@
         {% else %}
           <p class="comment-content"> No comments yet.</p>
         {% endif %}
-        <br>
+        <br><br>
           <div class='create comment'>
             <form action="/posts/{{post.id}}/comments" method="post">
-              <p>comment here</p>
-              <label for="">Content: </label>
-              <input type="text" name="New Comment" value="{{comment}}">
+              <label for="">Comment: </label>
+              <input type="text" name="comment" value="{{comment.comment}}">
+              <input type="hidden" name="author" value="{{comment.author}}">
+              <input type="hidden" name="time" value="{{comment.published}}">
               <div class="radio">
                 <input type="radio" name="contentType" value="text/plain" checked>
                 <label class="radio" for="">text/plain</label>

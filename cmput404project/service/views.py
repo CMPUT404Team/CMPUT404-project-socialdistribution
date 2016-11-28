@@ -132,6 +132,9 @@ class CommentAPIView(APIView):
 
     def post(self, request, pid):
         post = self.get_post(pid)
+        print "request data",request.data
+        
+        print request.data['comment']
         auth = self.get_author(request.data['comment']['author']['id'])
         try:
             comment = Comment.objects.get(guid=request.data['comment']['guid'])
@@ -506,4 +509,4 @@ class CreatePostView(APIView):
 
     def post(self, request):
         user = request.user
-        author = self.get_object(user) 
+        author = self.get_object(user)
