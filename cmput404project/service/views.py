@@ -198,6 +198,9 @@ class PostsView(APIView):
     	]
 	}
     """
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts.html'
+
     def get(self, request):
         posts = Post.objects.all().filter(visibility="PUBLIC")
         paginator = CustomPagination()
@@ -211,9 +214,7 @@ class PostsView(APIView):
                 request.GET['size'] if 'size' in request.GET else None)
 
     def post(self, request):
-        print request.data
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
-        print serializer
         if serializer.is_valid():
             serializer.save()
             print serializer.data
