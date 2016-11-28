@@ -103,28 +103,23 @@ class FriendView(APIView):
 class BefriendView(APIView): 
 
     def get_friend_json(self, raw_friend_data):
-        if (raw_friend_data!=None or raw_friend_data!=""):
-            friend_json = None
-            try:
-                friend_json=ast.literal_eval(raw_friend_data)
-            except:
-                return friend_json
-            return friend_json 
+        return ast.literal_eval(raw_friend_data)
 
     def post(self, request):
-        author = get_author_object(request.user) 
-        author_json = AuthorSerializer(author, context={'request':request}).data
-        request_dict = dict(request.data.iterlists())
-        currently_friends = request_dict.get("currently_friends")[0]
-        friend_json = self.get_friend_json(request_dict.get("friend")[0])
-        if (not friend_json):
+        try:
+            author = get_author_object(request.user) 
+            author_json = AuthorSerializer(author, context={'request':request}).data
+            request_dict = dict(request.data.iterlists())
+            currently_friends = request_dict.get("currently_friends")[0]
+            friend_json = self.get_friend_json(request_dict.get("friend")[0])
+            if (currently_friends == str(True)):
+                #You are unfriending them
+                author.remove_friend(Author.objects.get(id=friend_json['id']))
+                return HttpResponseNotModified()
+            else:
+                #You are befriending them
+                status_code = NodeManager.befriend(author_json, friend_json)
+                return HttpResponseNotModified()
+        except:
             return Response(status=400)
-        if (currently_friends == str(True)):
-            #You are unfriending them
-            author.remove_friend(Author.objects.get(id=friend_json['id']))
-            return HttpResponseNotModified()
-        else:
-            #You are befriending them
-            status_code = NodeManager.befriend(author_json, friend_json)
-            return HttpResponseNotModified()
 
