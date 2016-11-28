@@ -72,6 +72,30 @@ class NodeManager():
             return 404
 
     @classmethod
+    def get_stream(self,user):
+        stream=[]
+        author=Author.objects.get(user_id=user.id)
+
+        #get all public posts
+        publicPosts=self.get_public_posts()
+        for post in publicPosts:
+            stream.append(post)
+
+        #get all posts from friends of user
+        friends=author.get_friends()
+        friendPosts=self.get_posts_by_friends(friends)
+        for post in friendPosts:
+            if post not in stream:
+                stream.append(post)
+
+        #get user private posts
+        private=self.get_private_posts(author)
+        for post in private:
+            stream.append(post)
+        return stream
+
+        
+    @classmethod
     def get_posts_by_friends(self, author_ids):
         stream = []
         nodes = self.get_nodes()
