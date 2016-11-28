@@ -5,6 +5,7 @@ from models.Author import Author
 from models.Node import Node
 from frontEndViews import BefriendView
 from django.shortcuts import render
+from unittest import skip 
 
 class FrontEndViewTest(LiveServerTestCase):
     
@@ -40,6 +41,7 @@ class FrontEndViewTest(LiveServerTestCase):
     def test_should_400_on_malformed_json(self):
         response = self.client.post('/frontend/befriend/', data={"this is not friend json":"and will not make you any friends"})
         self.assertEqual(400, response.status_code)
+
     @skip("Wyatt doesn't know how to pass the form data properly, so he is giving up.")
     def test_should_befriend_from_frontend(self):
         response = self.client.post('/frontend/befriend/', data=str({"friend":str(self.get_friend_json(self.friend)),"currently_friends":"False"}))
