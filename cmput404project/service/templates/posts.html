@@ -1,10 +1,10 @@
 {% load rest_framework %}
 {% load staticfiles %}
 <html>
-<head><link href="{% static 'css/style.css?Sunday 27th of November 2016 10:45:24 AM' %}" rel="stylesheet" type="text/css"></head>
+<head><link href="{% static 'css/style.css?100' %}" rel="stylesheet" type="text/css"></head>
 <body id="background" class="tiled-background">
   <script> var images = "{% static 'images/' %}";</script>
-  <script src="{% static 'js/LoadBackground.js' %}"></script>
+  <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
 <ul class = 'post-list'>
   <div class="create-post">
     <form action="/posts/" method="post">
@@ -15,7 +15,7 @@
       <label for="">Content: </label>
       <input type="text" name="content" value="{{description}}">
       <br>
-      <label for="">Visibility</label>
+      <label class="visibility" for="">Visibility: </label>
       <select name="visibility">
        <option value="PUBLIC">Public</option>
        <option value="FRIENDS">Friends</option>
@@ -23,20 +23,26 @@
        <option value="PRIVATE">Private</option>
        <option value="SERVERONLY">Server Only</option>
       </select>
+      <div id="category">
+        <label for="">Categories:</label>
+        <br>
+        <script src="{% static 'js/CreateCategories.js' %}"></script>
+      </div>
       <div class="radio">
         <input type="radio" name="contentType" value="text/plain" checked>
         <label class="radio" for="">text/plain</label>
         <input type="radio" name="contentType" value="text/x-markdown">
         <label class="radio" for="">text/x-markdown</label>
       </div>
-      <div id="category">
-        <script src="{% static 'js/CreateCategories.js' %}"></script>
-      </div>
       <input type="submit" value="POST">
     </form>
   </div>
 {% if posts %}
     {% for post in posts %}
+    <div class="full-post">
+      <div class="post-image">
+        <img class= "image" src="{% static 'images/0.png' %}">
+      </div>
       <div class='post'>
         <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
         <p class="by">by</p>
@@ -46,9 +52,13 @@
         <p class='post-content'>{{post.content}}</p>
         <div class='comment'>
         {% if post.comments %}
+          <p class="comment-content"> Comments:</p>
+          <br>
           {% for comment in post.comments %}
+            <a class="comment-author" href="http://{{host}}/author/{{comment.author.id}}/">{{comment.author.displayName}}</a>
+            <p class="by">:</p>
             <p class="comment-content">{{comment.comment}}</p>
-          <a href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
+          <a class="comment-link" href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
           {% endfor %}
         {% else %}
           <p class="comment-content"> No comments yet.</p>
@@ -56,21 +66,21 @@
         <br><br>
           <div class='create comment'>
             <form action="/posts/{{post.id}}/comments" method="post">
-              <label for="">Comment: </label>
-              <input type="text" name="comment" value="{{comment.comment}}">
+              <label class="comment" for="">Enter your comment here:</label>
+              <input type="text" name="New Comment" value="{{comment}}">
               <input type="hidden" name="author" value="{{comment.author}}">
-              <input type="hidden" name="time" value="{{comment.published}}">
               <div class="radio">
                 <input type="radio" name="contentType" value="text/plain" checked>
                 <label class="radio" for="">text/plain</label>
                 <input type="radio" name="contentType" value="text/x-markdown">
                 <label class="radio" for="">text/x-markdown</label>
               </div>
-              <input type="submit" value="POST">
+              <input class="comment" type="submit" value="Comment">
             </form>
           </div>
         </div>
       </div>
+    </div>
     {% endfor %}
 {% else %}
 <div class="post">

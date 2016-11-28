@@ -108,8 +108,8 @@ class PostAPITests(APITestCase):
         # Return all the posts made by an author with a specific ID
         response = self.get_posts_by_author_id(self.author.id)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(self.post.id), response.data[0]['id'])
-        self.assertEqual(str(self.post.author.id), response.data[0]['author']['id'])
+        self.assertEqual(str(self.post.id), response.data['posts'][0]['id'])
+        self.assertEqual(str(self.post.author.id), response.data['posts'][0]['author']['id'])
 
     def test_get_posts_with_invalid_author_id(self):
         # Get posts with an invalid author id, or author ID that doesn't exist
@@ -120,8 +120,8 @@ class PostAPITests(APITestCase):
     def test_get_post_by_id(self):
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(str(self.post.id), response.data['id'])
-        self.assertEqual(str(self.post.author.id), response.data['author']['id'])
+        self.assertEqual(str(self.post.id), response.data['posts'][0]['id'])
+        self.assertEqual(str(self.post.author.id), response.data['posts'][0]['author']['id'])
 
     def test_get_posts_with_invalid_post_id(self):
         #TODO: tests behaviour for when you get posts with incorrectly
@@ -129,17 +129,17 @@ class PostAPITests(APITestCase):
         pass
 
     def test_get_post_returns_comment(self):
-        comment = Comment.create_comment("Look at dat comment", self.author, self.post)
+        comment = Comment.create_comment("Look at dat comment", self.author, self.post, 'text/plain')
         comment.save()
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
-        self.assertIsNotNone(response.data['comments'][0]['guid'])
-        self.assertEqual(str(comment.guid), response.data['comments'][0]['guid'])
+        self.assertIsNotNone(response.data['posts'][0]['comments'][0]['guid'])
+        self.assertEqual(str(comment.guid), response.data['posts'][0]['comments'][0]['guid'])
 
     def test_get_post_with_empty_comments(self):
         response = self.get_single_post_by_id(self.post.id)
         self.assertEqual(200, response.status_code)
-        self.assertFalse(response.data['comments'])
+        self.assertFalse(response.data['posts'][0]['comments'])
 
     def test_get_nonexistent_post_by_id(self):
         self.post.id = uuid.uuid4()
@@ -152,7 +152,6 @@ class PostAPITests(APITestCase):
         response = self.get_single_post_by_id(not_id)
         self.assertEqual(response.status_code, 400)
 
-    @skip("pagination needs a fix")
     def test_get_posts_by_page(self):
         #TODO: Returns all of posts on a specific page
         for post_count in range(0, 15):
@@ -160,29 +159,34 @@ class PostAPITests(APITestCase):
         response = self.get_posts_by_page(1)
         self.assertEqual(response.status_code, 200)
 
-    @skip("pagination needs a fix")
     def test_get_full_page_of_posts(self):
         # Retrieves a full page of posts
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page(1)
-        self.assertEqual(len(response.data), 10)
+        self.assertEqual(len(response.data['posts']), 5)
 
-    @skip("pagination needs a fix")
     def test_get_partial_page_of_posts(self):
         # Retrieves a partial page of posts
-        for post_count in range(0, 15):
+        for post_count in range(0, 13):
             self.new_post_setup(self.author, "PUBLIC")
-        response = self.get_posts_by_page(2)
-        self.assertEqual(len(response.data), 6)
+        response = self.get_posts_by_page(3)
+        #will be 4 because it includes the saved post from setup
+        self.assertEqual(len(response.data['posts']), 4)
 
-    @skip("pagination needs a fix")
     def test_page_does_not_exist(self):
         # Tests what is returned if requested page of posts does not exist
         response = self.get_posts_by_page(77)
         self.assertEqual(response.status_code, 404)
 
-    @skip("pagination needs a fix")
+    def test_get_comments_by_size(self):
+        # retrieves a page with specific size per page
+        for i in range(0, 5):
+            self.new_post_setup(self.author, "PUBLIC")
+        response = self.client.get('/author/posts/?size=2')
+        self.assertEqual(len(response.data['posts']), 2)
+        self.assertEqual(response.status_code, 200)
+
     def test_get_posts_by_page_and_size(self):
         # Retrieves a page of posts with specific size of page
         for post_count in range(0, 25):
@@ -190,21 +194,19 @@ class PostAPITests(APITestCase):
         response = self.get_posts_by_page_and_size(2, 20)
         self.assertEqual(response.status_code, 200)
 
-    @skip("pagination needs a fix")
     def test_get_posts_by_page_and_exceeded_size(self):
         # Retrieves a page where there are more posts than the specified size
         for post_count in range(0, 45):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page_and_size(2, 20)
-        self.assertEqual(len(response.data), 20)
+        self.assertEqual(len(response.data['posts']), 20)
 
-    @skip("pagination needs a fix")
     def test_get_posts_by_page_and_partial_size(self):
         # Retrives a page where the size is smaller than the one specified
         for post_count in range(0, 15):
             self.new_post_setup(self.author, "PUBLIC")
         response = self.get_posts_by_page_and_size(1, 20)
-        self.assertEqual(len(response.data), 16)
+        self.assertEqual(len(response.data['posts']), 16)
 
     def create_update_post_with_put(self, post_id, put_body):
         #PUT http://service/posts/postid to update/create post
@@ -237,6 +239,7 @@ class PostAPITests(APITestCase):
         self.post.title = "The new title"
         put_body = self.get_post_data(self.post, self.author)
         response = self.create_update_post_with_put(self.post.id, put_body)
+        print response.data
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['title'], "The new title")
 
@@ -250,6 +253,14 @@ class PostAPITests(APITestCase):
         post_id = self.post.id
         response = self.delete_post(post_id)
         self.assertEqual(response.status_code, 204)
+
+    def test_delete_post_if_requester_created_post(self):
+        post_id = self.post.id
+        client = APIClient()
+        evilUser = User.objects.create_user(username='evil', password='DeleteThePosts')
+        client.force_authenticate(user=evilUser)
+        response = client.delete("/posts/"+str(post_id)+"/")
+        self.assertEqual(401, response.status_code)
 
     def test_delete_nonexistent_post(self):
         post_id = uuid.uuid4()
@@ -312,9 +323,6 @@ class PostAPITests(APITestCase):
                     "displayName": author.displayName,
                 },
                 "categories": post.categories,
-                "count": str(post.count),
-                "size": str(post.size),
-                "next": post.next,
                 "published":str(post.published),
                 "id":str(post.id),
                 "visibility":post.visibility
@@ -333,9 +341,6 @@ class PostAPITests(APITestCase):
                     "displayName": author.displayName,
                 },
                 "categories": post.categories,
-                "count": str(post.count),
-                "size": str(post.size),
-                "next": post.next,
                 "comments":[
     				{
     					"author":{

@@ -2,14 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
-import uuid, base64, urllib2
+import uuid, urllib2
 import json
+import requests
 
 class Node(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     displayName = models.CharField(max_length=30)
     host = models.CharField(max_length=100)
-    path = models.CharField(max_length=100, default='')
+    path = models.CharField(max_length=100, default='', blank=True)
     user = models.ForeignKey(User, null=True)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
@@ -23,41 +24,46 @@ class Node(models.Model):
             path = path,
             user = user,
             username = username,
-            password = base64.b64encode(password)
+            password = password,
             )
 
     def __str__(self):
         return self.displayName
+   
+    def get_base_url(self):
+        return self.host + self.path
+
+    def make_authenticated_request(self, url):
+        return requests.get(url, auth=(self.username,self.password))
+
+    def make_authenticated_post_request(self, url, data):
+        return requests.post(url, auth=(self.username,self.password), json=data)
+    
+    def get_friend_request_json(self, author_json, friend_json):
+        return {
+                "query":"friendrequest",
+                "author": author_json,
+                "friend": friend_json
+                }
+
+    def get_json(self, url):
+        r = self.make_authenticated_request(url)
+        if (r.status_code == 200):
+            return r.json()
 
     def get_posts(self):
-        baseUrl = 'http://' + self.host + self.path
-        url = baseUrl + "/author/posts"
-        r = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-        r.add_header("Authorization", "Basic %s" % base64string)
-        f = urllib2.urlopen(r).read()
-        posts = json.loads(f)
-        return posts
+        url = self.get_base_url() + "/author/posts"
+        return self.get_json(url) 
 
     def get_posts_by_author(self, author_id):
-        baseUrl = 'http://' + self.host + self.path
-        url = baseUrl + "/posts"
-        try:
-            r = urllib2.Request(url)
-            base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-            r.add_header("Authorization", "Basic %s" % base64string)
-            f = urllib2.urlopen(r).read()
-            posts = json.loads(f)
-        except ValueError:
-            posts = {}
-        return posts
+        url = self.get_base_url() + "/author/" + str(author_id) + "/posts"
+        return self.get_json(url)
 
     def get_public_posts(self):
-        baseUrl = 'http://' + self.host + self.path
-        url = baseUrl + "/posts"
-        r = urllib2.Request(url)
-        base64string = base64.b64encode('%s:%s' % (self.username, self.password))
-        r.add_header("Authorization", "Basic %s" % base64string)
-        f = urllib2.urlopen(r).read()
-        posts = json.loads(f)
-        return posts
+        url = self.get_base_url() + "/posts"
+        return self.get_json(url)
+
+    def befriend(self, author_json, friend_json):
+        url = self.get_base_url() + "/friendrequest/"
+        r = self.make_authenticated_post_request(url, self.get_friend_request_json(author_json, friend_json))
+        return r.status_code

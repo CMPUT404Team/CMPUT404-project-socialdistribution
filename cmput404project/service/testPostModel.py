@@ -15,7 +15,7 @@ class PostModelTests(TestCase):
         self.author.save()
         self.post = Post.create(self.author,
             title="A post title about a post about web dev",
-            origin="http://whereitcamefrom.com/post/zzzzz",
+            origin="http://"+self.author.host+"/post/zzzzz",
             description="This post discusses stuff -- brief",
             categories = ["web","tutorial"],
             visibility = "PUBLIC")
@@ -31,7 +31,7 @@ class PostModelTests(TestCase):
         self.assertEqual(self.post.description, "This post discusses stuff -- brief")
 
     def test_Post_Origin_Equal(self):
-        self.assertEqual(self.post.origin, '127.0.0.1:8000')
+        self.assertEqual(self.post.origin, "http://"+self.author.host+"/posts/"+str(self.post.id))
 
     def test_Post_Has_Source(self):
         self.assertIsNotNone(self.post.source)
@@ -61,13 +61,6 @@ class PostModelTests(TestCase):
 
     def test_Post_Has_Published(self):
         self.assertIsNotNone(self.post.published)
-
-    def test_Post_Next_Equal(self):
-        post_next = "http://service/posts/" + str(self.post.id) +"/comments"
-        self.assertEqual(self.post.next, post_next)
-
-    def test_Post_Number_Of_Comments_To_Display(self):
-        self.assertIsNotNone(self.post.size)
 
     @skip("Failing")
     def test_Post_Add_Comment(self):

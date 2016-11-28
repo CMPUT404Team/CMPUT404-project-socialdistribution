@@ -9,15 +9,16 @@ import json
 
 class UserViewSetTests(APITestCase):
     def setUp(self):
-        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
+        superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')
+        superuser2 = User.objects.create_superuser('superuser2', 'test2@test.com', 'test1234')
         self.client = APIClient()
         #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
-	self.friend1 = Author.create(host='local', displayName='testMonkey1', user=superuser)
-	self.friend1.save()
-	self.friend2 = Author.create(host='local', displayName='testMonkey2', user=superuser)
-	self.friend2.save()
-   
+    	self.friend1 = Author.create(host='local', displayName='testMonkey1', user=superuser)
+    	self.friend1.save()
+    	self.friend2 = Author.create(host='local', displayName='testMonkey2', user=superuser2)
+    	self.friend2.save()
+
     def test_check_valid_friends(self):
 	# Should not be friends at this point
 	self.assertFalse(self.friend1.is_friend(self.friend2))
@@ -37,4 +38,3 @@ class UserViewSetTests(APITestCase):
 	self.friend1.add_friend(self.friend2)
 	# After friend is added to author
 	self.assertEqual(len(self.friend1.get_friends()), 1)
-	
