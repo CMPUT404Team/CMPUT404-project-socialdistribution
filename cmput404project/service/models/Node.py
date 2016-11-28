@@ -67,3 +67,9 @@ class Node(models.Model):
         url = self.get_base_url() + "/friendrequest/"
         r = self.make_authenticated_post_request(url, self.get_friend_request_json(author_json, friend_json))
         return r.status_code
+
+    def get_author(self, author_id):
+        url = self.baseUrl + "/author/" + str(author_id)
+        r = self.make_authenticated_request(url)
+	if (r.status_code == 200):
+        	return r.json()

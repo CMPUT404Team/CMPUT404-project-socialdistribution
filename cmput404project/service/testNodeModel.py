@@ -1,9 +1,11 @@
 from django.test import TestCase, LiveServerTestCase
 from models.Node import Node
 from models.NodeManager import NodeManager
+from mock import MagicMock, Mock
 from models.Author import Author
 from models.Post import Post
 from django.contrib.auth.models import User
+from django.core.management import call_command
 from unittest import skip
 from urlparse import urlparse
 import json
@@ -211,3 +213,14 @@ class NodeModelTests(LiveServerTestCase):
                 "host":friend.host,
                 "displayName":friend.displayName
                 }
+        
+    def test_get_Author_by_id(self):
+        author = self.node.get_author(self.author.id)
+        self.assertIsNotNone(author)
+        self.assertEqual(author['id'], str(self.author.id))
+        self.assertEqual(author['host'], self.author.host)
+        self.assertEqual(author['displayName'], self.author.displayName)
+
+    def test_get_Author_by_id_does_not_exist(self):
+        author = self.node.get_author(uuid.uuid4()) 
+        self.assertEqual(None, author)
