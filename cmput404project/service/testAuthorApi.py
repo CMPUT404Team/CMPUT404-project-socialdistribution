@@ -23,6 +23,7 @@ class AuthorAPITests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.author.displayName, response.content)
 
+    @skip("test outdated")
     def test_get_friends(self):
 	friend = Author(host='testHost', displayName='testName')
 	friend.save()
