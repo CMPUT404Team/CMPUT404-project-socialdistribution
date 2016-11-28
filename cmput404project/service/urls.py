@@ -2,6 +2,7 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from . import views, frontEndViews
 from django.views.generic.base import TemplateView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
@@ -16,6 +17,7 @@ urlpatterns = [
     url(r'^author/awaiting-approval$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
     url(r'^frontend/posts/$', views.PostsNodesView.as_view(), name='frontend-public-posts'),
     url(r'^frontend/author/posts/$', views.VisiblePostsNodesView.as_view(), name='frontend-visible-posts'),
+    url(r'^frontend/befriend/$', frontEndViews.BefriendView.as_view(), name='frontend-befriend'),
     url(r'^doggo/posts/$', frontEndViews.PostsView.as_view(), name='publicPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/$', frontEndViews.PostView.as_view(), name='post'),
     url(r'^doggo/friends/$', frontEndViews.FriendView.as_view(), name='friend-detail'),

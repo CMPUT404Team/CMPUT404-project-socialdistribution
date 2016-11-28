@@ -32,7 +32,6 @@ class CommentSerializer(serializers.Serializer):
 
 
     def update(self, instance, validated_data):
-        print "update"
         instance.comment = validated_data.get('comment', instance.comment)
         instance.guid = validated_data.get('guid', instance.guid)
         instance.save()

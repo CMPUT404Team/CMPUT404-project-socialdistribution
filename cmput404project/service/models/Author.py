@@ -20,6 +20,8 @@ class Author(models.Model):
     def add_friend(self, author):
         self.friends.add(author)
 
+    def remove_friend(self, friend):
+        self.friends.remove(friend)
     # Checks if one author is following another
     def is_following(self, uuid):
 	return len(self.friends.filter(id=uuid))==1

@@ -3,6 +3,19 @@
 {% if author %}
       <div class='author'>
         <h1 class='author-displayName'>{{author.displayName}}</h1>
+	{% if currently_friends %}
+		<form action="/frontend/befriend/" method="post">
+			<input type="hidden" name="friend" value="{{author}}">
+			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
+			<input type="submit" value="Unfollow" />
+		</form>		
+	{% else %}
+		<form action="/frontend/befriend/" method="post">
+			<input type="hidden" name="friend" value="{{author}}">
+			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
+			<input type="submit" value="Follow & Send Friend Request" />
+		</form>
+	{% endif %}
         <p class='author-published'>{{author.host}}</p>
         {% if friends%}
           {% for friend in friends%}

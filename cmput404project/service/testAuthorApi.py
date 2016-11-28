@@ -29,9 +29,10 @@ class AuthorAPITests(APITestCase):
 	friend.save()
 	self.author.add_friend(friend)
 	response = self.client.get(self.detail_url)
-	json_friend = response.data.get('friends')[0]
-	self.assertIn('testHost',json_friend['host'])
-	self.assertIn('testName',json_friend['displayName'])	
+        self.assertEqual(200, response.status_code)
+	json_friend = response.content
+	self.assertIn('testHost',json_friend)
+	self.assertIn('testName',json_friend)
         
 class AddAuthorApiTests(APITestCase):
 
