@@ -194,6 +194,7 @@ class NodeManager():
                 stream.append(p)
         return stream
 
+    @classmethod
     def get_post_by_postid(self, post_id):
         nodes = self.get_nodes()
         for node in nodes:
