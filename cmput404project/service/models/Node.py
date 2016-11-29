@@ -51,6 +51,10 @@ class Node(models.Model):
         if (r.status_code == 200):
             return r.json()
 
+    def get_post(self, post_id):
+        url = self.get_base_url() + "/posts/" + str(post_id)
+        return self.get_json(url) 
+
     def get_posts(self):
         url = self.get_base_url() + "/author/posts"
         return self.get_json(url)

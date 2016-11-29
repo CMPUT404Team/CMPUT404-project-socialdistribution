@@ -233,6 +233,12 @@ class NodeModelTests(LiveServerTestCase):
         posts = self.nodemanager.get_serveronly_posts(self.author)
         self.assertEqual(posts, [])
 
+    def test_get_post_for_author(self):
+        self.create_post(self.author)
+        post = self.nodemanager.get_post_for_user(self.post.id, self.author)
+        self.assertEqual(post['id'], str(self.post.id))
+
+
     def get_author_json(self, author):
         author_json = self.get_friend_json(author)
         author_json['url'] = author.host+"/author/"+str(author.id)
