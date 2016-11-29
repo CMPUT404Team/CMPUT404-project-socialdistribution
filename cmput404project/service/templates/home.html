@@ -1,0 +1,23 @@
+{% load rest_framework %}
+{% load staticfiles %}
+<html>
+<head>
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="{% static 'js/Login.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body id="background" class="tiled-background">
+  <script> var images = "{% static 'images/' %}";</script>
+  <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
+  <div class="home-page">
+    <div class="background">
+      <div id="title" class="title">
+        <h1 class="title">Doggo</h1>
+        <input type="button" value="login" onclick="Login(); return false;"/>
+      </div>
+      <div id="login" class="login" style="display:none">
+        {% include "author_form.html"%}
+      </div>
+    </div>
+  </div>
+</body></html>

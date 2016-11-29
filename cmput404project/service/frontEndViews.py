@@ -20,13 +20,18 @@ from models.NodeManager import NodeManager
 import ast
 
 def index(index):
-    return redirect("author-add")
+    return redirect("home")
 
 def get_author_object(user):
     try:
         return Author.objects.get(user=user)
     except Author.DoesNotExist:
         raise Http404
+
+class HomeView(APIView):
+    def get(self, request):
+        form = AuthorForm()
+        return render(request, 'home.html', {'form': form})
 
 class PostView(APIView):
     '''

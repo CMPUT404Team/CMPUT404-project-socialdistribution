@@ -584,7 +584,7 @@ class VisiblePostsNodesView(APIView):
     def get(self, request):
         posts = NodeManager.get_posts()
         return Response({'query':'frontend-posts', "posts":posts})
-        
+
 class CustomPagination(PageNumberPagination):
     page_size_query_param = 'size'
 
@@ -631,3 +631,16 @@ class CreatePostView(APIView):
     def post(self, request):
         user = request.user
         author = self.get_object(user)
+
+def create_author(request):
+    if request.method == 'POST':
+        form = AuthorForm(request.POST)
+        print form
+        try:
+            if form.is_valid():
+                return HttpResponseRedirect('doggo/author/awaiting-approval')
+        except:
+            print "non valid user"
+    else:
+        form = AuthorForm()
+    return render(request, 'home.html', {'form': form})

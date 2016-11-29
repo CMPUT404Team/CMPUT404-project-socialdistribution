@@ -5,9 +5,11 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    url(r'^doggo/$', frontEndViews.HomeView.as_view(), name='home'),
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
     url(r'^posts/(?P<pk>[^/]+)/$', views.PostView.as_view(), name='post'),
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
+    url(r'^author/add/$', views.create_author, name='create_author'),
     url(r'^posts/add/$', views.CreatePostView.as_view(), name='createPost'),
     url(r'^author/(?P<pk>[^/]+)/posts/$', views.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^posts/(?P<pid>[^/]+)/comments', views.CommentAPIView.as_view()),
@@ -15,7 +17,7 @@ urlpatterns = [
     url(r'^friends/(?P<uuid1>[^/]+)/(?P<uuid2>[^/]+)$', views.FriendDetailView.as_view(), name='friend-detail'),
     url(r'^friends/(?P<uuid>[^/]+)/', views.MutualFriendDetailView.as_view(),name='mutual-friend'),
     url(r'^author/(?P<pk>[^/]+)/$', views.AuthorDetailView.as_view(), name='author-detail'),
-    url(r'^author/awaiting-approval$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
+    url(r'^doggo/author/awaiting-approval$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
     url(r'^frontend/posts/$', views.PostsNodesView.as_view(), name='frontend-public-posts'),
     url(r'^frontend/author/posts/$', views.VisiblePostsNodesView.as_view(), name='frontend-visible-posts'),
     url(r'^frontend/befriend/$', frontEndViews.BefriendView.as_view(), name='frontend-befriend'),

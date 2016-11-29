@@ -8,6 +8,64 @@
   src: url("../fonts/Raleway-Light.ttf") format("opentype");
 }
 
+@font-face {
+  font-family: SonderSans-Black;
+  src: url("../fonts/SonderSans-BlackRough.otf") format("opentype");
+}
+
+@font-face {
+  font-family: SonderSerif-Bold;
+  src: url("../fonts/SonderSerif-BoldRough.otf") format("opentype");
+}
+
+.home-page {
+  background-color:rgba(0, 0, 0, 0.5);
+  position: absolute;
+  display: flex;
+  top: 30%;
+  left: 30%;
+  height: 40%;
+  width: 40%;
+  padding: 2%;
+}
+
+.background {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.title {
+    margin-bottom:0%;
+    margin-top: 0%;
+}
+
+#id {
+  width: 100%;
+  height:100%;
+}
+
+form {
+  margin-bottom: 0%;
+  align-self: center;
+}
+
+#title {
+  font-family: SonderSans-Black;
+  align-self: center;
+  font-size: 300%;
+}
+
+.login {
+  width: 100%;
+  height:100%;
+  margin: 5%;
+  padding-bottom: 0%;
+}
+
 .tiled-background{
   display: flex;
   flex-direction: row;
@@ -145,18 +203,22 @@ hr {
   padding: 5%;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"] {
   border: none;
-  width: 100%;
+  width: 80%;
   border-bottom: 2px solid #d3d3d3;
   font-family: Raleway-Light;
 }
 
-input[type="text"]:hover {
+input[type="submit"] {
+   margin-top: 2%;
+ }
+
+input[type="text"]:hover , input[type="password"]:hover {
   background-color: #d3d3d3;
 }
 
-input[type="submit"] {
+input[type="submit"], button#title {
   display: block;
   font-family: Raleway-Bold;
   font-size: 150%;
