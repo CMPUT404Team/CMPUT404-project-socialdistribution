@@ -15,11 +15,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='author',
-            name='user',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AlterField(
             model_name='post',
             name='contentType',
             field=models.CharField(choices=[(b'text/plain', b'text/plain'), (b'text/markdown', b'text/markdown')], default=b'text/plain', max_length=100),
