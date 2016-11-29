@@ -136,16 +136,20 @@ class NodeManager():
         friends = True
         local = False
         nodes = self.get_nodes()
+        #assumes the user has an author - won't work otherwise
         user_auth = Author.objects.get(user_id=user_id)
         node = None
+        print "I AM HERE"
 
         try:
             author = Author.objects.get(id=id)
             local = True if author.host == "http://"+host else False
         except Author.DoesNotExist:
+            print "except"
             friends = False
             author = None
 
+        print "hey"
         #a user can see their own posts
         if (local and str(id) == str(user_auth.id)):
             return Post.objects.filter(author_id=user_auth.id)
@@ -158,8 +162,13 @@ class NodeManager():
                     url = n.get_base_url()+'/author/'+str(id)
                     json_data = n.get_json(url)
                     # is this the author's host?
-                    if ('http://' + json_data['host'] == n.host):
+                    print json_data
+                    print n.host
+                    print json_data['host']
+                    if (json_data['host'] == n.host):
+                        print n
                         node = n
+                        print n
                         break;
                 except:
                     pass
