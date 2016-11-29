@@ -51,7 +51,7 @@ class AuthorIdPostsView(APIView):
     '''
     '''
     def get(self, request, pk):
-        posts = NodeManager.get_author_posts(pk,request.user.id, request_get_host())
+        posts = NodeManager.get_author_posts(pk,request.user.id, request.get_host())
         author = views.AuthorDetailView.as_view()(request, pk).data
         return render(request, "author-id-posts.html", {"posts":posts, "host":request.get_host(), "author": author })
 

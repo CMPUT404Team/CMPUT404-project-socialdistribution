@@ -69,9 +69,6 @@ class Node(models.Model):
         return r.status_code
 
     def are_friends(self, id1, id2):
-        url = self.get_base_url() + "/" + str(id1) + "/" + str(id2)
-        response = self.make_authenticated_request(url)
-        #!200 | (200 & false) to return false
-        if (response.status_code == 200 and response.data['friends'] == 'true'):
-            return True
-        return False
+        url = self.get_base_url() + "/friends/" + str(id1) + "/" + str(id2)
+        response = self.get_json(url)
+        return (response != None and response['friends'] == True)

@@ -190,19 +190,16 @@ class NodeModelTests(LiveServerTestCase):
         self.create_serveronly_post(friend2)
         stream = self.nodemanager.get_author_posts(friend.id, user2.id, self.live_server_url)
         #should see serveronly, public, friends. not private
-
+    '''
     def test_get_author_posts_through_nodeManager_local_local_not_friend(self):
         pass
 
-    ''' Same as test_get_author_posts_through_nodeManager_local_local_friend i think
-    def test_get_author_posts_through_nodeManager_local_remote_friend(self):
-        pass
-    '''
     def test_get_author_posts_through_nodeManager_local_remote_notfriend(self):
         pass
 
     def test_get_author_posts_through_nodeManager_user_is_author(self):
         pass
+    '''
 
     def test_get_private_posts(self):
         self.create_private_post(self.author)
