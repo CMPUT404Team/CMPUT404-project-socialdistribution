@@ -27,7 +27,7 @@ class NodeModelTests(LiveServerTestCase):
         self.author.save()
         self.node = Node.create(
             displayName = "The Node",
-            host = self.live_server_url, 
+            host = self.live_server_url,
             path = "",
             user = remoteUser,
             username = self.remote_username,
@@ -51,6 +51,10 @@ class NodeModelTests(LiveServerTestCase):
     def create_serveronly_post(self, author):
         #create(cls, author,title,origin,description,categories,visibility):
         self.post = Post.create(author, "ServerOnly post", "here", "Local secrets", "More local secrets", "SERVERONLY")
+        self.post.save()
+
+    def create_friend_post(self, author):
+        self.post = Post.create(author, "friends post", "here", "friend secrets", "More friend secrets", "FRIENDS")
         self.post.save()
 
     def test_node_creates_id(self):
@@ -89,7 +93,7 @@ class NodeModelTests(LiveServerTestCase):
 
     def test_befriend_remote_author(self):
         user = User.objects.create(username="hopefulFriend", password='superhopeful')
-        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user) 
+        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend', user=user)
         friend.save()
         status = self.node.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
         self.assertEqual(204, status)
@@ -113,7 +117,7 @@ class NodeModelTests(LiveServerTestCase):
         status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
         self.assertEqual(204, status)
         self.assertIn(friend, self.author.friends.all())
-        
+
     def test_befriend_through_NodeManager_with_bad_json(self):
         status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
         self.assertEqual(400, status)
@@ -171,6 +175,33 @@ class NodeModelTests(LiveServerTestCase):
         friend_ids = self.author.get_friends()
         posts = self.nodemanager.get_posts_by_friends(friend_ids)
         self.assertEqual(posts, [])
+
+    def test_get_author_posts_through_nodeManager_local_local_friend(self):
+        #pass
+        user = User.objects.create(username="user", password='dogs4lyf')
+        friend = Author.create(host=self.live_server_url, displayName='friend1', user=user)
+        friend.save()
+        user2 = User.objects.create(username="user2", password='dogs4lyf')
+        friend2 = Author.create(host=self.live_server_url, displayName='friend2', user=user2)
+        friend2.save()
+        friend2.add_friend(friend)
+        friend.add_friend(friend2)
+        self.create_friend_post(friend2)
+        self.create_private_post(friend2)
+        self.create_post(friend2)
+        self.create_serveronly_post(friend2)
+        stream = self.nodemanager.get_author_posts(friend.id, user2.id, self.live_server_url)
+        #should see serveronly, public, friends. not private
+    '''
+    def test_get_author_posts_through_nodeManager_local_local_not_friend(self):
+        pass
+
+    def test_get_author_posts_through_nodeManager_local_remote_notfriend(self):
+        pass
+
+    def test_get_author_posts_through_nodeManager_user_is_author(self):
+        pass
+    '''
 
     def test_get_private_posts(self):
         self.create_private_post(self.author)

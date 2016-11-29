@@ -5,7 +5,7 @@ from django.urls import reverse
 from Author import Author
 from Node import Node
 from Post import Post
-import uuid, json
+import uuid, json, requests
 
 class NodeManager():
     @classmethod
@@ -94,7 +94,7 @@ class NodeManager():
             stream.append(post)
         return stream
 
-        
+
     @classmethod
     def get_posts_by_friends(self, author_ids):
         stream = []
@@ -128,3 +128,67 @@ class NodeManager():
             author = node.get_author(author_id)
             if (author != None):
                 return author
+
+    @classmethod # add FOAF if our endpoint works
+    #host is the host of user
+    def get_author_posts(self, id, user_id, host):
+        stream = []
+        friends = True
+        local = False
+        nodes = self.get_nodes()
+        user_auth = Author.objects.get(user_id=user_id)
+        node = None
+
+        try:
+            author = Author.objects.get(id=id)
+            local = True if author.host == "http://"+host else False
+        except Author.DoesNotExist:
+            friends = False
+            author = None
+
+        #a user can see their own posts
+        if (local and str(id) == str(user_auth.id)):
+            return Post.objects.filter(author_id=user_auth.id)
+
+        #find node
+        if (author == None):
+            #find the author's host and node
+            for n in nodes:
+                try:
+                    url = n.get_base_url()+'/author/'+str(id)
+                    json_data = n.get_json(url)
+                    # is this the author's host?
+                    if ('http://' + json_data['host'] == n.host):
+                        node = n
+                        break;
+                except:
+                    pass
+            if (node == None):
+                raise Exception("Author doesn't exist anywhere!")
+        #already know host, find the node
+        else:
+            if (Node.objects.filter(host__icontains=author.host).exists()):
+                node = Node.objects.get(host__startswith=author.host)
+
+        #check if id and user are friends
+        if (friends):
+            #see if can find author in friends list of user
+            # user is not friends with that author
+            if author not in user_auth.friends.all():
+                friends = False
+            # user is friends, but is it mutal?
+            else:
+                # check if friends friends/<authorid1>/<authorid2>
+                friends = node.are_friends(id, user_auth.id)
+
+        posts = node.get_posts_by_author(id)
+        for p in posts['posts']:
+            if (local and p['visibility'] == 'SERVERONLY'):
+                # add serveronly posts
+                stream.append(p)
+            elif (friends and p['visibility'] == 'FRIENDS'):
+                # add friend posts
+                stream.append(p)
+            elif (p['visibility'] == 'PUBLIC'):
+                stream.append(p)
+        return stream
