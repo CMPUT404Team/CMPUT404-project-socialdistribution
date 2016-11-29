@@ -18,7 +18,10 @@ class PostModelTests(TestCase):
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="This post discusses stuff -- brief",
             categories = ["web","tutorial"],
-            visibility = "PUBLIC")
+            visibility = "PUBLIC",
+            content = "hey",
+            contentType = "text/plain"
+            )
         self.post.save()
 
     def test_Post_Creates_Id(self):
@@ -83,7 +86,10 @@ class PostModelTests(TestCase):
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="https://www.instagram.com/p/BMLWLAZhicf/?taken-by=sensible.heart",
             categories = ["web","tutorial"],
-            visibility = "PUBLIC")
+            visibility = "PUBLIC",
+            content = "hey",
+            contentType = "text/plain"
+            )
         self.post2.save()
         self.assertTrue(self.post.attached_photo)
 

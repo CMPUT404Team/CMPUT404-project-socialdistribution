@@ -21,7 +21,10 @@ class PostAPITests(APITestCase):
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="This post discusses stuff -- brief",
             categories = ["web","tutorial"],
-            visibility = "PUBLIC")
+            visibility = "PUBLIC",
+            content = "hey",
+            contentType = "text/plain"
+            )
         self.post.save()
 
     def new_post_setup(self, author, visibility):
@@ -30,7 +33,10 @@ class PostAPITests(APITestCase):
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="This post discusses stuff -- brief",
             categories=["web","tutorial"],
-            visibility=visibility)
+            visibility=visibility,
+            content = "hey",
+            contentType = "text/plain"
+            )
         new_post.save()
 
     def get_posts_by_current_user(self):

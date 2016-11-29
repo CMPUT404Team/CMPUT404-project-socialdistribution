@@ -33,7 +33,10 @@ class CommentUnitTest(TestCase):
             origin="http://whereitcamefrom.com/post/zzzzz",
             description="This post discusses stuff -- brief",
             categories = ["web","tutorial"],
-            visibility = "PUBLIC")
+            visibility = "PUBLIC",
+            content = "hey",
+            contentType = "text/plain"
+            )
         comment = 'Nice doggo'
         comm = Comment().create_comment(comment, author, post, 'text/plain')
         self.assertEqual(comm.author, author, "Author not equal")
@@ -71,7 +74,10 @@ class CommentAPIViewTests(APITestCase):
             origin="http://dogfanatic.com",
             description="How do you pick just ten?!",
             categories = ["list","dog"],
-            visibility = "PUBLIC")
+            visibility = "PUBLIC",
+            content = "hey",
+            contentType = "text/plain"
+            )
         self.author.save()
         self.post.save()
         self.ct = 'text/plain'

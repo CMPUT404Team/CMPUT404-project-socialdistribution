@@ -23,12 +23,11 @@ class Post(models.Model):
     comments = []
 
     @classmethod
-    def create(cls, author,title,origin,description,categories,visibility):
+    def create(cls, author,title,origin,description,categories,visibility, content, contentType):
         post = cls(author=author, title=title, origin=origin, description=description, categories=categories,
-        visibility=visibility)
+        visibility=visibility, content=content, contentType=contentType)
         post.origin = author.host
         post.source = author.host
-        post.parse_description()
         post.id = uuid.uuid4()
         return post
 

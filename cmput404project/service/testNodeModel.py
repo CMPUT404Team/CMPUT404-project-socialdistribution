@@ -40,21 +40,21 @@ class NodeModelTests(LiveServerTestCase):
 
     def create_post(self, author):
         #create(cls, author,title,origin,description,categories,visibility):
-        self.post = Post.create(author, "Yolo", "here", "Stuff", "Moar stuff", "PUBLIC")
+        self.post = Post.create(author, "Yolo", "here", "Stuff", "Moar stuff", "PUBLIC", "hey", "text/plain")
         self.post.save()
 
     def create_private_post(self, author):
         #create(cls, author,title,origin,description,categories,visibility):
-        self.post = Post.create(author, "Private post", "here", "Secrets", "More secrets", "PRIVATE")
+        self.post = Post.create(author, "Private post", "here", "Secrets", "More secrets", "PRIVATE", "hey", "text/plain")
         self.post.save()
 
     def create_serveronly_post(self, author):
         #create(cls, author,title,origin,description,categories,visibility):
-        self.post = Post.create(author, "ServerOnly post", "here", "Local secrets", "More local secrets", "SERVERONLY")
+        self.post = Post.create(author, "ServerOnly post", "here", "Local secrets", "More local secrets", "SERVERONLY", "hey", "text/plain")
         self.post.save()
 
     def create_friend_post(self, author):
-        self.post = Post.create(author, "friends post", "here", "friend secrets", "More friend secrets", "FRIENDS")
+        self.post = Post.create(author, "friends post", "here", "friend secrets", "More friend secrets", "FRIENDS", "hey", "text/plain")
         self.post.save()
 
     def test_node_creates_id(self):
@@ -250,7 +250,7 @@ class NodeModelTests(LiveServerTestCase):
                 "host":friend.host,
                 "displayName":friend.displayName
                 }
-        
+
     def test_get_Author_by_id(self):
         author = self.node.get_author(self.author.id)
         self.assertIsNotNone(author)
@@ -259,5 +259,5 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(author['displayName'], self.author.displayName)
 
     def test_get_Author_by_id_does_not_exist(self):
-        author = self.node.get_author(uuid.uuid4()) 
+        author = self.node.get_author(uuid.uuid4())
         self.assertEqual(None, author)
