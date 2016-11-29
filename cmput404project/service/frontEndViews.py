@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from AuthorForm import AuthorForm
 from serializers import AuthorSerializer
 import ast
+import uuid
 
 def index(request):
     return redirect("author-add")
@@ -89,7 +90,7 @@ class AuthorDetailView(APIView):
         for friend in author["friends"]:
             f = views.AuthorDetailView.as_view()(request, friend["id"]).data
             friends.append(f)
-        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host(), "currently_friends":currently_friends})
+        return render(request, "author-id.html", {"author": author, "friends": friends, "currently_friends":currently_friends})
 
 class FriendView(APIView):
     def get(self, request):
@@ -102,30 +103,24 @@ class FriendView(APIView):
 
 class BefriendView(APIView): 
 
-    def get_friend_json(self, raw_friend_data):
-        return ast.literal_eval(raw_friend_data)
-
-    def post(self, request):
-        try:
-            author = get_author_object(request.user) 
-            author_json = AuthorSerializer(author, context={'request':request}).data
-            request_dict = dict(request.data.iterlists())
-            currently_friends = request_dict.get("currently_friends")[0]
-            friend_json = self.get_friend_json(request_dict.get("friend")[0])
-            if (currently_friends == str(True)):
-                #You are unfriending them
-                author.remove_friend(Author.objects.get(id=friend_json['id']))
-            else:
-                #You are befriending them
-                status_code = NodeManager.befriend(author_json, friend_json)
-            return redirect('frontend-author-detail', friend_json['id'])
-        except:
-            return Response(status=400)
+    def post(self, request, pk):
+        author = get_author_object(request.user) 
+        author_json = AuthorSerializer(author, context={'request':request}).data
+        friend_json = NodeManager.get_author(pk)
+        if (friend_json == None):
+            return Response(status=404)
+        status_code = NodeManager.befriend(author_json, friend_json)
+        if (str(status_code).startswith('2')):
+            return redirect('frontend-author-detail', pk) 
+        return Response(status=status_code)
 
 class UnfriendView(APIView):
 
-    def post(self, request):
-        pass
+    def post(self, request, pk):
+        author = get_author_object(request.user)
+        author.remove_friend(Author.objects.get(id=pk))
+        return redirect('frontend-author-detail', pk)
+        
 
 class FriendRequestsView(APIView):
 
