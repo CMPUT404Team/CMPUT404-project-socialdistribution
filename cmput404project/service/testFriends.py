@@ -10,12 +10,13 @@ import json
 class UserViewSetTests(APITestCase):
     def setUp(self):
         superuser = User.objects.create_superuser('superuser', 'test@test.com', 'test1234')       
+        user = User.objects.create_user(username='user', password='test1234')
         self.client = APIClient()
         #Authenticate as a super user so we can test everything
         self.client.force_authenticate(user=superuser)
 	self.friend1 = Author.create(host='local', displayName='testMonkey1', user=superuser)
 	self.friend1.save()
-	self.friend2 = Author.create(host='local', displayName='testMonkey2', user=superuser)
+	self.friend2 = Author.create(host='local', displayName='testMonkey2', user=user)
 	self.friend2.save()
    
     def test_check_valid_friends(self):
