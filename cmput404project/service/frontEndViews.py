@@ -17,6 +17,7 @@ from rest_framework.response import Response
 from AuthorForm import AuthorForm
 from AuthorExistsForm import AuthorExistsForm
 from LoginForm import LoginForm
+from CommentForm import CommentForm
 from serializers import AuthorSerializer
 from models.NodeManager import NodeManager
 import ast
@@ -86,12 +87,25 @@ class PostView(APIView):
         return render(request, "posts-id.html", {"post":post})
 
 class CommentsView(APIView):
-    '''
-    '''
     def get(self, request, pk):
         comments = views.CommentAPIView.as_view()(request, pk).data
         post = views.PostView.as_view()(request, pk).data
-        return render(request, "posts-id-comments.html", {"comments": comments, "host": request.get_host(), "post": post})
+        return render(request, "posts-id-comments.html", {"comments": comments,
+        "host": request.get_host(), "post": post})
+
+class PostsCommentsView(APIView):
+    '''
+    '''
+    def post(self, request, pk):
+        views.create_comment(request,pk)
+        return redirect("publicPosts")
+
+class AuthorCommentsView(APIView):
+    '''
+    '''
+    def post(self, request, pk):
+        views.create_comment(request,pk)
+        return redirect("author-detail", pk=pk)
 
 class PostsView(APIView):
     '''
@@ -99,8 +113,9 @@ class PostsView(APIView):
     #TODO: replace get_public_posts()
     def get(self, request):
         response = views.PostsView.as_view()(request)
+        form = CommentForm()
         if (response.status_code == 200):
-            return render(request, "posts.html", {"posts":response.data['posts'], })
+            return render(request, "posts.html", {"posts":response.data['posts'], "form":form })
         else:
             return HttpResponse(status=response.status_code)
 

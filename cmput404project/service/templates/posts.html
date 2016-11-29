@@ -64,17 +64,7 @@
           <p class="comment-content"> No comments yet.</p>
         {% endif %}
           <div class='create comment'>
-            <form action="/posts/{{post.id}}/comments" method="post">
-              <label class="comment" for="">Enter your comment here:</label>
-              <input type="text" name="New Comment" value="{{comment}}">
-              <div class="radio">
-                <input type="radio" name="contentType" value="text/plain" checked>
-                <label class="radio" for="">text/plain</label>
-                <input type="radio" name="contentType" value="text/x-markdown">
-                <label class="radio" for="">text/x-markdown</label>
-              </div>
-              <input class="comment" type="submit" value="Comment">
-            </form>
+            {% include 'posts-comment-form.html'%}
           </div>
         </div>
       </div>

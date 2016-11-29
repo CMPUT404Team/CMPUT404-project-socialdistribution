@@ -23,6 +23,7 @@ from AuthorForm import AuthorForm
 from models.NodeManager import NodeManager
 import json
 from PostForm import PostForm
+from CommentForm import CommentForm
 from rest_framework.renderers import TemplateHTMLRenderer
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -632,10 +633,39 @@ class CreatePostView(APIView):
         user = request.user
         author = self.get_object(user)
 
+def get_author_object(user):
+     try:
+         return Author.objects.get(user=user)
+     except Author.DoesNotExist:
+         raise Http404
+
+def get_post(pk):
+    try:
+        post=Post.objects.get(id=pk)
+    except Post.DoesNotExist:
+        raise Http404
+    return post
+
+def create_comment(request, pk):
+    print "post request data", request.POST
+    auth = get_author_object(request.user)
+    post = get_post(pk)
+    if request.method == 'POST':
+        print "post request", request.POST
+        form = CommentForm(request.POST)
+        try:
+            if form.is_valid():
+                form.create_comment(auth, post)
+                return
+        except:
+            print "non valid user"
+    else:
+        form = CommentForm()
+    return
+
 def create_author(request):
     if request.method == 'POST':
         form = AuthorForm(request.POST)
-        print form
         try:
             if form.is_valid():
                 return HttpResponseRedirect('doggo/author/awaiting-approval')
