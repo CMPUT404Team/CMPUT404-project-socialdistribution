@@ -1,0 +1,20 @@
+{% load rest_framework %}
+<html><body>
+{% if requests %}
+  <ul class = "friend-requests">
+    {% for request in requests %}
+      <div class="friend-request">
+        <a href="/doggo/author/{{request.requesting_author_id}}/">{{request.displayName}}</a>
+	<form action="/doggo/friendrequest/add/" method="post">
+		<input type="submit" value="Add"/>
+	</form>
+	<form action="/doggo/friendrequest/remove/" method="post">
+		<input type="submit" value="Remove"/>
+	</form>
+      </div>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No friend requests right now :'(</p>
+{% endif %}
+</body></html>

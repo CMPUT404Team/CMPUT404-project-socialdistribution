@@ -19,7 +19,7 @@ from serializers import AuthorSerializer
 from models.NodeManager import NodeManager
 import ast
 
-def index(index):
+def index(request):
     return redirect("author-add")
 
 def get_author_object(user):
@@ -123,3 +123,9 @@ class BefriendView(APIView):
         except:
             return Response(status=400)
 
+class FriendRequestsView(APIView):
+
+    def get(self, request):
+        #based on the currently logged in user, display the friend requests
+        friend_requests = Author.objects.get(user_id=request.user.id).friendrequest_set.all()
+        return render(request, 'friend-requests.html', {"requests":friend_requests})

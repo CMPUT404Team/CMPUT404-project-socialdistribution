@@ -5,6 +5,7 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    url(r'^$', frontEndViews.index, name='index'),
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
     url(r'^posts/(?P<pk>[^/]+)/$', views.PostView.as_view(), name='post'),
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'^doggo/posts/$', frontEndViews.PostsView.as_view(), name='publicPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/$', frontEndViews.PostView.as_view(), name='post'),
     url(r'^doggo/friends/$', frontEndViews.FriendView.as_view(), name='friend-detail'),
+    url(r'^doggo/friendrequests/$', frontEndViews.FriendRequestsView.as_view(), name='friend-requests'),
     url(r'^doggo/author/posts/$',frontEndViews.AuthorPostsView.as_view(), name='authorPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/comments', frontEndViews.CommentsView.as_view(), name='comments'),
     url(r'^doggo/author/add/$', frontEndViews.AuthorCreateView.as_view(), name='author-add'),
