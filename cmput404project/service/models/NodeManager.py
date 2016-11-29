@@ -116,7 +116,7 @@ class NodeManager():
 
         #a user can see their own private posts (& technically all their posts)
         if (local and id == user_id):
-            private = get_private_posts
+            private = get_private_posts(author)
             for post in private:
                 stream.append(post)
 
@@ -127,9 +127,11 @@ class NodeManager():
                 try:
                     url = n.get_base_url()+'/author/'+str(id)
                     print url
-                    #requests.get(url, auth=(self.username,self.password))
                     json_data = node.make_authenticated_request(url)
-                    # TODO: find result of json_data
+                    # is this the author's host?
+                    if (json_data['host'] == n.host):
+                        node = n;
+                        break;
                 except:
                     pass
         #already know host, find the node
@@ -145,20 +147,17 @@ class NodeManager():
                 friends = False
             # user is friends, but is it mutal?
             else:
-                # TODO - check if friends friends/<authorid1>/<authorid2>
-                #url = author.host + "/" + str(user_auth.id) + "/" + str(author.id)
-                #print url
-                node.are_friends()
-                #response.status_code == 200
-                #do remote query for friends - have host
-                # TODO: set friends based on json result
-                pass
+                # check if friends friends/<authorid1>/<authorid2>
+                friends = node.are_friends(id, user_auth.id)
 
-        # TODO
-        # query /author/posts
-        # sort
-        # add posts marked public
-        # if local : add posts marked server only
-        # if friends: add posts marked friends
-
+        posts = node.get_posts_by_author(id)
+        for p in posts:
+            if (local and p['visibility'] == 'SERVERONLY'):
+                # add serveronly posts
+                stream.append(p)
+            elif (friends and p['visibility'] == 'FRIENDS'):
+                # add friend posts
+                stream.append(p)
+            elif (p['visibility'] == 'PRIVATE'):
+                stream.append(p)
         return stream

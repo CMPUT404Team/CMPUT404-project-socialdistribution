@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
+from models.NodeManager import NodeManager
 from . import views
 
 def index(index):
@@ -25,7 +26,7 @@ class CommentsView(APIView):
     '''
     def get(self, request, pk):
         comments = views.CommentAPIView.as_view()(request, pk).data
-        post = views.PostView.as_view()(request, pk).data 
+        post = views.PostView.as_view()(request, pk).data
         return render(request, "posts-id-comments.html", {"comments": comments, "host": request.get_host(), "post": post})
 
 class PostsView(APIView):
@@ -42,7 +43,7 @@ class AuthorPostsView(APIView):
     '''
     '''
     def get(self, request):
-        response = views.VisiblePostsNodesView.as_view()(request) 
+        response = views.VisiblePostsNodesView.as_view()(request)
         posts = response.data['posts']
         return render(request, "author-posts.html", {"posts":posts})
 
@@ -50,7 +51,7 @@ class AuthorIdPostsView(APIView):
     '''
     '''
     def get(self, request, pk):
-        posts =  views.AuthorPostsView.as_view()(request, pk).data 
+        posts = NodeManager.get_author_posts(pk,request.user.id, request_get_host())
         author = views.AuthorDetailView.as_view()(request, pk).data
         return render(request, "author-id-posts.html", {"posts":posts, "host":request.get_host(), "author": author })
 
