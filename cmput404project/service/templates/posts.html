@@ -7,35 +7,7 @@
   <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
 <ul class = 'post-list'>
   <div class="create-post">
-    <form action="/posts/" method="post">
-      <label for="">Title:</label>
-      <input type="text" name="title" value="{{title}}" required="required">
-      <label for="">Description: </label>
-      <input type="text" name="description" value="{{description}}">
-      <label for="">Content: </label>
-      <input type="text" name="content" value="{{description}}">
-      <br>
-      <label class="visibility" for="">Visibility: </label>
-      <select name="visibility">
-       <option value="PUBLIC">Public</option>
-       <option value="FRIENDS">Friends</option>
-       <option value="FOAF">Friend of a Friend</option>
-       <option value="PRIVATE">Private</option>
-       <option value="SERVERONLY">Server Only</option>
-      </select>
-      <div id="category">
-        <label for="">Categories:</label>
-        <br>
-        <script src="{% static 'js/CreateCategories.js' %}"></script>
-      </div>
-      <div class="radio">
-        <input type="radio" name="contentType" value="text/plain" checked>
-        <label class="radio" for="">text/plain</label>
-        <input type="radio" name="contentType" value="text/x-markdown">
-        <label class="radio" for="">text/x-markdown</label>
-      </div>
-      <input type="submit" value="POST">
-    </form>
+      {% include "post_form.html"%}
   </div>
 {% if posts %}
     {% for post in posts %}

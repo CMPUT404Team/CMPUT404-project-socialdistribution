@@ -77,7 +77,7 @@ class AuthorIdPostsView(APIView):
     '''
     '''
     def get(self, request, pk):
-        posts =  views.AuthorPostsView.as_view()(request, pk).data
+        posts = NodeManager.get_author_posts(pk,request.user.id, request.get_host())
         author = views.AuthorDetailView.as_view()(request, pk).data
         return render(request, "author-id-posts.html", {"posts":posts, "host":request.get_host(),
             "author": author })
@@ -86,7 +86,7 @@ class AuthorDetailView(APIView):
     '''
     '''
     def get(self, request, pk):
-        author = views.AuthorDetailView.as_view()(request, pk).data
+        author = NodeManager.get_author(pk)
         currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
         for friend in author["friends"]:
