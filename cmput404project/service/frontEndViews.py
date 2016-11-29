@@ -25,8 +25,10 @@ def index(request):
 
 def get_author_object(user):
     try:
+        print "user", user
         return Author.objects.get(user=user)
     except Author.DoesNotExist:
+        print "author does not exist"
         raise Http404
 
 class PostView(APIView):
@@ -133,10 +135,19 @@ class FriendRequestsAddView(APIView):
 
     def post(self, request, pk):
         #Create author object of the friend
-        serializer = AuthorSerializer(data=NodeManager.get_author(pk), context={'request':request})
+        print "pk", pk
+        friend = NodeManager.get_author(pk)
+        print "friend",friend
+        serializer = AuthorSerializer(data=friend, context={'request':request})
+        print "Got the serializer"
         if(serializer.is_valid(raise_exception=True)):
-            friend = serializer.save()
-            author = Author.objects.get(user=request.user)
+            author = get_author_object(request.user)
+            print "validated_data", serializer.validated_data
+            if (not Author.objects.filter(id=serializer.validated_data["id"]).exists()):
+                print "uuid from data", serializer.validated_data["id"]
+                friend = serializer.save()
+            else:
+                friend = Author.objects.get(id=pk)
             author.add_friend(friend)
             FriendRequest.objects.get(requesting_author_id=pk, author=author).delete()
             return redirect('friend-requests')
