@@ -51,6 +51,10 @@ class NodeModelTests(LiveServerTestCase):
         self.post = Post.create(author, "ServerOnly post", "here", "Local secrets", "More local secrets", "SERVERONLY")
         self.post.save()
 
+    def create_friend_post(self, author):
+        self.post = Post.create(author, "friends post", "here", "friend secrets", "More friend secrets", "FRIENDS")
+        self.post.save()
+
     def test_node_creates_id(self):
         self.assertIsNotNone(self.node.id)
 
@@ -171,13 +175,21 @@ class NodeModelTests(LiveServerTestCase):
         self.assertEqual(posts, [])
 
     def test_get_author_posts_through_nodeManager_local_local_friend(self):
-        pass
-        '''
+        #pass
         user = User.objects.create(username="user", password='dogs4lyf')
-        friend = Author.create(host=self.live_server_url, displayName='hopefulFriend1', user=user1)
+        friend = Author.create(host=self.live_server_url, displayName='friend1', user=user)
         friend.save()
-        self.author.add_friend(friend)
-        '''
+        user2 = User.objects.create(username="user2", password='dogs4lyf')
+        friend2 = Author.create(host=self.live_server_url, displayName='friend2', user=user2)
+        friend2.save()
+        friend2.add_friend(friend)
+        friend.add_friend(friend2)
+        self.create_friend_post(friend2)
+        self.create_private_post(friend2)
+        self.create_post(friend2)
+        self.create_serveronly_post(friend2)
+        stream = self.nodemanager.get_author_posts(friend.id, user2.id, self.live_server_url)
+        #should see serveronly, public, friends. not private
 
     def test_get_author_posts_through_nodeManager_local_local_not_friend(self):
         pass

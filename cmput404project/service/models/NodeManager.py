@@ -99,48 +99,57 @@ class NodeManager():
         return posts_list
 
     @classmethod # add FOAF if our endpoint works
-    def get_author_posts(self, id, user):
+    #host is the host of user
+    def get_author_posts(self, id, user_id, host):
         stream = []
         friends = True
         local = False
         nodes = self.get_nodes()
-        print type(user)
+        user_auth = Author.objects.get(user_id=user_id)
 
         try:
             author = Author.objects.get(id=id)
-            local = True if author.host == request.get_host()# else False
+            local = True if author.host == host else False
         except Author.DoesNotExist:
             friends = False
             author = None
 
-        #a user can see their own private posts
-        if (local and id == user):
-                private = Post.objects.filter(author=author, visibility="PRIVATE")
-                for post in private:
-                    stream.append(post)
+        #a user can see their own private posts (& technically all their posts)
+        if (local and id == user_id):
+            private = get_private_posts
+            for post in private:
+                stream.append(post)
 
+        #find node
         if (author == None):
-            #find the author's host
-            for node in nodes:
+            #find the author's host and node
+            for n in nodes:
                 try:
-                    url = node.get_base_url()+'/author/'
+                    url = n.get_base_url()+'/author/'+str(id)
                     print url
                     #requests.get(url, auth=(self.username,self.password))
                     json_data = node.make_authenticated_request(url)
                     # TODO: find result of json_data
                 except:
                     pass
+        #already know host, find the node
+        else:
+            if (Node.objects.filter(host__icontains=author.host).exists()):
+                node = Node.objects.get(host__startswith=author.host)
 
         #check if id and user are friends
         if (friends):
             #see if can find author in friends list of user
-            user_auth = Author.objects.get(id=user)
             # user is not friends with that author
-            if author not in user_auth.friends:
+            if author not in user_auth.friends.all():
                 friends = False
             # user is friends, but is it mutal?
             else:
-                # TODO
+                # TODO - check if friends friends/<authorid1>/<authorid2>
+                #url = author.host + "/" + str(user_auth.id) + "/" + str(author.id)
+                #print url
+                node.are_friends()
+                #response.status_code == 200
                 #do remote query for friends - have host
                 # TODO: set friends based on json result
                 pass
