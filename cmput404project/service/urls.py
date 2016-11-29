@@ -18,7 +18,6 @@ urlpatterns = [
     url(r'^author/awaiting-approval/$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
     url(r'^frontend/posts/$', views.PostsNodesView.as_view(), name='frontend-public-posts'),
     url(r'^frontend/author/posts/$', views.VisiblePostsNodesView.as_view(), name='frontend-visible-posts'),
-    url(r'^frontend/befriend/$', frontEndViews.BefriendView.as_view(), name='frontend-befriend'),
     url(r'^doggo/posts/$', frontEndViews.PostsView.as_view(), name='publicPosts'),
     url(r'^doggo/posts/(?P<pk>[^/]+)/$', frontEndViews.PostView.as_view(), name='post'),
     url(r'^doggo/friends/$', frontEndViews.FriendView.as_view(), name='friend-detail'),
@@ -29,6 +28,8 @@ urlpatterns = [
     url(r'^doggo/posts/(?P<pk>[^/]+)/comments/$', frontEndViews.CommentsView.as_view(), name='comments'),
     url(r'^doggo/author/add/$', frontEndViews.AuthorCreateView.as_view(), name='author-add'),
     url(r'^doggo/author/(?P<pk>[^/]+)/$', frontEndViews.AuthorDetailView.as_view(), name='frontend-author-detail'),
+    url(r'^doggo/author/(?P<pk>[^/]+)/befriend/$', frontEndViews.BefriendView.as_view(), name='frontend-befriend'),
+    url(r'^doggo/author/(?P<pk>[^/]+)/unfriend/$', frontEndViews.UnfriendView.as_view(), name='frontend-unfriend'),
     url(r'^doggo/author/(?P<pk>[^/]+)/posts/$', frontEndViews.AuthorIdPostsView.as_view(), name='authorIdPosts'),
 ]
 

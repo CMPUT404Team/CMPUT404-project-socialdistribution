@@ -118,10 +118,14 @@ class BefriendView(APIView):
             else:
                 #You are befriending them
                 status_code = NodeManager.befriend(author_json, friend_json)
-            request.method = "get"
-            return AuthorDetailView.as_view()(request, friend_json['id'])
+            return redirect('frontend-author-detail', friend_json['id'])
         except:
             return Response(status=400)
+
+class UnfriendView(APIView):
+
+    def post(self, request):
+        pass
 
 class FriendRequestsView(APIView):
 
