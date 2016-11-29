@@ -15,23 +15,68 @@ from . import views
 from django.views.generic.edit import FormView
 from rest_framework.response import Response
 from AuthorForm import AuthorForm
+from AuthorExistsForm import AuthorExistsForm
+from LoginForm import LoginForm
 from serializers import AuthorSerializer
 from models.NodeManager import NodeManager
 import ast
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 def index(index):
     return redirect("home")
 
+def get_author_exists(username):
+    return User.objects.filter(username=username).exists()
+
 def get_author_object(user):
-    try:
-        return Author.objects.get(user=user)
-    except Author.DoesNotExist:
-        raise Http404
+     try:
+         return Author.objects.get(user=user)
+     except Author.DoesNotExist:
+         raise Http404
 
 class HomeView(APIView):
     def get(self, request):
-        form = AuthorForm()
-        return render(request, 'home.html', {'form': form})
+        print request.user.is_authenticated
+        if not request.user.is_authenticated:
+            form = AuthorExistsForm()
+            return render(request, 'home.html', {'form': form})
+        else:
+            form = AuthorExistsForm()
+            return render(request, 'home.html', {'form': form})
+
+class AuthorExistsView(APIView):
+    def get(self, request):
+        form = LoginForm()
+        return redirect("login")
+
+    def post(self, request):
+        self.username = request.POST['displayName']
+        user_exists = get_author_exists(self.username)
+        if user_exists:
+            return redirect("login")
+        else:
+            return redirect("create_author")
+
+class LoginView(APIView):
+    def get(self, request):
+        form = LoginForm()
+        return render(request, "login.html", {"form": form})
+
+    def post(self, request):
+        username = request.POST['displayName']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("welcome")
+        else:
+            return redirect("login")
+
+class WelcomeView(APIView):
+    def get(self, request):
+        author = get_author_object(request.user)
+        return render(request, "welcome.html", {"author": author})
 
 class PostView(APIView):
     '''

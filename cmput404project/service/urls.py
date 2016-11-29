@@ -6,7 +6,10 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^doggo/$', frontEndViews.HomeView.as_view(), name='home'),
+    url(r'^doggo/welcome/$', frontEndViews.WelcomeView.as_view(), name='welcome'),
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
+    url(r'^doggo/login/$', frontEndViews.LoginView.as_view(), name='login'),
+    url(r'^doggo/author/exists/$', frontEndViews.AuthorExistsView.as_view(), name='author_exists'),
     url(r'^posts/(?P<pk>[^/]+)/$', views.PostView.as_view(), name='post'),
     url(r'^author/posts/$', views.VisiblePostsView.as_view(), name='visiblePosts'),
     url(r'^author/add/$', views.create_author, name='create_author'),

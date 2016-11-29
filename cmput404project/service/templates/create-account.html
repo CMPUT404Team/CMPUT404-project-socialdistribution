@@ -11,7 +11,9 @@
   <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
   <div class="home-page">
     <div class="background">
-      <h1 class="approval-message">Your account creation is waiting for administator approval.</h1>
+      <div id="login" class="login">
+        {% include "author_form.html"%}
+      </div>
     </div>
   </div>
 </body></html>
