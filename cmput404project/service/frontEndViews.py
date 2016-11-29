@@ -11,12 +11,12 @@ from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
 from models.NodeManager import NodeManager
+from models.FriendRequest import FriendRequest
 from . import views
 from django.views.generic.edit import FormView
 from rest_framework.response import Response
 from AuthorForm import AuthorForm
 from serializers import AuthorSerializer
-from models.NodeManager import NodeManager
 import ast
 
 def index(request):
@@ -129,3 +129,21 @@ class FriendRequestsView(APIView):
         #based on the currently logged in user, display the friend requests
         friend_requests = Author.objects.get(user_id=request.user.id).friendrequest_set.all()
         return render(request, 'friend-requests.html', {"requests":friend_requests})
+
+class FriendRequestsAddView(APIView):
+
+    def post(self, request, pk):
+        #Create author object of the friend
+        serializer = AuthorSerializer(data=NodeManager.get_author(pk), context={'request':request})
+        if(serializer.is_valid(raise_exception=True)):
+            friend = serializer.save()
+            author = Author.objects.get(user=request.user)
+            author.add_friend(friend)
+            FriendRequest.objects.get(author=author).delete()
+            request.method='get'
+            return FriendRequestsView.as_view()(request)
+
+class FriendRequestsRemoveView(APIView):
+
+    def post(self, request, pk):
+        pass

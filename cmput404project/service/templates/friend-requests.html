@@ -5,10 +5,10 @@
     {% for request in requests %}
       <div class="friend-request">
         <a href="/doggo/author/{{request.requesting_author_id}}/">{{request.displayName}}</a>
-	<form action="/doggo/friendrequest/add/" method="post">
+	<form action="/doggo/friendrequests/add/{{request.requesting_author_id}}/" method="post">{% csrf_token %}
 		<input type="submit" value="Add"/>
 	</form>
-	<form action="/doggo/friendrequest/remove/" method="post">
+	<form action="/doggo/friendrequests/remove/{{request.requesting_author_id}}/" method="post">{% csrf_token %}
 		<input type="submit" value="Remove"/>
 	</form>
       </div>
