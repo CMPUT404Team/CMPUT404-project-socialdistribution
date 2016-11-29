@@ -139,11 +139,11 @@ class FriendRequestsAddView(APIView):
             friend = serializer.save()
             author = Author.objects.get(user=request.user)
             author.add_friend(friend)
-            FriendRequest.objects.get(author=author).delete()
-            request.method='get'
-            return FriendRequestsView.as_view()(request)
+            FriendRequest.objects.get(requesting_author_id=pk, author=author).delete()
+            return redirect('friend-requests')
 
 class FriendRequestsRemoveView(APIView):
 
     def post(self, request, pk):
-        pass
+        FriendRequest.objects.get(requesting_author_id=pk, author=Author.objects.get(user=request.user)).delete()
+        return redirect('friend-requests')
