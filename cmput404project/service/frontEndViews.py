@@ -84,14 +84,30 @@ class AuthorIdPostsView(APIView):
 class AuthorDetailView(APIView):
     '''
     '''
+    def get_object(self, user):
+        try:
+            print "author", Author.objects.get(user=user)
+            return Author.objects.get(user=user)
+        except Author.DoesNotExist:
+            raise Http404
+
     def get(self, request, pk):
+        author2 = self.get_object(request.user)
         author = views.AuthorDetailView.as_view()(request, pk).data
+        your_profile = False
+        if (str(author2.id) == pk):
+            your_profile = True
+            posts = NodeManager.get_stream(request.user)
+        else:
+            posts =  views.AuthorPostsView.as_view()(request, pk).data
         currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
         for friend in author["friends"]:
             f = views.AuthorDetailView.as_view()(request, friend["id"]).data
             friends.append(f)
-        return render(request, "author-id.html", {"author": author, "friends": friends, "host": request.get_host(), "currently_friends":currently_friends})
+        return render(request, "author-id.html", {"author": author, "friends": friends,
+            "host": request.get_host(), "currently_friends":currently_friends,
+            "your_profile": your_profile, "posts": posts })
 
 class FriendView(APIView):
     def get(self, request):

@@ -29,19 +29,20 @@
   position: absolute;
   flex-direction: column;
   left: 5%;
-  padding: 5%;
+  padding: 3%;
   width: 25%;
   padding-bottom:5%;
   overflow-y: auto;
   min-height: 0px;
   height:100%;
+  padding-top: 7%;
 }
 
 .author {
   display: flex;
   background-color: white;
   flex-direction: column;
-  bottom:5%;
+  top:5%;
   align-items: center;
   flex-basis: auto;
   height:100%;
@@ -83,6 +84,7 @@ form.befriend {
 h4.friends {
   font-family: Raleway-Bold;
   align-self:center;
+  margin-bottom: 5%;
 }
 
 p {
@@ -100,6 +102,27 @@ p {
   margin-bottom: 5%;
   width: 75%;
   height:90%;
+}
+
+.author-post-list{
+  background-color:rgba(0, 0, 0, 0.5);
+  top: 5%;
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  right: 4%;
+  padding: 2%;
+  bottom: 5%;
+  width: 55%;
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  width: 100%;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(211,211,211, 0.8), rgba(0, 0, 0, 0));
 }
 
 .post-list {
@@ -178,6 +201,10 @@ input[type="radio"] {
 .post-image {
   width:25%;
   align-self: center;
+}
+
+.image{
+  max-width: 100%;
 }
 
 .comment-author {
