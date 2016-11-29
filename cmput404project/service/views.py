@@ -563,9 +563,10 @@ class FriendRequestView(APIView):
     def post(self, request):
         serializer = FriendRequestSerializer(request.data,data=request.data, context={'request':request})
         if (serializer.is_valid(raise_exception=True)):
-            author = self.get_object(serializer.validated_data['author']['id'])
+            author_json = serializer.validated_data['author']
             friend_json = serializer.validated_data['friend']
-            FriendRequest.objects.create(displayName=friend_json['displayName'], requesting_author_id=friend_json['id'], author=author)
+            friend = self.get_object(friend_json['id'])
+            FriendRequest.objects.create(displayName=author_json['displayName'], requesting_author_id=author_json['id'], author=friend)
             return Response(status=204)
 
 class PostsNodesView(APIView):
