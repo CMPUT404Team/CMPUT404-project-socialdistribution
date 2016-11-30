@@ -40,6 +40,8 @@ class NodeManager():
         nodes = self.get_nodes()
         for node in nodes:
             jsonData = node.get_public_posts()
+            if(jsonData == None):
+                continue
             i = 0
             for post in jsonData['posts']:
                 stream.append(jsonData['posts'][i])
@@ -52,6 +54,8 @@ class NodeManager():
         nodes = self.get_nodes()
         for node in nodes:
             jsonData = node.get_posts()
+            if(jsonData == None):
+                continue
             i = 0
             for post in jsonData['posts']:
                 stream.append(jsonData['posts'][i])
