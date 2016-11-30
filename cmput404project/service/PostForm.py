@@ -15,8 +15,8 @@ CATEGORIES = (
 
 class PostForm(forms.Form):
     title = forms.CharField(widget=forms.TextInput())
-    description = forms.CharField(widget=forms.TextInput())
-    content = forms.CharField(widget=forms.TextInput())
+    description = forms.CharField(widget=forms.TextInput(), required=False)
+    content = forms.CharField(widget=forms.TextInput(), required=False)
     visibility = forms.ChoiceField(widget=forms.Select, choices=VISIBILITY_OPTIONS)
     contentType = forms.ChoiceField(widget=forms.RadioSelect, choices=CONTENT_TYPE)
     categories = forms.MultipleChoiceField(
