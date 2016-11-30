@@ -11,14 +11,14 @@
   <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
   <div class="home-page">
     <div class="background">
-      <div id="title" class="title">
+      <div id="title" class="navigation">
         <h1 class="title">Doggo</h1>
-        <p>Welcome back to Doggo</p>
+        <p class="navigation">Welcome back</p>
       </div>
       <div class="navigation">
-        <a href="/doggo/author/posts/">Your Feed</a>
-        <a href="/doggo/author/{{author.id}}.">Your Profile</a>
-        <a href="/doggo/posts/">Public Posts</a>
+        <a class="navigation" href="/doggo/author/posts/">Your Feed</a>
+        <a class="navigation" href="/doggo/author/{{author.id}}/">Your Profile</a>
+        <a class="navigation" href="/doggo/posts/">Public Posts</a>
       </div>
     </div>
   </div>
