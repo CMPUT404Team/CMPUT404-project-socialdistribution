@@ -58,6 +58,20 @@ form {
   font-size: 300%;
 }
 
+label[for="id_displayName"]{
+  font-size: 70%;
+  align-self: center;
+}
+
+input#id_displayName {
+  align-self: center;
+}
+
+input[value="Login"]{
+  align-self: center;
+  font-size: 80%;
+}
+
 .login {
   width: 100%;
   height:100%;
@@ -230,7 +244,6 @@ input[type="text"]:hover , input[type="password"]:hover {
 input[type="submit"], input[type="button"] {
   display: block;
   font-family: Raleway-Bold;
-  font-size: 150%;
   background-color: white;
   border: 2px solid #d3d3d3;
 }
