@@ -12,6 +12,11 @@ Documentation
 To get the documentation, run the app by following the instructions in the readme inside of
 cmput404project/ in this repo and hit the endpoint /docs. Ex) http://localhost:8000/docs
 
+Demo Video
+==========
+https://drive.google.com/open?id=0B-TH6Ugp3srHZlZLMFJ5YnpVSVk 
+
+
 Contributors / Licensing
 ========================
 
