@@ -1,0 +1,5 @@
+<form action="/doggo/posts/" method="post">
+    {% csrf_token %}
+    {{ post_form }}
+    <input type="submit" value="Post" />
+</form>

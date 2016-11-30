@@ -1,10 +1,13 @@
 {% load rest_framework %}
-<html><body>
+{% load staticfiles %}
+<html>
+<head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
+<body>
 {% if comments %}
   <ul class = 'comments'>
     {% for comment in comments %}
       <div class='comment'>
-        <a href="{{host}}/doggo/posts/{{post.id}}">Back to posts</a>
+        <a href="http://{{host}}/doggo/posts/{{post.id}}">Back to posts</a>
         <p class='comment'>{{comment.comment}}</p>
         <p class='comment-published'>{{comment.pubDate}}</p>
         <p class='comment-author'>{{comment.author.displayName}}</p>

@@ -1,31 +1,118 @@
 {% load rest_framework %}
-<html><body>
-{% if author %}
-      <div class='author'>
+{% load staticfiles %}
+<html>
+<head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
+<body id="background" class="tiled-background">
+  <script> var images = "{% static 'images/' %}";</script>
+  <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
+  {% if author %}
+  <div class='author-page'>
+    <div class="author">
+      <div id="profile-picture">
+          <script src="{% static 'js/LoadProfilePicture.js' %}"></script>
+        </div>
         <h1 class='author-displayName'>{{author.displayName}}</h1>
-	{% if currently_friends %}
-		<form action="/frontend/befriend/" method="post">
-			<input type="hidden" name="friend" value="{{author}}">
-			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-			<input type="submit" value="Unfollow" />
-		</form>		
-	{% else %}
-		<form action="/frontend/befriend/" method="post">
-			<input type="hidden" name="friend" value="{{author}}">
-			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-			<input type="submit" value="Follow & Send Friend Request" />
-		</form>
-	{% endif %}
-        <p class='author-published'>{{author.host}}</p>
-        {% if friends%}
-          {% for friend in friends%}
-            <a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
-          {% endfor %}
-        {% else %}
-          <p class='friends'>No friends to display</p>
-        {% endif %}
+      	{% if currently_friends %}
+      		<form class="befriend" action="/frontend/befriend/" method="post">
+      			<input type="hidden" name="friend" value="{{author}}">
+      			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
+      			<input type="submit" value="Unfollow" />
+      		</form>
+      	{% else %}
+      		<form class="befriend" action="/frontend/befriend/" method="post">
+      			<input type="hidden" name="friend" value="{{author}}">
+      			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
+      			<input type="submit" value="Follow & Send Friend Request" />
+      		</form>
+      	{% endif %}
+        <div class="friends-list">
+          {% if friends%}
+            <h4 class="friends">Friends List</h4>
+            <hr>
+            {% for friend in friends%}
+              <a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
+              <hr>
+            {% endfor %}
+          {% else %}
+            <p class='friends'>No friends to display</p>
+          {% endif %}
+        </div>
       </div>
-{% else %}
-  <p> 404. No author found</p>
-{% endif %}
+    </div>
+    <ul class = 'author-post-list'>
+    {% if your_profile %}
+      <div class="create-post">
+        <form action="/posts/" method="post">
+          <label for="">Title:</label>
+          <input type="text" name="title" value="{{title}}" required="required">
+          <label for="">Description: </label>
+          <input type="text" name="description" value="{{description}}">
+          <label for="">Content: </label>
+          <input type="text" name="content" value="{{description}}">
+          <br>
+          <label class="visibility" for="">Visibility: </label>
+          <select name="visibility">
+           <option value="PUBLIC">Public</option>
+           <option value="FRIENDS">Friends</option>
+           <option value="FOAF">Friend of a Friend</option>
+           <option value="PRIVATE">Private</option>
+           <option value="SERVERONLY">Server Only</option>
+          </select>
+          <div id="category">
+            <label for="">Categories:</label>
+            <br>
+            <script src="{% static 'js/CreateCategories.js' %}"></script>
+          </div>
+          <div class="radio">
+            <input type="radio" name="contentType" value="text/plain" checked>
+            <label class="radio" for="">text/plain</label>
+            <input type="radio" name="contentType" value="text/x-markdown">
+            <label class="radio" for="">text/x-markdown</label>
+          </div>
+          <input type="submit" value="POST">
+        </form>
+      </div>
+    {% endif %}
+    {% if posts %}
+        {% for post in posts %}
+        <div class="full-post">
+          <div class="post-image">
+            <img class= "image" src="{% static 'images/0.png' %}">
+          </div>
+          <div class='post'>
+            <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
+            <p class="by">by</p>
+            <a class='post-author' href="http://{{host}}/doggo/author/{{post.author.id}}/">{{post.author.displayName}}</a>
+            <p class='post-published'>{{post.published}}</p>
+            <p class='post-description'>{{post.description}}</p>
+            <p class='post-content'>{{post.content}}</p>
+            <div class='comment'>
+            {% if post.comments %}
+              <p class="comment-content"> Comments:</p>
+              <br>
+              {% for comment in post.comments %}
+                <a class="comment-author" href="http://{{host}}/author/{{comment.author.id}}/">{{comment.author.displayName}}</a>
+                <p class="by">:</p>
+                <p class="comment-content">{{comment.comment}}</p>
+              <a class="comment-link" href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
+              {% endfor %}
+            {% else %}
+              <p class="comment-content"> No comments yet.</p>
+            {% endif %}
+              <div class='create comment'>
+                {% include 'author-comment-form.html'%}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="full-post">
+      <p>No posts available.</p>
+    </div>
+    {% endif %}
+    </ul>
+  {% else %}
+    <p> 404. No author found</p>
+  {% endif %}
 </body></html>

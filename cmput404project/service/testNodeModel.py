@@ -34,7 +34,6 @@ class NodeModelTests(LiveServerTestCase):
             password = self.remote_password
             )
         self.node.save()
-
         self.nodemanager = NodeManager.create()
         self.create_post(self.author)
 

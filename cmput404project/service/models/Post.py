@@ -13,8 +13,8 @@ class Post(models.Model):
     published = models.DateTimeField(auto_now=True)
     visibility = models.CharField(max_length=10, choices=VISIBILITY_OPTIONS, default= 'PUBLIC')
     title = models.CharField(max_length=75)
-    source = models.CharField(max_length=100)
-    origin = models.CharField(max_length=100)
+    source = models.CharField(max_length=100, editable=False)
+    origin = models.CharField(max_length=100, editable=False)
     description = models.CharField(max_length=200, blank=True)
     content = models.CharField(max_length=200, blank=True)
     contentType = models.CharField(max_length=100, choices=CONTENT_TYPE, default='text/plain')
@@ -29,6 +29,9 @@ class Post(models.Model):
         post.origin = author.host
         post.source = author.host
         post.id = uuid.uuid4()
+        post.origin = "http://" + author.host +"/posts/" + str(post.id)
+        post.source = "http://" + author.host +"/posts/" + str(post.id)
+        post.parse_description()
         return post
 
     def __str__(self):

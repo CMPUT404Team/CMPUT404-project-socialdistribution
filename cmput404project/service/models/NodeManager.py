@@ -3,9 +3,9 @@ from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
 from Author import Author
-from Node import Node
 from Post import Post
 import uuid, json, requests
+from Node import Node
 
 class NodeManager():
     @classmethod
@@ -40,8 +40,6 @@ class NodeManager():
         nodes = self.get_nodes()
         for node in nodes:
             jsonData = node.get_public_posts()
-            if (jsonData == None):
-                continue
             i = 0
             for post in jsonData['posts']:
                 stream.append(jsonData['posts'][i])
@@ -54,8 +52,6 @@ class NodeManager():
         nodes = self.get_nodes()
         for node in nodes:
             jsonData = node.get_posts()
-            if (jsonData == None):
-                continue
             i = 0
             for post in jsonData['posts']:
                 stream.append(jsonData['posts'][i])
@@ -98,7 +94,6 @@ class NodeManager():
         for post in public:
             stream.append(post)
         return stream
-
 
     @classmethod
     def get_posts_by_friends(self, author_ids):

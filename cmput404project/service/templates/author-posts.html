@@ -1,15 +1,18 @@
 {% load rest_framework %}
-<html><body>
+{% load staticfiles %}
+<html>
+<head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
+<body>
 {% if posts %}
   <ul class = "public-posts">
     {% for post in posts %}
-      <h1 class="author">{{post.author.displayName}}</h1>
-      <div class="post">
-        <a class="post-title" href="http://winter-resonance.herokuapp.com/posts/{{post.id}}/">{{post.title}}</a>
-        <p class="post-published">{{post.published}}</p>
-        <p class="post-description">{{post.description}}</p>
-        <p class="post-content">{{post.content}}</p>
-        <a href="/posts/{{post.id}}/comments/">Comments</a>
+      <h1 class='author'>{{post.author.displayName}}</h1>
+      <div class='post'>
+        <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
+        <p class='post-published'>{{post.published}}</p>
+        <p class='post-description'>{{post.description}}</p>
+        <p class='post-content'>{{post.content}}</p>
+        <a href="http://{{host}}/doggo/posts/{{post.id}}/comments/">Comments</a>
       </div>
     {% endfor %}
   </ul>
