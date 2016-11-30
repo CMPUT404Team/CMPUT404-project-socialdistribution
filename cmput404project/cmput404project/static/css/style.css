@@ -88,7 +88,13 @@ input[value="Login"]{
 input[value="Create Account"]{
   align-self: center;
   font-size: 80%;
-  margin: 1%;
+}
+
+#link {
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .login {
@@ -250,8 +256,12 @@ input[type="text"], input[type="password"] {
   font-family: Raleway-Light;
 }
 
+.account-link {
+  font-family: Raleway-Bold;
+}
+
 input[type="submit"] {
-   margin-top: 2%;
+     margin: 10 !important;
    margin-bottom: 2%;
  }
 
@@ -319,6 +329,10 @@ input[type="radio"] {
 
 h1, p, a {
   word-break: break-all;
+}
+
+h1 {
+  font-family: Raleway-Bold;
 }
 
 .full-post{
