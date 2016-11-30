@@ -1,21 +1,34 @@
 @font-face {
   font-family: Raleway-Bold;
-  src: url("../fonts/Raleway-Bold.ttf") format("opentype");
+  src: url("../fonts/Raleway-Bold.575e4317521b.ttf") format("opentype");
 }
 
 @font-face {
   font-family: Raleway-Light;
-  src: url("../fonts/Raleway-Light.ttf") format("opentype");
+  src: url("../fonts/Raleway-Light.b1bdea561f24.ttf") format("opentype");
 }
 
 @font-face {
   font-family: SonderSans-Black;
-  src: url("../fonts/SonderSans-BlackRough.otf") format("opentype");
+  src: url("../fonts/SonderSans-BlackRough.2669d5af4697.otf") format("opentype");
 }
 
 @font-face {
   font-family: SonderSerif-Bold;
-  src: url("../fonts/SonderSerif-BoldRough.otf") format("opentype");
+  src: url("../fonts/SonderSerif-BoldRough.85d358cf6a72.otf") format("opentype");
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Raleway-Bold;
+  margin: 10%;
+}
+
+a.navigation {
+  margin-bottom:5;
+  font-size: 110%;
 }
 
 .home-page {

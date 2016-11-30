@@ -160,7 +160,8 @@ class AuthorPostsView(APIView):
     '''
     def get(self, request):
         posts = NodeManager.get_stream(request.user)
-        return render(request, "author-posts.html", {"posts":posts})
+        form = PostForm()
+        return render(request, "author-posts.html", {"posts":posts, "post_form": form})
 
 class AuthorIdPostsView(APIView):
     '''
@@ -189,7 +190,7 @@ class AuthorDetailView(APIView):
             your_profile = True
             posts = NodeManager.get_stream(request.user)
         else:
-            posts =  views.AuthorPostsView.as_view()(request, pk).data
+            posts = views.AuthorPostsView.as_view()(request, pk).data
         currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
         for friend in author["friends"]:

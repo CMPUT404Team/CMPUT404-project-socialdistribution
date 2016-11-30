@@ -207,9 +207,9 @@ class NodeManager():
                 continue
             else:
                 # need to account for diferrent format of single post endpoint
-                if 'posts' in jsonData:
+                try:
                     return jsonData['posts'][0]
-                else:
+                except:
                     return jsonData
         return 404
 

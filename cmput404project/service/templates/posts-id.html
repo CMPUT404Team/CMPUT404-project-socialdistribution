@@ -13,7 +13,7 @@
         <p class='author'>{{post.author.displayName}}</p>
         <p class='post-published'>{{post.published}}</p>
         <p class='post-description'>{{post.description}}</p>
-        <div class='post-content md-content'>{{post.content}}</p>
+        <div class='post-content {% if post.contentType != "text/plain" %} md-content {% endif %}'>{{post.content}}</div>
         <a href="/doggo/posts/{{post.id}}/comments/">Comments</a>
       </div>
     </div>
