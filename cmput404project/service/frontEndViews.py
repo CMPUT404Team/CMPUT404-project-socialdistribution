@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, render_to_response
-from django.http import HttpResponse, HttpResponseNotModified
+from django.http import HttpResponse, HttpResponseNotModified, Http404
 from django.urls import reverse
 from django.views import View
 from rest_framework.decorators import api_view, permission_classes
