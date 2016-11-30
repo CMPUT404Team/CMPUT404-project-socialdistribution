@@ -21,6 +21,13 @@
   				<input type="submit" value="Follow & Friend" />
   			</form>
   			{% endif %}
+			{% if your_profile %}
+	<div class="navigation">
+	       <a class="navigation" href="/doggo/author/posts/">Your Feed</a>
+	       <a class="navigation" href="/doggo/author/{{author.id}}/">Your Profile</a>
+	       <a class="navigation" href="/doggo/posts/">Public Posts</a>
+	     </div>
+	     {% endif %}
         <div class="friends-list">
           {% if friends%}
             <h4 class="friends">Friends List</h4>
