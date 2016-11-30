@@ -1,5 +1,5 @@
 <form action="/doggo/posts/posts/{{post.id}}/comments/" method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ comment_form }}
     <input type="submit" value="Comment" />
 </form>

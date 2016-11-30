@@ -18,6 +18,7 @@ from AuthorForm import AuthorForm
 from AuthorExistsForm import AuthorExistsForm
 from LoginForm import LoginForm
 from CommentForm import CommentForm
+from PostForm import PostForm
 from serializers import AuthorSerializer
 from models.NodeManager import NodeManager
 import ast
@@ -84,14 +85,17 @@ class PostView(APIView):
     '''
     def get(self, request, pk):
         post = views.PostView.as_view()(request, pk).data
-        return render(request, "posts-id.html", {"post":post})
+        form = PostForm()
+        comment_form = CommentForm()
+        return render(request, "posts-id.html", {"post": post, "post_form": form, "comment_form": comment_form})
 
 class CommentsView(APIView):
     def get(self, request, pk):
         comments = views.CommentAPIView.as_view()(request, pk).data
         post = views.PostView.as_view()(request, pk).data
+        form = CommentForm()
         return render(request, "posts-id-comments.html", {"comments": comments,
-        "host": request.get_host(), "post": post})
+        "host": request.get_host(), "post": post, "comment_form": form})
 
 class PostsCommentsView(APIView):
     '''
@@ -114,10 +118,22 @@ class PostsView(APIView):
     def get(self, request):
         response = views.PostsView.as_view()(request)
         form = CommentForm()
+        post_form = PostForm()
+        try:
+            next_page = response.data["next"]
+        except:
+            next_page = None
+        print next_page
         if (response.status_code == 200):
-            return render(request, "posts.html", {"posts":response.data['posts'], "form":form })
+            return render(request, "posts.html", {"posts":response.data['posts'],
+                "comment_form":form, "post_form": post_form, "next":next_page })
         else:
             return HttpResponse(status=response.status_code)
+
+    def post(self, request):
+        print "MADE IT TO THE POST"
+        views.create_post(request)
+        return redirect("public-posts")
 
 class AuthorCreateView(FormView):
     template_name = "author_form.html"

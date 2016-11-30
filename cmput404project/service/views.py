@@ -621,18 +621,6 @@ class PaginationOfCommentInPost():
             i += 1
         return data
 
-class CreatePostView(APIView):
-
-    def get_object(self, user):
-        try:
-            return Author.objects.get(user=user)
-        except Author.DoesNotExist:
-            raise Http404
-
-    def post(self, request):
-        user = request.user
-        author = self.get_object(user)
-
 def get_author_object(user):
      try:
          return Author.objects.get(user=user)
@@ -646,19 +634,34 @@ def get_post(pk):
         raise Http404
     return post
 
+def create_post(request):
+    print "MA"
+    print request.POST
+    author = get_author_object(request.user)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        try:
+            if form.is_valid():
+                form.create_post(author)
+                return
+        except:
+            print "non valid post"
+    else:
+        form = CommentForm()
+    return
+
+
 def create_comment(request, pk):
-    print "post request data", request.POST
     auth = get_author_object(request.user)
     post = get_post(pk)
     if request.method == 'POST':
-        print "post request", request.POST
         form = CommentForm(request.POST)
         try:
             if form.is_valid():
                 form.create_comment(auth, post)
                 return
         except:
-            print "non valid user"
+            print "non valid comment"
     else:
         form = CommentForm()
     return
