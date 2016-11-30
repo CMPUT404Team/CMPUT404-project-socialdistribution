@@ -26,7 +26,10 @@ class PostForm(forms.Form):
     )
 
     def create_post(self, author):
-        #create(cls, author,title,origin,description,categories,visibility):
+        #create(cls, author,title,origin,description,categories,visibility, content, contentType):
+        #    post = cls(author=author, title=title, origin=origin, description=description, categories=categories,
+        #    visibility=visibility, content=content, contentType=contentType)
         post = Post.create(author, self.cleaned_data['title'], author.host, self.cleaned_data['description'],
-            self.cleaned_data['categories'], self.cleaned_data['visibility'])
+            self.cleaned_data['categories'], self.cleaned_data['visibility'], self.cleaned_data['content'], self.cleaned_data['contentType'])
         post.save()
+        print "saved post"

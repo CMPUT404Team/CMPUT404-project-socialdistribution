@@ -223,7 +223,7 @@ class PostsView(APIView):
         serializer = PostSerializerPutPost(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
-            print serializer.data
+            #print serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -655,8 +655,6 @@ def get_post(pk):
     return post
 
 def create_post(request):
-    print "MA"
-    print request.POST
     author = get_author_object(request.user)
     if request.method == 'POST':
         form = PostForm(request.POST)
