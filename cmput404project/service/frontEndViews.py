@@ -39,6 +39,7 @@ def get_author_object(user):
          raise Http404
 
 class HomeView(APIView):
+    permission_classes = []
     def get(self, request):
         print request.user.is_authenticated
         if not request.user.is_authenticated:
@@ -49,6 +50,7 @@ class HomeView(APIView):
             return render(request, 'home.html', {'form': form})
 
 class AuthorExistsView(APIView):
+     permission_classes = []
     def get(self, request):
         form = LoginForm()
         return redirect("login")
@@ -62,6 +64,7 @@ class AuthorExistsView(APIView):
             return redirect("create_author")
 
 class LoginView(APIView):
+    permission_classes = []
     def get(self, request):
         form = LoginForm()
         return render(request, "login.html", {"form": form})
