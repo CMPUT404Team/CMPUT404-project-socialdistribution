@@ -87,7 +87,7 @@ class CommentAPIViewTests(APITestCase):
         #call the endpoint
         comment = Comment().create_comment("Your pupper is wonderful", self.author, self.post, self.ct)
         comment.save()
-        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments/')
         #check that they match
         self.assertEqual(response.status_code, 200)
         self.assertEqual(str(comment.guid), response.data['comments'][0]['guid'])
@@ -97,14 +97,14 @@ class CommentAPIViewTests(APITestCase):
     @skip("failing")
     # test get comment with non existent post
     def test_get_comment_no_post(self):
-        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments/')
         self.assertEqual(response.status_code, 404)
 
     @skip("failing")
     # test post comments with no comments
     def test_get_no_comments(self):
         # call endpoint
-        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments/')
 
         self.assertEqual(response.status_code, 404)
         #self.assertEqual(str(comment.guid),"")
@@ -114,7 +114,7 @@ class CommentAPIViewTests(APITestCase):
     def test_get_empty_comments(self):
         comment = Comment().create_comment("", self.author, self.post, self.ct)
 
-        response = self.client.get('/posts/'+str(self.post.id)+'/comments')
+        response = self.client.get('/posts/'+str(self.post.id)+'/comments/')
         #check that they match
         self.assertEqual(response.status_code, 404)
 
@@ -137,7 +137,7 @@ class CommentAPIViewTests(APITestCase):
             "guid": "84758741-e737-48e2-afde-c0f56546531c"
             }
         }
-        response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
+        response=self.client.post('/posts/'+str(self.post.id)+'/comments/',comment,format='json')
         self.assertEqual(response.status_code, 200)
         try:
             Comment.objects.get(comment="Majestic dog")
@@ -167,7 +167,7 @@ class CommentAPIViewTests(APITestCase):
         }
 
         # update comment
-        response=self.client.post('/posts/'+str(self.post.id)+'/comments',updated_comment,format='json')
+        response=self.client.post('/posts/'+str(self.post.id)+'/comments/',updated_comment,format='json')
         self.assertEqual(comment.comment, "Your pupper is wonderful", "Comments not equal")
 
     # create a comment for a post that doesn't exist
@@ -191,7 +191,7 @@ class CommentAPIViewTests(APITestCase):
             }
         }
         try:
-            response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
+            response=self.client.post('/posts/'+str(self.post.id)+'/comments/',comment,format='json')
             self.assertEqual(response.status_code, 404)
 
         except Comment.DoesNotExist:
@@ -218,7 +218,7 @@ class CommentAPIViewTests(APITestCase):
             }
         }
         try:
-            response=self.client.post('/posts/'+str(self.post.id)+'/comments',comment,format='json')
+            response=self.client.post('/posts/'+str(self.post.id)+'/comments/',comment,format='json')
             self.assertEqual(response.status_code, 404, "Updated a comment with a non existent post")
 
         except Comment.DoesNotExist:
@@ -243,7 +243,7 @@ class CommentAPIViewTests(APITestCase):
             }
         }
         try:
-            response = self.client.put('/posts/'+str(self.post.id)+'/comments', comment, format='json')
+            response = self.client.put('/posts/'+str(self.post.id)+'/comments/', comment, format='json')
             self.assertNotEqual(response.status_code, 404, "The put passed")
         except:
             self.assertEqual(response.status_code, 404)
@@ -251,7 +251,7 @@ class CommentAPIViewTests(APITestCase):
     # delete fails
     def test_comment_delete_fails(self):
         try:
-            response = self.client.delete('/posts/'+str(self.post.id)+'/comments')
+            response = self.client.delete('/posts/'+str(self.post.id)+'/comments/')
             self.assertNotEqual(response.status_code, 404, "The delete passed")
         except:
             self.assertEqual(response.status_code, 404)
@@ -266,7 +266,7 @@ class CommentAPIViewTests(APITestCase):
         # retrieves comments with specific size per page
         for i in range(0, 5):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=2')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=2/')
         self.assertEqual(len(response.data['comments']), 2)
         self.assertEqual(response.status_code, 200)
 
@@ -274,18 +274,18 @@ class CommentAPIViewTests(APITestCase):
         # retrieves comments with a specific size and page
         for i in range(0, 10):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=2&page=3')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=2&page=3/')
         self.assertEqual(len(response.data['comments']), 2)
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=9&page=1')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?size=9&page=1/')
         self.assertEqual(len(response.data['comments']), 9)
 
     def test_get_full_page_of_comments(self):
         # retrieves a full page of comments
         for i in range(0, 22):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2/')
         self.assertEqual(len(response.data['comments']), 5)
         self.assertEqual(response.status_code, 200)
 
@@ -293,7 +293,7 @@ class CommentAPIViewTests(APITestCase):
         # retrieves a partial page of comments
         for i in range(0, 13):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3/')
         self.assertEqual(len(response.data['comments']), 3)
         self.assertEqual(response.status_code, 200)
 
@@ -301,14 +301,14 @@ class CommentAPIViewTests(APITestCase):
         # retrieves a page of comments that doesn't exist
         for i in range(0, 2):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2/')
         self.assertEqual(response.status_code, 404)
 
     def test_get_comments_by_page_and_exceeded_size(self):
         # retrieves a page where there are more comments than the specified size
         for i in range(0, 10):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2&size=4')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=2&size=4/')
         self.assertEqual(len(response.data['comments']), 4)
         self.assertEqual(response.status_code, 200)
 
@@ -316,6 +316,6 @@ class CommentAPIViewTests(APITestCase):
         # retrieves a page where there are less comments than the specified size
         for i in range(0, 10):
             self.new_comment_setup()
-        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3&size=4')
+        response = self.client.get('/posts/' + str(self.post.id) + '/comments?page=3&size=4/')
         self.assertEqual(len(response.data['comments']), 2)
         self.assertEqual(response.status_code, 200)
