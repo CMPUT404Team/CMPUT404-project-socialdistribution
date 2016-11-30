@@ -38,7 +38,8 @@ class AddAuthorApiTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.add_url = reverse('author-add')
+        self.add_url = reverse('create_author')
+        print self.add_url
 
     def test_add_new_author(self):
         form = AuthorForm({'displayName':'Yolo Swag', 'password':'4ForLife'})

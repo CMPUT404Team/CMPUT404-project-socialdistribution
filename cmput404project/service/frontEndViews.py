@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse, HttpResponseNotModified
 from django.urls import reverse
 from django.views import View
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.decorators import login_required
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.request import Request
@@ -27,6 +28,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework.permissions import AllowAny
 import uuid
 
+@permission_classes((AllowAny, ))
 def index(index):
     return redirect("home")
 
@@ -145,6 +147,8 @@ class PostsView(APIView):
         return redirect("public-posts")
 
 class AuthorCreateView(APIView):
+    permission_classes = (AllowAny,)
+
     def get(self, request):
         form = AuthorForm()
         return render(request, "create-account.html", {"form": form})

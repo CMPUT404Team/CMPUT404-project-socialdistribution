@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^friends/(?P<uuid1>[^/]+)/(?P<uuid2>[^/]+)/$', views.FriendDetailView.as_view(), name='friend-detail'),
     url(r'^friends/(?P<uuid>[^/]+)/$', views.MutualFriendDetailView.as_view(),name='mutual-friend'),
     url(r'^author/(?P<pk>[^/]+)/$', views.AuthorDetailView.as_view(), name='author-detail'),
-    url(r'^author/awaiting-approval/$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
+    url(r'^doggo/author/awaiting-approval/$', TemplateView.as_view(template_name='awaiting-approval.html'), name='awaiting-approval'),
     url(r'^frontend/posts/$', views.PostsNodesView.as_view(), name='frontend-public-posts'),
     url(r'^frontend/author/posts/$', views.VisiblePostsNodesView.as_view(), name='frontend-visible-posts'),
     url(r'^doggo/posts/$', frontEndViews.PostsView.as_view(), name='public-posts'),

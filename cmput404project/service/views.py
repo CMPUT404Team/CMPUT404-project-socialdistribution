@@ -5,6 +5,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from django.utils.six import BytesIO
 from models.Comment import Comment
 from service.serializers import *
@@ -19,6 +21,7 @@ from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from django.http.request import QueryDict
+from django.http import HttpResponseRedirect
 from AuthorForm import AuthorForm
 from models.NodeManager import NodeManager
 from models.FriendRequest import FriendRequest
@@ -686,14 +689,18 @@ def create_comment(request, pk):
         form = CommentForm()
     return
 
+@permission_classes((AllowAny, ))
 def create_author(request):
     if request.method == 'POST':
-        form = AuthorForm(request.POST)
-        try:
-            if form.is_valid():
-                return HttpResponseRedirect('doggo/author/awaiting-approval')
-        except:
-            print "non valid user"
-    else:
-        form = AuthorForm()
+        #try:
+        data = request.POST
+        user = User.objects.create_user(username=data['displayName'],
+                password=data['password'], is_active=False)
+        user.save()
+        author = Author.create(user, data['displayName'], request.get_host())
+        author.save() 
+        return HttpResponseRedirect('/doggo/author/awaiting-approval')
+        #except:
+        #    print "non valid user"
+    form = AuthorForm()
     return render(request, 'home.html', {'form': form})
