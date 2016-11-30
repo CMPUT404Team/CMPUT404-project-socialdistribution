@@ -692,15 +692,15 @@ def create_comment(request, pk):
 @permission_classes((AllowAny, ))
 def create_author(request):
     if request.method == 'POST':
-        #try:
-        data = request.POST
-        user = User.objects.create_user(username=data['displayName'],
-                password=data['password'], is_active=False)
-        user.save()
-        author = Author.create(user, data['displayName'], request.get_host())
-        author.save() 
-        return HttpResponseRedirect('/doggo/author/awaiting-approval')
-        #except:
-        #    print "non valid user"
+        try:
+            data = request.POST
+            user = User.objects.create_user(username=data['displayName'],
+                    password=data['password'], is_active=False)
+            user.save()
+            author = Author.create(user, data['displayName'], request.get_host())
+            author.save() 
+            return HttpResponseRedirect('/doggo/author/awaiting-approval')
+        except:
+            print "non valid user"
     form = AuthorForm()
     return render(request, 'home.html', {'form': form})
