@@ -59,7 +59,7 @@ class AuthorExistsView(APIView):
         if user_exists:
             return redirect("login")
         else:
-            return redirect("create_author")
+            return redirect("author-add")
 
 class LoginView(APIView):
     def get(self, request):
@@ -136,16 +136,10 @@ class PostsView(APIView):
         views.create_post(request)
         return redirect("public-posts")
 
-class AuthorCreateView(FormView):
-    template_name = "author_form.html"
-    form_class = AuthorForm
-
-    def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.create_author(self.request.get_host())
-        self.success_url = reverse('awaiting-approval')
-        return super(AuthorCreateView, self).form_valid(form)
+class AuthorCreateView(APIView):
+    def get(self, request):
+        form = AuthorForm()
+        return render(request, "create-account.html", {"form": form})
 
 class AuthorPostsView(APIView):
     '''
