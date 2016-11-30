@@ -236,3 +236,16 @@ class NodeManager():
             if not is_authorized:
                 return 404
         return post
+
+    @classmethod
+    def get_comments_for_post(self, pid):
+        stream = []
+        nodes = self.get_nodes()
+        for node in nodes:
+            jsonData = node.get_comments(pid)
+            if (jsonData == None):
+                continue
+            else:
+                 for comment in jsonData['comments']:
+                     stream.append(comment)
+        return stream

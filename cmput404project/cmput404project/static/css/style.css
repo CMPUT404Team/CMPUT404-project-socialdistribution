@@ -282,6 +282,10 @@ input[type="radio"] {
   max-width: 100%;
 }
 
+.comment-post-image{
+    width:25%;
+}
+
 .comment-author {
   margin:0%;
   padding:0%;
@@ -314,6 +318,9 @@ input[type="submit"].comment {
   font-size: 100%;
 }
 
+.comment{
+    border-bottom: 2px solid #d3d3d3;
+}
 
 label {
   display: block;

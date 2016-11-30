@@ -38,7 +38,7 @@ class Node(models.Model):
 
     def make_authenticated_post_request(self, url, data):
         return requests.post(url, auth=(self.username,self.password), json=data, allow_redirects=True)
-    
+
     def get_friend_request_json(self, author_json, friend_json):
         return {
                 "query":"friendrequest",
@@ -53,7 +53,7 @@ class Node(models.Model):
 
     def get_post(self, post_id):
         url = self.get_base_url() + "/posts/" + str(post_id)
-        return self.get_json(url) 
+        return self.get_json(url)
 
     def get_posts(self):
         url = self.get_base_url() + "/author/posts"
@@ -82,3 +82,8 @@ class Node(models.Model):
         url = self.get_base_url() + "/friends/" + str(id1) + "/" + str(id2)
         response = self.get_json(url)
         return (response != None and response['friends'] == True)
+
+    def get_comments(self, post_id):
+        url = self.get_base_url()+'/posts/' + str(post_id) + "/comments"
+        response = self.get_json(url)
+        return response

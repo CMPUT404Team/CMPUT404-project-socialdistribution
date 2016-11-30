@@ -92,8 +92,10 @@ class PostView(APIView):
 
 class CommentsView(APIView):
     def get(self, request, pk):
-        comments = views.CommentAPIView.as_view()(request, pk).data
-        post = views.PostView.as_view()(request, pk).data
+        #comments = views.CommentAPIView.as_view()(request, pk).data
+        comments = NodeManager.get_comments_for_post(pk)
+        #post = views.PostView.as_view()(request, pk).data
+        post = NodeManager.get_post_by_postid(pk)
         form = CommentForm()
         return render(request, "posts-id-comments.html", {"comments": comments,
         "host": request.get_host(), "post": post, "comment_form": form})
