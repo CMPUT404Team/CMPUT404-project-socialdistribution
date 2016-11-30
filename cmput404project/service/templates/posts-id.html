@@ -9,10 +9,13 @@
         <p class='author'>{{post.author.displayName}}</p>
         <p class='post-published'>{{post.published}}</p>
         <p class='post-description'>{{post.description}}</p>
-        <p class='post-content'>{{post.content}}</p>
+        <div class='post-content md-content'>{{post.content}}</p>
         <a href="/doggo/posts/{{post.id}}/comments/">Comments</a>
       </div>
 {% else %}
   <p>404. No post found</p>
 {% endif %}
-</body></html>
+</body>
+<script src="{% static 'js/marked.min.js' %}"></script>
+<script src="{% static 'js/MarkdownParser.js' %}"></script>
+</html>
