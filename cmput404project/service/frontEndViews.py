@@ -24,6 +24,7 @@ from serializers import AuthorSerializer
 import ast
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from rest_framework.permissions import AllowAny
 import uuid
 
 def index(index):
@@ -33,13 +34,14 @@ def get_author_exists(username):
     return User.objects.filter(username=username).exists()
 
 def get_author_object(user):
-     try:
-         return Author.objects.get(user=user)
-     except Author.DoesNotExist:
-         raise Http404
+    try:
+        return Author.objects.get(user=user)
+    except Author.DoesNotExist:
+        raise Http404
 
 class HomeView(APIView):
-    permission_classes = []
+    permission_classes = (AllowAny,)
+
     def get(self, request):
         print request.user.is_authenticated
         if not request.user.is_authenticated:
@@ -50,7 +52,8 @@ class HomeView(APIView):
             return render(request, 'home.html', {'form': form})
 
 class AuthorExistsView(APIView):
-     permission_classes = []
+    permission_classes = (AllowAny,)
+
     def get(self, request):
         form = LoginForm()
         return redirect("login")
@@ -64,7 +67,8 @@ class AuthorExistsView(APIView):
             return redirect("create_author")
 
 class LoginView(APIView):
-    permission_classes = []
+    permission_classes = (AllowAny,)
+
     def get(self, request):
         form = LoginForm()
         return render(request, "login.html", {"form": form})
@@ -80,6 +84,7 @@ class LoginView(APIView):
             return redirect("login")
 
 class WelcomeView(APIView):
+
     def get(self, request):
         author = get_author_object(request.user)
         return render(request, "welcome.html", {"author": author})
@@ -99,7 +104,7 @@ class CommentsView(APIView):
         post = views.PostView.as_view()(request, pk).data
         form = CommentForm()
         return render(request, "posts-id-comments.html", {"comments": comments,
-        "host": request.get_host(), "post": post, "comment_form": form})
+            "host": request.get_host(), "post": post, "comment_form": form})
 
 class PostsCommentsView(APIView):
     '''
@@ -218,9 +223,7 @@ class BefriendView(APIView):
             else:
                 friend = Author.objects.get(id=pk)
             author.add_friend(friend)
-	print "made it to befor the node manager request"
         status_code = NodeManager.befriend(author_json, friend_json)
-	print "after nodemanager request"
         if (str(status_code).startswith('2')):
             return redirect('frontend-author-detail', pk)
         return Response(status=status_code)
