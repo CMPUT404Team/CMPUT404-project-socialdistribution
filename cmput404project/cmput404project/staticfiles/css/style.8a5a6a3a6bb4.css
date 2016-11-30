@@ -1,0 +1,431 @@
+@font-face {
+  font-family: Raleway-Bold;
+  src: url("../fonts/Raleway-Bold.575e4317521b.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: Raleway-Light;
+  src: url("../fonts/Raleway-Light.b1bdea561f24.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: SonderSans-Black;
+  src: url("../fonts/SonderSans-BlackRough.2669d5af4697.otf") format("opentype");
+}
+
+@font-face {
+  font-family: SonderSerif-Bold;
+  src: url("../fonts/SonderSerif-BoldRough.85d358cf6a72.otf") format("opentype");
+}
+
+.home-page {
+  background-color:rgba(0, 0, 0, 0.5);
+  position: absolute;
+  display: flex;
+  top: 30%;
+  left: 30%;
+  width: 40%;
+  padding: 2%;
+}
+
+.background {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.title {
+    margin-bottom:0%;
+    margin-top: 0%;
+    display:flex;
+    flex-direction: column;
+}
+
+#id {
+  width: 100%;
+  height:100%;
+}
+
+form {
+  margin-bottom: 0%;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+}
+
+#title {
+  font-family: Raleway-Bold;
+  align-self: center;
+  font-size: 300%;
+  margin: 0%;
+}
+
+label[for="id_password"]{
+  align-self: center;
+}
+
+label[for="id_displayName"]{
+  align-self: center;
+}
+
+input#id_displayName {
+  align-self: center;
+}
+
+input#id_password {
+  align-self: center;
+}
+
+input[value="Login"]{
+  align-self: center;
+  font-size: 80%;
+  margin: 1%;
+}
+
+input[value="Create Account"]{
+  align-self: center;
+  font-size: 80%;
+}
+
+#link {
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.login {
+  height:100%;
+  margin: 5%;
+  padding-bottom: 0%;
+}
+
+.tiled-background{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  overflow: auto;
+}
+
+.tiled-photo{
+  height: 20%;
+  width: 16.66%;
+  filter: blur(8px);
+}
+
+.author-page {
+  background-color:rgba(0, 0, 0, 0.5);
+  top: 5%;
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  left: 5%;
+  padding: 3%;
+  width: 25%;
+  padding-bottom:5%;
+  overflow-y: auto;
+  min-height: 0px;
+  height:100%;
+  padding-top: 7%;
+}
+
+.author {
+  display: flex;
+  background-color: white;
+  flex-direction: column;
+  top:5%;
+  align-items: center;
+  flex-basis: auto;
+  height:100%;
+}
+
+.friends {
+  align-self: center;
+}
+
+a.friends {
+  font-family: Raleway-Light;
+}
+
+.post-image, #profile-picture {
+  border-radius: 8px;
+  border: 2px solid #d3d3d3;
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+
+#profile-picture {
+  align-self:center;
+  position: relative;
+  top: -7%;
+}
+
+.author-displayName {
+  align-self: center;
+  font-family: Raleway-Bold;
+  margin-top: 2%;
+  top: -5%;
+}
+
+form.befriend {
+  align-self: center;
+  word-break: break-all;
+  font-size: 80%;
+}
+
+h4.friends {
+  font-family: Raleway-Bold;
+  align-self:center;
+  margin-bottom: 5%;
+}
+
+p {
+    font-family: Raleway-Light;
+}
+
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  align-self: center;
+  border: 2px solid #d3d3d3;
+  padding-left: 5%;
+  padding-right: 5%;
+  margin-bottom: 5%;
+  width: 75%;
+  height:90%;
+}
+
+.author-post-list{
+  background-color:rgba(0, 0, 0, 0.5);
+  top: 5%;
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  right: 4%;
+  padding: 2%;
+  bottom: 5%;
+  width: 55%;
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  width: 100%;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(211,211,211, 0.8), rgba(0, 0, 0, 0));
+}
+
+.post-list {
+  background-color:rgba(0, 0, 0, 0.5);
+  top: 5%;
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  left: 5%;
+  padding: 5%;
+  bottom: 5%;
+  width: 80%;
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+.create-post {
+  background-color: white;
+  margin-bottom: 5%;
+  padding: 5%;
+}
+
+.approval-message {
+  padding: 5%;
+  align-self: center;
+  word-wrap: normal;
+  word-break: keep-all;
+  font-family: Raleway-Bold;
+  vertical-align: middle;
+}
+
+input[type="text"], input[type="password"] {
+  border: none;
+  width: 80%;
+  border-bottom: 2px solid #d3d3d3;
+  font-family: Raleway-Light;
+}
+
+.account-link {
+  font-family: Raleway-Bold;
+}
+
+input[type="submit"] {
+     margin: 10 !important;
+   margin-bottom: 2%;
+ }
+
+input[type="text"]:hover , input[type="password"]:hover {
+  background-color: #d3d3d3;
+}
+
+input[type="submit"], input[type="button"] {
+  display: block;
+  font-family: Raleway-Bold;
+  background-color: white;
+  border: 2px solid #d3d3d3;
+}
+
+input[type="button"] {
+  font-size: 100%;
+}
+
+label.category {
+  display: inline;
+  font-family: Raleway-Light;
+  padding-bottom: 1%;
+  align-self: center;
+}
+
+#category{
+  display: flex;
+}
+
+input.category {
+  display:inline;
+  align-self: center;
+}
+
+.radio{
+  padding: 1%;
+}
+
+label.radio{
+  display:inline;
+  font-size: 100%;
+}
+
+input[type="radio"] {
+  display: inline-block;
+  border: none;
+  font-family: Raleway-Bold;
+  font-size: 150%;
+  background-color: white;
+}
+
+.post-image {
+  width:25%;
+  align-self: center;
+}
+
+.image{
+  max-width: 100%;
+}
+
+.comment-post-image{
+    width:25%;
+}
+
+.comment-author {
+  margin:0%;
+  padding:0%;
+}
+
+h1, p, a {
+  word-break: break-all;
+}
+
+h1 {
+  font-family: Raleway-Bold;
+}
+
+.full-post{
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  padding: 5%;
+  margin-bottom: 5%;
+}
+
+.post-published {
+  margin: 0%;
+  padding: 0%;
+  font-size: 70%;
+}
+
+.visibility {
+  display: inline;
+}
+
+input[type="submit"].comment {
+  border: 2px solid #d3d3d3;
+  font-size: 100%;
+}
+
+.comment{
+    border-bottom: 2px solid #d3d3d3;
+}
+
+label {
+  display: block;
+  font-family: Raleway-Bold;
+  font-size: 150%;
+}
+
+.post {
+  font-family: Raleway-Light;
+  color: black;
+  bottom: 5%;
+  align-self: center;
+  width:75%;
+}
+
+.comment-content{
+  margin:0%;
+  display:inline-block;
+}
+
+.comment-link {
+  display:block;
+}
+
+.post-content {
+  font-size: 120%;
+}
+
+.post-title {
+  font-family: Raleway-Bold;
+  font-size: 150%;
+  display:inline-block;
+  margin-bottom: 0%;
+}
+
+a:hover{
+  color:#d3d3d3;
+}
+
+.by{
+  display:inline;
+  margin: 0%;
+  padding:0%;
+}
+
+label.comment {
+  font-size: 100%;
+}
+
+.post-author{
+  font-family: Raleway-Bold;
+  display:inline-block;
+  margin-bottom: 0%;
+}
+
+.post-description {
+  margin: 0%;
+  padding: 0%;
+  font-size: 70%;
+}
+
+a {
+  color: black;
+}

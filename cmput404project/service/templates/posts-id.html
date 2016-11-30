@@ -2,8 +2,12 @@
 {% load staticfiles %}
 <html>
 <head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
-<body>
+<body id="background" class="tiled-background">
+<script> var images = "{% static 'images/' %}";</script>
+<script src="{% static 'js/LoadBackground.js?1500' %}"></script>
+<ul class = 'post-list'>
 {% if post %}
+    <div class="full-post">
       <div class='post'>
         <h1 class='post-title'>{{post.title}}</h1>
         <p class='author'>{{post.author.displayName}}</p>
@@ -12,9 +16,11 @@
         <div class='post-content md-content'>{{post.content}}</p>
         <a href="/doggo/posts/{{post.id}}/comments/">Comments</a>
       </div>
+    </div>
 {% else %}
   <p>404. No post found</p>
 {% endif %}
+</ul>
 </body>
 <script src="{% static 'js/marked.min.js' %}"></script>
 <script src="{% static 'js/MarkdownParser.js' %}"></script>
