@@ -81,7 +81,7 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("welcome")
+            return redirect("frontend-author-detail", pk=Author.objects.get(user=user).id)
         else:
             return redirect("login")
 
