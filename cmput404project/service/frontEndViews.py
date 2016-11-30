@@ -117,7 +117,7 @@ class PostsView(APIView):
     '''
     #TODO: replace get_public_posts()
     def get(self, request):
-        response = views.PostsView.as_view()(request)
+        response = views.PostsNodesView.as_view()(request)
         form = CommentForm()
         post_form = PostForm()
         try:
