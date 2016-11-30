@@ -52,20 +52,25 @@ class CommentAPIView(APIView):
     Content-Type: application/json
     Vary: Accept
 
-    [
+{
+    "count": 1,
+    "query": "comments",
+    "comments": [
         {
-			"author": {
-				"url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-				"id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-				"displayName": "asdf",
-				"host": "a",
-				"friends": []
+            "author": {
+                "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                "displayName": "name",
+                "host": "https://winter-resonance.herokuapp.com",
+                "friends": []
             },
-            "pubDate": "2016-11-26T02:08:42Z",
-            "comment": "First Comment!!",
-            "guid": "db42e75f-4045-415a-8969-f8601360981a"
+            "pubDate": "2016-11-29T23:48:38Z",
+            "comment": "What a neat dog !",
+            "guid": "ab52ca35-6fb1-4949-a492-e38df0f56126"
         }
-    ]
+    ],
+    "size": 5
+}
     """
     def get_comments(self, postId):
         post = self.get_post(postId)
@@ -147,7 +152,7 @@ class AuthorDetailView(APIView):
 
 class PostsView(APIView):
     """
-    Return a list of all public posts or create a new post 
+    Return a list of all public posts or create a new post
 
     Input: http://localhost:8000/posts/
     Output:
@@ -157,44 +162,46 @@ class PostsView(APIView):
 	Content-Type: application/json
 	Vary: Accept
 
-	{
-    	"posts": [
-    	    {
-    	        "title": "My New Post",
-    	        "source": "na",
-    	        "origin": "na",
-    	        "content": "",
-    	        "contentType": "text/plain",
-    	        "description": "",
-    	        "author": {
-    	            "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-    	            "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-    	            "displayName": "asdf",
-    	            "host": "a"
-    	        },
-    	        "count": 0,
-    	        "size": 50,
-    	        "next": "na",
-    	        "comments": [
-    	            {
-    	                "author": {
-    	                    "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b2	2b27d9c3/",
-    	                    "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-    	                    "displayName": "asdf",
-    	                    "host": "a",
-    	                    "friends": []
-    	                },
-    	                "pubDate": "2016-11-26T02:08:42Z",
-    	                "comment": "First Comment!!",
-    	                "guid": "db42e75f-4045-415a-8969-f8601360981a"
-    	            }
-    	        ],
-    	        "published": "2016-11-26T02:00:44.793165Z",
-    	        "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
-    	        "visibility": "PUBLIC"
-    	    }
-    	]
-	}
+{
+    "count": 1,
+    "query": "posts",
+    "posts": [
+        {
+            "title": "My favourite dogs",
+            "source": "source",
+            "origin": "origin",
+            "content": "content",
+            "contentType": "text/plain",
+            "description": "description",
+            "author": {
+                "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                "displayName": "name",
+                "host": "https://winter-resonance.herokuapp.com"
+            },
+            "comments": [
+                {
+                    "author": {
+                        "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                        "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                        "displayName": "name",
+                        "host": "https://winter-resonance.herokuapp.com",
+                        "friends": []
+                    },
+                    "pubDate": "2016-11-29T23:48:38Z",
+                    "comment": "Wild!",
+                    "guid": "ab52ca35-6fb1-4949-a492-e38df0f56126"
+                }
+            ],
+            "published": "2016-11-29T23:04:35.134605Z",
+            "id": "bba4fd15-c276-435a-b7c7-8e782b8ba0a3",
+            "visibility": "PUBLIC",
+            "count": 1,
+            "size": 5
+        }
+    ],
+    "size": 5
+}
     """
 
     def get(self, request):
@@ -229,41 +236,46 @@ class PostView(APIView):
 	Content-Type: application/json
 	Vary: Accept
 
-    
-	{
-	    "title": "My New Post",
-	    "source": "na",
-	    "origin": "na",
-	    "content": "",
-	    "contentType": "text/plain",
-	    "description": "",
-	    "author": {
-	        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-	        "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-	        "displayName": "asdf",
-	        "host": "a"
-	    },
-	    "count": 0,
-	    "size": 50,
-	    "next": "na",
-	    "comments": [
-	        {
-	            "author": {
-	                "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-	                "displayName": "asdf",
-	                "host": "a",
-	                "friends": []
-	            },
-	            "pubDate": "2016-11-26T02:08:42Z",
-	            "comment": "First Comment!!",
-	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
-	        }
-	    ],
-	    "published": "2016-11-26T02:00:44.793165Z",
-	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
-	    "visibility": "PUBLIC"
-	}
+{
+    "count": 1,
+    "query": "posts",
+    "posts": [
+        {
+            "title": "My favourite dogs",
+            "source": "source",
+            "origin": "origin",
+            "content": "content",
+            "contentType": "text/plain",
+            "description": "description",
+            "author": {
+                "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                "displayName": "name",
+                "host": "https://winter-resonance.herokuapp.com"
+            },
+            "comments": [
+                {
+                    "author": {
+                        "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                        "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                        "displayName": "name",
+                        "host": "https://winter-resonance.herokuapp.com",
+                        "friends": []
+                    },
+                    "pubDate": "2016-11-29T23:48:38Z",
+                    "comment": "Wild!",
+                    "guid": "ab52ca35-6fb1-4949-a492-e38df0f56126"
+                }
+            ],
+            "published": "2016-11-29T23:04:35.134605Z",
+            "id": "bba4fd15-c276-435a-b7c7-8e782b8ba0a3",
+            "visibility": "PUBLIC",
+            "count": 1,
+            "size": 5
+        }
+    ],
+    "size": 5
+}
     """
     def get_object(self, uuid):
         try:
@@ -329,44 +341,46 @@ class VisiblePostsView(APIView):
 	Content-Type: application/json
 	Vary: Accept
 
-	{
-    	"posts": [
-    	    {
-    	        "title": "My New Post",
-    	        "source": "na",
-    	        "origin": "na",
-    	        "content": "",
-    	        "contentType": "text/plain",
-    	        "description": "",
-    	        "author": {
-    	            "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-    	            "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-    	            "displayName": "asdf",
-    	            "host": "a"
-    	        },
-    	        "count": 0,
-    	        "size": 50,
-    	        "next": "na",
-    	        "comments": [
-    	            {
-    	                "author": {
-    	                    "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-        	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-        	                "displayName": "asdf",
-        	                "host": "a",
-        	                "friends": []
-        	            },
-        	            "pubDate": "2016-11-26T02:08:42Z",
-        	            "comment": "First Comment!!",
-        	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
-        	        }
-        	    ],
-        	    "published": "2016-11-26T02:00:44.793165Z",
-        	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
-        	    "visibility": "PUBLIC"
-        	}
-    	]
-	}
+{
+    "count": 1,
+    "query": "posts",
+    "posts": [
+        {
+            "title": "My favourite dogs",
+            "source": "source",
+            "origin": "origin",
+            "content": "content",
+            "contentType": "text/plain",
+            "description": "description",
+            "author": {
+                "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                "displayName": "name",
+                "host": "https://winter-resonance.herokuapp.com"
+            },
+            "comments": [
+                {
+                    "author": {
+                        "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                        "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                        "displayName": "name",
+                        "host": "https://winter-resonance.herokuapp.com",
+                        "friends": []
+                    },
+                    "pubDate": "2016-11-29T23:48:38Z",
+                    "comment": "Wild!",
+                    "guid": "ab52ca35-6fb1-4949-a492-e38df0f56126"
+                }
+            ],
+            "published": "2016-11-29T23:04:35.134605Z",
+            "id": "bba4fd15-c276-435a-b7c7-8e782b8ba0a3",
+            "visibility": "PUBLIC",
+            "count": 1,
+            "size": 5
+        }
+    ],
+    "size": 5
+}
     """
     def get(self, request):
         posts = Post.objects.all().exclude(visibility="PRIVATE").exclude(visibility="SERVERONLY")
@@ -388,49 +402,53 @@ class AuthorPostsView(APIView):
     Return a list of available posts created by specified user
 
     Input: http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/posts/
-	output: 
+	output:
 
 	HTTP 200 OK
 	Allow: GET, HEAD, OPTIONS
 	Content-Type: application/json
 	Vary: Accept
 
-	[
-    	{
-    	    "title": "My New Post",
-    	    "source": "na",
-    	    "origin": "na",
-    	    "content": "",
-    	    "contentType": "text/plain",
-    	    "description": "",
-    	    "author": {
-    	        "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-    	        "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-    	        "displayName": "asdf",
-    	        "host": "a"
-    	    },
-    	    "count": 0,
-    	    "size": 50,
-    	    "next": "na",
-    	    "comments": [
-    	        {
-    	            "author": {
-    	                "url": "http://localhost:8000/author/6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3/",
-    	                "id": "6384edbd-27bb-4ee5-9ac6-e2b22b27d9c3",
-    	                "displayName": "asdf",
-    	                "host": "a",
-    	                "friends": []
-    	            },
-    	            "pubDate": "2016-11-26T02:08:42Z",
-    	            "comment": "First Comment!!",
-    	            "guid": "db42e75f-4045-415a-8969-f8601360981a"
-    	        }
-    	    ],
-    	    "published": "2016-11-26T02:00:44.793165Z",
-    	    "id": "ea8c25f6-35d6-4918-8232-e6df8e697424",
-    	    "visibility": "PUBLIC"
-    	}
-	]
+{
+    "count": 1,
+    "query": "posts",
+    "posts": [
+        {
+            "title": "My favourite dogs",
+            "source": "source",
+            "origin": "origin",
+            "content": "content",
+            "contentType": "text/plain",
+            "description": "description",
+            "author": {
+                "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                "displayName": "name",
+                "host": "https://winter-resonance.herokuapp.com"
+            },
+            "comments": [
+                {
+                    "author": {
+                        "url": "http://localhost:8000/author/e887f870-b3ee-4a6d-a433-aa09c724a7bc/",
+                        "id": "e887f870-b3ee-4a6d-a433-aa09c724a7bc",
+                        "displayName": "name",
+                        "host": "https://winter-resonance.herokuapp.com",
+                        "friends": []
+                    },
+                    "pubDate": "2016-11-29T23:48:38Z",
+                    "comment": "Wild!",
+                    "guid": "ab52ca35-6fb1-4949-a492-e38df0f56126"
+                }
+            ],
+            "published": "2016-11-29T23:04:35.134605Z",
+            "id": "bba4fd15-c276-435a-b7c7-8e782b8ba0a3",
+            "visibility": "PUBLIC",
+            "count": 1,
+            "size": 5
+        }
+    ],
+    "size": 5
+}
     """
     def get(self, request, pk):
         try:
@@ -498,7 +516,7 @@ class MutualFriendDetailView(APIView):
 
 	Input: http://localhost:8000/friends/3c1f82f3-e207-48bb-9849-a9b03f3bfb96/
 	Output:
-    
+
 	HTTP 200 OK
 	Allow: GET, POST, HEAD, OPTIONS
 	Content-Type: application/json
