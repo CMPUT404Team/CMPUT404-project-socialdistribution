@@ -47,3 +47,10 @@ Source:css-tricks Location: https://css-tricks.com/examples/hrs/
 Source: shree Location:http://stackoverflow.com/questions/16271972/hiding-a-div-by-default
 Source: Josh Crozier Location: http://stackoverflow.com/questions/21070101/show-hide-div-using-javascript
 Source: Jeff Parker Location: http://stackoverflow.com/questions/5108139/javascript-linking-onclick-to-a-js-to-a-file
+Daniel Roseman http://stackoverflow.com/questions/24068576/how-to-receive-json-data-using-http-post-request-in-django-1-6 Nov 3, 2016 for json.loads  
+
+kstratis
+http://stackoverflow.com/questions/29128225/django-rest-framework-3-1-breaks-pagination-paginationserializer Nov 23, 2016 for serializing pagination  
+http://www.django-rest-framework.org/api-guide/pagination/#custom-pagination-styles  Nov 23, 2016 for custom pagination  
+miki725  
+http://stackoverflow.com/questions/13363628/django-can-i-create-a-querydict-from-a-dictionary Nov 27, 2016 for clearing queries from a request object  
