@@ -245,7 +245,6 @@ class PostAPITests(APITestCase):
         self.post.title = "The new title"
         put_body = self.get_post_data(self.post, self.author)
         response = self.create_update_post_with_put(self.post.id, put_body)
-        print response.data
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['title'], "The new title")
 

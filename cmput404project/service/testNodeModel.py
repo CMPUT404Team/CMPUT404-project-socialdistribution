@@ -96,7 +96,6 @@ class NodeModelTests(LiveServerTestCase):
         friend.save()
         status = self.node.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
         self.assertEqual(204, status)
-        self.assertIn(friend, self.author.friends.all())
 
     def test_befriend_with_malformed_json(self):
         status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})
@@ -115,7 +114,6 @@ class NodeModelTests(LiveServerTestCase):
         friend.save()
         status = self.nodemanager.befriend(self.get_author_json(self.author), self.get_friend_json(friend))
         self.assertEqual(204, status)
-        self.assertIn(friend, self.author.friends.all())
 
     def test_befriend_through_NodeManager_with_bad_json(self):
         status = self.node.befriend({"this isn't the right json":"for making friends"}, {"Neither is":"this"})

@@ -12,19 +12,15 @@
           <script src="{% static 'js/LoadProfilePicture.js' %}"></script>
         </div>
         <h1 class='author-displayName'>{{author.displayName}}</h1>
-      	{% if currently_friends %}
-      		<form class="befriend" action="/frontend/befriend/" method="post">
-      			<input type="hidden" name="friend" value="{{author}}">
-      			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-      			<input type="submit" value="Unfollow" />
-      		</form>
-      	{% else %}
-      		<form class="befriend" action="/frontend/befriend/" method="post">
-      			<input type="hidden" name="friend" value="{{author}}">
-      			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-      			<input type="submit" value="Follow & Send Friend Request" />
-      		</form>
-      	{% endif %}
+        {% if currently_friends %}
+  			<form class="befriend" action="unfriend/" method="post">
+  				<input type="submit" value="Unfollow" />
+  			</form>
+  			{% else %}
+  			<form class="befriend" action="befriend/" method="post">
+  				<input type="submit" value="Follow & Friend" />
+  			</form>
+  			{% endif %}
         <div class="friends-list">
           {% if friends%}
             <h4 class="friends">Friends List</h4>

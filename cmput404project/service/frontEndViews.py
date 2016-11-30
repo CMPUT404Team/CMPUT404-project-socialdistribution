@@ -11,6 +11,7 @@ from django.template.response import TemplateResponse
 from django.conf import settings
 from models.Author import Author
 from models.NodeManager import NodeManager
+from models.FriendRequest import FriendRequest
 from . import views
 from django.views.generic.edit import FormView
 from rest_framework.response import Response
@@ -20,10 +21,10 @@ from LoginForm import LoginForm
 from CommentForm import CommentForm
 from PostForm import PostForm
 from serializers import AuthorSerializer
-from models.NodeManager import NodeManager
 import ast
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+import uuid
 
 def index(index):
     return redirect("home")
@@ -201,23 +202,60 @@ class FriendView(APIView):
 
 class BefriendView(APIView):
 
-    def get_friend_json(self, raw_friend_data):
-        return ast.literal_eval(raw_friend_data)
-
-    def post(self, request):
-        try:
-            author = get_author_object(request.user)
-            author_json = AuthorSerializer(author, context={'request':request}).data
-            request_dict = dict(request.data.iterlists())
-            currently_friends = request_dict.get("currently_friends")[0]
-            friend_json = self.get_friend_json(request_dict.get("friend")[0])
-            if (currently_friends == str(True)):
-                #You are unfriending them
-                author.remove_friend(Author.objects.get(id=friend_json['id']))
+    def post(self, request, pk):
+        author = get_author_object(request.user)
+        author_json = AuthorSerializer(author, context={'request':request}).data
+        friend_json = NodeManager.get_author(pk)
+        if (friend_json == None):
+            return Response(status=404)
+        serializer = AuthorSerializer(data=friend_json, context={'request':request})
+        if(serializer.is_valid(raise_exception=True)):
+            if (not Author.objects.filter(id=serializer.validated_data["id"]).exists()):
+                friend = serializer.save()
             else:
-                #You are befriending them
-                status_code = NodeManager.befriend(author_json, friend_json)
-            request.method = "get"
-            return AuthorDetailView.as_view()(request, friend_json['id'])
-        except:
-            return Response(status=400)
+                friend = Author.objects.get(id=pk)
+            author.add_friend(friend)
+	print "made it to befor the node manager request"
+        status_code = NodeManager.befriend(author_json, friend_json)
+	print "after nodemanager request"
+        if (str(status_code).startswith('2')):
+            return redirect('frontend-author-detail', pk)
+        return Response(status=status_code)
+
+class UnfriendView(APIView):
+
+    def post(self, request, pk):
+        author = get_author_object(request.user)
+        author.remove_friend(Author.objects.get(id=pk))
+        return redirect('frontend-author-detail', pk)
+
+
+class FriendRequestsView(APIView):
+
+    def get(self, request):
+        #based on the currently logged in user, display the friend requests
+        friend_requests = Author.objects.get(user_id=request.user.id).friendrequest_set.all()
+        return render(request, 'friend-requests.html', {"requests":friend_requests})
+
+class FriendRequestsAddView(APIView):
+
+    def post(self, request, pk):
+        #Create author object of the friend
+        friend = NodeManager.get_author(pk)
+        serializer = AuthorSerializer(data=friend, context={'request':request})
+        if(serializer.is_valid(raise_exception=True)):
+            author = get_author_object(request.user)
+            if (not Author.objects.filter(id=serializer.validated_data["id"]).exists()):
+                friend = serializer.save()
+            else:
+                friend = Author.objects.get(id=pk)
+            print "Adding author here"
+            author.add_friend(friend)
+            FriendRequest.objects.get(requesting_author_id=pk, author=author).delete()
+            return redirect('friend-requests')
+
+class FriendRequestsRemoveView(APIView):
+
+    def post(self, request, pk):
+        FriendRequest.objects.get(requesting_author_id=pk, author=Author.objects.get(user=request.user)).delete()
+        return redirect('friend-requests')

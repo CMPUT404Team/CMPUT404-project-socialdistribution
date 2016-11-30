@@ -37,8 +37,8 @@ class Node(models.Model):
         return requests.get(url, auth=(self.username,self.password))
 
     def make_authenticated_post_request(self, url, data):
-        return requests.post(url, auth=(self.username,self.password), json=data)
-
+        return requests.post(url, auth=(self.username,self.password), json=data, allow_redirects=True)
+    
     def get_friend_request_json(self, author_json, friend_json):
         return {
                 "query":"friendrequest",
