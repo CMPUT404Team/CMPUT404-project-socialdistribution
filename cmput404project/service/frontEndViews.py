@@ -160,7 +160,8 @@ class AuthorPostsView(APIView):
     '''
     def get(self, request):
         posts = NodeManager.get_stream(request.user)
-        return render(request, "author-posts.html", {"posts":posts})
+        form = PostForm()
+        return render(request, "author-posts.html", {"posts":posts, "post_form": form})
 
 class AuthorIdPostsView(APIView):
     '''
