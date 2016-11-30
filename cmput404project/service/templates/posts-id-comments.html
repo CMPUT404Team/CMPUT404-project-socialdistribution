@@ -12,9 +12,9 @@
     <img class= "image" src="{% static 'images/0.png' %}">
   </div>
   <div class='post'>
-    <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
+    <a class='post-title' href="/doggo/posts/{{post.id}}/">{{post.title}}</a>
     <p class="by">by</p>
-    <a class='post-author' href="http://{{host}}/doggo/author/{{post.author.id}}/">{{post.author.displayName}}</a>
+    <a class='post-author' href="/doggo/author/{{post.author.id}}/">{{post.author.displayName}}</a>
     <p class='post-published'>{{post.published}}</p>
     <p class='post-description'>{{post.description}}</p>
     <p class='post-content'>{{post.content}}</p>
@@ -30,8 +30,8 @@
         <p class='comment-content'>{{comment.content}}</p>
       </div>
       {% endfor %}
-    <a class="comment-link" href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
-    <a href="http://{{host}}/doggo/posts/{{post.id}}">Back to posts</a>
+    <a class="comment-link" href="/doggo/posts/{{post.id}}/comments/">See more comments.</a>
+    <a href="/doggo/posts/{{post.id}}">Back to posts</a>
     {% else %}
       <p class="comment-content"> No comments available.</p>
     {% endif %}
