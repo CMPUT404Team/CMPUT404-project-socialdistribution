@@ -1,22 +1,56 @@
 {% load rest_framework %}
 {% load staticfiles %}
 <html>
-<head><link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"></head>
-<body>
+<head><link href="{% static 'css/style.css?100' %}" rel="stylesheet" type="text/css"></head>
+<body id="background" class="tiled-background">
+  <script> var images = "{% static 'images/' %}";</script>
+  <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
+<ul class = 'post-list'>
+  <div class="create-post">
+    {% include "post-form.html"%}
+  </div>
 {% if posts %}
-  <ul class = "public-posts">
     {% for post in posts %}
-      <h1 class='author'>{{post.author.displayName}}</h1>
+    <div class="full-post">
+      <div class="post-image">
+        <img class= "image" src="{% static 'images/0.png' %}">
+      </div>
       <div class='post'>
         <a class='post-title' href="http://{{host}}/doggo/posts/{{post.id}}/">{{post.title}}</a>
+        <p class="by">by</p>
+        <a class='post-author' href="http://{{host}}/doggo/author/{{post.author.id}}/">{{post.author.displayName}}</a>
         <p class='post-published'>{{post.published}}</p>
         <p class='post-description'>{{post.description}}</p>
         <p class='post-content'>{{post.content}}</p>
-        <a href="http://{{host}}/doggo/posts/{{post.id}}/comments/">Comments</a>
+        <div class='comment'>
+        {% if post.comments %}
+          <p class="comment-content"> Comments:</p>
+          <br>
+          {% for comment in post.comments %}
+            <a class="comment-author" href="http://{{host}}/author/{{comment.author.id}}/">{{comment.author.displayName}}</a>
+            <p class="by">:</p>
+            <p class="comment-content">{{comment.comment}}</p>
+          <a class="comment-link" href="http://{{host}}/doggo/posts/{{post.id}}/comments/">See more comments.</a>
+          {% endfor %}
+        {% else %}
+          <p class="comment-content"> No comments yet.</p>
+        {% endif %}
+          <div class='create comment'>
+            {% include 'posts-comment-form.html'%}
+          </div>
+        </div>
       </div>
+    </div>
     {% endfor %}
-  </ul>
-  {% else %}
-  <p>No public posts available.</p>
+{% else %}
+<div class="full-post">
+  <p>No posts available.</p>
+</div>
 {% endif %}
+{% if next %}
+  <div class="next">
+    <a href="{{next}}">Next Page</a>
+  </div>
+{% endif %}
+</ul>
 </body></html>

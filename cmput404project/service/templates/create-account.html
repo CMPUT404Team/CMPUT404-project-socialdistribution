@@ -11,8 +11,13 @@
   <script src="{% static 'js/LoadBackground.js?1500' %}"></script>
   <div class="home-page">
     <div class="background">
-      <div id="login" class="login">
+      <div class="title">
+        <h1 id="title">DOGGO</h1>
         {% include "author_form.html"%}
+        <div id=link>
+          <p>Have an account?</p>
+          <a class="account-link" href="/doggo/login/"> Login</a>
+      </div>
       </div>
     </div>
   </div>

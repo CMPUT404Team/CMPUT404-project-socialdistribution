@@ -49,14 +49,17 @@ class Node(models.Model):
     def get_json(self, url):
         r = self.make_authenticated_request(url)
         if (r.status_code == 200):
-            return r.json()
+            try:
+                return r.json()
+            except:
+                return None
 
     def get_post(self, post_id):
         url = self.get_base_url() + "/posts/" + str(post_id)
         return self.get_json(url)
 
     def get_posts(self):
-        url = self.get_base_url() + "/author/posts"
+        url = self.get_base_url() + "/author/posts?page=1&size=1000"
         return self.get_json(url)
 
     def get_posts_by_author(self, author_id):
