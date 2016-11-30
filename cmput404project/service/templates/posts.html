@@ -22,7 +22,7 @@
         <a class='post-author' href="/doggo/author/{{post.author.id}}/">{{post.author.displayName}}</a>
         <p class='post-published'>{{post.published}}</p>
         <p class='post-description'>{{post.description}}</p>
-        <p class='post-content'>{{post.content}}</p>
+        <div class='post-content {% if post.contentType != "text/plain" %} md-content {% endif %}'>{{post.content}}</div>
         <div class='comment'>
         {% if post.comments %}
           <p class="comment-content"> Comments:</p>
@@ -30,7 +30,7 @@
           {% for comment in post.comments %}
             <a class="comment-author" href="/author/{{comment.author.id}}/">{{comment.author.displayName}}</a>
             <p class="by">:</p>
-            <p class="comment-content">{{comment.comment}}</p>
+            <div class="comment-content {% if comment.contentType != 'text/plain' %} md-content {% endif %}">{{comment.comment}}</div>
           <a class="comment-link" href="/doggo/posts/{{post.id}}/comments/">See more comments.</a>
           {% endfor %}
         {% else %}
@@ -54,4 +54,7 @@
   </div>
 {% endif %}
 </ul>
-</body></html>
+</body>
+<script src="{% static 'js/marked.min.js' %}"></script>
+<script src="{% static 'js/MarkdownParser.js' %}"></script>
+</html>

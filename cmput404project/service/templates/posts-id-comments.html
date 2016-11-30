@@ -27,7 +27,7 @@
         <p class='comment'>{{comment.comment}}</p>
         <p class='comment-published'>{{comment.pubDate}}</p>
         <p class='comment-author'>{{comment.author.displayName}}</p>
-        <p class='comment-content'>{{comment.content}}</p>
+        <div class='comment-content {% if comment.contentType != "text/plain" %} md-content {% endif %}'>{{comment.content}}</div>
       </div>
       {% endfor %}
     <a class="comment-link" href="/doggo/posts/{{post.id}}/comments/">See more comments.</a>
@@ -40,4 +40,7 @@
   </div>
 </div>
 </ul>
-</body></html>
+</body>
+<script src="{% static 'js/marked.min.js' %}"></script>
+<script src="{% static 'js/MarkdownParser.js' %}"></script>
+</html>
