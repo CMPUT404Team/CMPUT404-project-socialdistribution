@@ -2,9 +2,12 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from . import views, frontEndViews
 from django.views.generic.base import TemplateView
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('home'))),
     url(r'^doggo/$', frontEndViews.HomeView.as_view(), name='home'),
     url(r'^doggo/welcome/$', frontEndViews.WelcomeView.as_view(), name='welcome'),
     url(r'^posts/$', views.PostsView.as_view(), name='publicPosts'),
