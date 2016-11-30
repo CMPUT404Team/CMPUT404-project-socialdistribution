@@ -190,7 +190,7 @@ class AuthorDetailView(APIView):
             your_profile = True
             posts = NodeManager.get_stream(request.user)
         else:
-            posts =  views.AuthorPostsView.as_view()(request, pk).data
+            posts = views.AuthorPostsView.as_view()(request, pk).data
         currently_friends = get_author_object(request.user).is_following(author['id'])
         friends = []
         for friend in author["friends"]:
