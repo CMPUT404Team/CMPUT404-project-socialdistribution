@@ -1,31 +1,27 @@
 {% load rest_framework %}
 <html><body>
-{% if author %}
-      <div class='author'>
-        <h1 class='author-displayName'>{{author.displayName}}</h1>
-	{% if currently_friends %}
-		<form action="/frontend/befriend/" method="post">
-			<input type="hidden" name="friend" value="{{author}}">
-			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-			<input type="submit" value="Unfollow" />
-		</form>		
-	{% else %}
-		<form action="/frontend/befriend/" method="post">
-			<input type="hidden" name="friend" value="{{author}}">
-			<input type="hidden" name="currently_friends" value="{{currently_friends}}">
-			<input type="submit" value="Follow & Send Friend Request" />
-		</form>
-	{% endif %}
-        <p class='author-published'>{{author.host}}</p>
-        {% if friends%}
-          {% for friend in friends%}
-            <a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
-          {% endfor %}
-        {% else %}
-          <p class='friends'>No friends to display</p>
-        {% endif %}
-      </div>
-{% else %}
-  <p> 404. No author found</p>
-{% endif %}
-</body></html>
+		{% if author %}
+		<div class='author'>
+			<h1 class='author-displayName'>{{author.displayName}}</h1>
+			{% if currently_friends %}
+			<form action="unfriend/" method="post">
+				<input type="submit" value="Unfollow" />
+			</form>		
+			{% else %}
+			<form action="befriend/" method="post">
+				<input type="submit" value="Follow & Friend" />
+			</form>
+			{% endif %}
+			<p class='author-published'>{{author.host}}</p>
+			{% if friends%}
+			{% for friend in friends%}
+			<a class='friends' href="{{friend.url}}">{{friend.displayName}}</a>
+			{% endfor %}
+			{% else %}
+			<p class='friends'>No friends to display</p>
+			{% endif %}
+		</div>
+		{% else %}
+		<p> 404. No author found</p>
+		{% endif %}
+	</body></html>

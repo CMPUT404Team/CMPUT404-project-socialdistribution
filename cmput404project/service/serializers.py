@@ -20,6 +20,10 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         model = Author
         fields = ('url', 'id', 'displayName', 'host', 'friends')
 
+    def create(self, validated_data):
+        friends = validated_data.pop('friends')
+        return Author.objects.create(**validated_data)
+
 class CommentSerializer(serializers.Serializer):
     author = AuthorSerializer()
     pubDate = serializers.DateTimeField()

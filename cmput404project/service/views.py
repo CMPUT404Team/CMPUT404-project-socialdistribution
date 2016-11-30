@@ -21,6 +21,7 @@ from django.views.generic.edit import FormView
 from django.http.request import QueryDict
 from AuthorForm import AuthorForm
 from models.NodeManager import NodeManager
+from models.FriendRequest import FriendRequest
 import json
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -580,9 +581,10 @@ class FriendRequestView(APIView):
     def post(self, request):
         serializer = FriendRequestSerializer(request.data,data=request.data, context={'request':request})
         if (serializer.is_valid(raise_exception=True)):
-            author = self.get_object(serializer.validated_data['author']['id'])
-            friend = self.get_object(serializer.validated_data['friend']['id'])
-            author.add_friend(friend)
+            author_json = serializer.validated_data['author']
+            friend_json = serializer.validated_data['friend']
+            friend = self.get_object(friend_json['id'])
+            FriendRequest.objects.create(displayName=author_json['displayName'], requesting_author_id=author_json['id'], author=friend)
             return Response(status=204)
 
 class PostsNodesView(APIView):

@@ -40,13 +40,6 @@ class FriendRequestApiTest(APITestCase):
         self.client.force_authenticate(user=self.author.user)
         response = self.client.post(self.friend_request_url, data=post_data, format='json')
         self.assertEqual(204, response.status_code, response.data)
-        try:
-            friend_from_author = self.author.friends.get(id=self.friend.id)
-            self.assertEqual(self.friend, friend_from_author)
-        except Author.DoesNotExist:
-            self.fail("The friend was not added to the author")
-        except:
-            self.fail("Something crazy happened")
 
     def test_should_404_if_friend_does_not_exist(self):
        post_data = self.get_post_data(self.author, Author.create(User.objects.create(username='unsavedAuthor', password='test1234'), 'UnsavedAuthor', 'noHost'))
@@ -56,7 +49,7 @@ class FriendRequestApiTest(APITestCase):
 
     def test_should_404_if_author_does_not_exist(self):
         unsaved_author = Author.create(User.objects.create(username='unsavedAuthor', password='test1234'), 'UnsavedAuthor', 'noHost')
-        post_data = self.get_post_data(unsaved_author, self.friend)
+        post_data = self.get_post_data(self.friend, unsaved_author)
 	self.client.force_authenticate(user=unsaved_author.user)
        	response = self.client.post(self.friend_request_url, data=post_data, format='json')
        	self.assertEqual(404, response.status_code)
