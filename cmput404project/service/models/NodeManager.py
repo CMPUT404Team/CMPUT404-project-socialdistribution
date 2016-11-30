@@ -210,7 +210,10 @@ class NodeManager():
                 try:
                     return jsonData['posts'][0]
                 except:
-                    return jsonData
+                    try:
+                        return jsonData['posts']
+                    except:
+                        return jsonData
         return 404
 
     @classmethod
